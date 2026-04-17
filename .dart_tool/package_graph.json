@@ -16,7 +16,8 @@
         "flutter_svg",
         "geocoding",
         "geolocator",
-        "http"
+        "http",
+        "intl"
       ],
       "devDependencies": [
         "flutter_lints",
@@ -46,6 +47,15 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "intl",
+      "version": "0.20.2",
+      "dependencies": [
+        "clock",
+        "meta",
+        "path"
       ]
     },
     {
@@ -214,7 +224,7 @@
     },
     {
       "name": "matcher",
-      "version": "0.12.18",
+      "version": "0.12.19",
       "dependencies": [
         "async",
         "meta",
@@ -225,7 +235,7 @@
     },
     {
       "name": "test_api",
-      "version": "0.7.9",
+      "version": "0.7.10",
       "dependencies": [
         "async",
         "boolean_selector",

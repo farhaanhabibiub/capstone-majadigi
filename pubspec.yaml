@@ -19,6 +19,7 @@ dependencies:
   geolocator: ^14.0.2
   geocoding: ^4.0.0
   csv: ^6.0.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +46,24 @@ flutter:
     - assets/images/feature_kesehatan.png
     - assets/images/feature_sosial.png
     - assets/images/feature_pemerintahan.png
+    - assets/images/tekstur.png
+    - assets/images/pin_lokasi.png
+    - assets/images/mdi_clock.png
+    - assets/images/bus.png
+    - assets/images/bawang_merah.png
+    - assets/images/bawang_putih.png
+    - assets/images/beras_medium.png
+    - assets/images/beras_premium.png
+    - assets/images/cabe_rawit.png
+    - assets/images/cabe_merah.png
+    - assets/images/cabe_merah_keriting.png
+    - assets/images/daging_sapi.png
+    - assets/images/Bookmark.png
+    - assets/images/arrow_bawah.png
+    - assets/images/icon_program.png
+    - assets/images/icon_disabilitas.png
+    - assets/images/icon_info.png
+    - assets/images/icon_storage.png
     - assets/images/feature_keamanan.png
     - assets/images/personalization_success.png
   fonts:
