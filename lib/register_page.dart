@@ -4,7 +4,7 @@ import 'app_route.dart';
 import 'auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -23,7 +23,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _showValidationErrors = false;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
   static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
 

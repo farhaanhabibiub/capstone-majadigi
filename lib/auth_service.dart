@@ -360,6 +360,39 @@ class AuthService {
     }
   }
 
+  Future<Map<String, dynamic>?> getUserProfile() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return null;
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      return doc.data();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> markOnboardingCompleted() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return;
+      await _firestore.collection('users').doc(user.uid).set({
+        'onboardingCompleted': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (_) {}
+  }
+
+  Future<bool> hasCompletedOnboarding() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return false;
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      return doc.data()?['onboardingCompleted'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }

@@ -6,9 +6,9 @@ class EmailSentPage extends StatefulWidget {
   final String email;
 
   const EmailSentPage({
-    Key? key,
+    super.key,
     required this.email,
-  }) : super(key: key);
+  });
 
   @override
   State<EmailSentPage> createState() => _EmailSentPageState();

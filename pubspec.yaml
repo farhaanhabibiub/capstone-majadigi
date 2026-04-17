@@ -19,6 +19,7 @@ dependencies:
   geolocator: ^14.0.2
   geocoding: ^4.0.0
   csv: ^6.0.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -39,6 +40,20 @@ flutter:
     - assets/images/email_sent_icon.png
     - assets/images/personalization_location_map.png
     - assets/data/jatim_kecamatan.csv
+    - assets/data/kendaraan_dummy.csv
+    - assets/data/njkb_database.csv
+    - assets/data/kamar_rsud.csv
+    - assets/data/jadwal_operasi.csv
+    - assets/data/info_antrean.csv
+    - assets/data/kamar_saiful_anwar.csv
+    - assets/data/jadwal_saiful_anwar.csv
+    - assets/data/antrean_saiful_anwar.csv
+    - assets/data/kamar_karsa_husada.csv
+    - assets/data/jadwal_karsa_husada.csv
+    - assets/data/antrean_karsa_husada.csv
+    - assets/data/kamar_prov_jatim.csv
+    - assets/data/jadwal_prov_jatim.csv
+    - assets/data/antrean_prov_jatim.csv
     - assets/images/feature_mobilitas.png
     - assets/images/feature_ekonomi.png
     - assets/images/feature_pekerjaan.png
@@ -47,6 +62,17 @@ flutter:
     - assets/images/feature_pemerintahan.png
     - assets/images/feature_keamanan.png
     - assets/images/personalization_success.png
+    - assets/images/beranda_banner_illustration.png
+    - assets/images/layanan_bapenda.png
+    - assets/images/layanan_rsjd.png
+    - assets/images/layanan_transportasi.png
+    - assets/images/layanan_sikamperbato.png
+    - assets/images/layanan_nomor_darurat.png
+    - assets/images/artikel_1.png
+    - assets/images/artikel_2.png
+    - assets/images/artikel_3.png
+    - assets/images/bapenda_pajak_kendaraan.png
+    - assets/images/bapenda_nilai_jual.png
   fonts:
     - family: PlusJakartaSans
       fonts:

@@ -4,7 +4,7 @@ import 'app_route.dart';
 import 'auth_service.dart';
 
 class PersonalizationServicesPage extends StatefulWidget {
-  const PersonalizationServicesPage({Key? key}) : super(key: key);
+  const PersonalizationServicesPage({super.key});
 
   @override
   State<PersonalizationServicesPage> createState() =>
@@ -156,7 +156,7 @@ class _PersonalizationServicesPageState
                 child: Image.asset(
                   item.assetPath,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) {
+                  errorBuilder: (_, _, _) {
                     return Icon(
                       item.fallbackIcon,
                       size: 28,

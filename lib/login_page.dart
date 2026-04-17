@@ -3,7 +3,7 @@ import 'app_route.dart';
 import 'auth_service.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -93,13 +93,14 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
 
+      final completed = await AuthService.instance.hasCompletedOnboarding();
+      if (!mounted) return;
+
       Navigator.pushNamedAndRemoveUntil(
         context,
-        AppRoutes.personalizationLocationPage,
-            (route) => false,
+        completed ? AppRoutes.berandaPage : AppRoutes.personalizationLocationPage,
+        (route) => false,
       );
-
-      // TODO: ganti ke halaman dashboard/home saat sudah ada.
     } finally {
       if (mounted) {
         setState(() {
@@ -118,58 +119,13 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 18),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                    ),
-                  ),
-                  OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.white),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/images/language_icon.png',
-                          width: 16,
-                          height: 16,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                              Icons.language,
-                              size: 16,
-                              color: Colors.white,
-                            );
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Bahasa Indonesia',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.fromLTRB(4, 12, 16, 18),
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
               ),
             ),
             Expanded(

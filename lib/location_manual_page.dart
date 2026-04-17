@@ -7,7 +7,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'auth_service.dart';
 
 class LocationManualPage extends StatefulWidget {
-  const LocationManualPage({Key? key}) : super(key: key);
+  const LocationManualPage({super.key});
 
   @override
   State<LocationManualPage> createState() => _LocationManualPageState();
@@ -488,7 +488,7 @@ class _LocationManualPageState extends State<LocationManualPage> {
                     Expanded(
                       child: ListView.separated(
                         itemCount: _filteredLocations.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                         const Divider(
                           height: 1,
                           thickness: 1,
