@@ -95,11 +95,9 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushNamedAndRemoveUntil(
         context,
-        AppRoutes.personalizationLocationPage,
-            (route) => false,
+        AppRoutes.berandaPage,
+        (route) => false,
       );
-
-      // TODO: ganti ke halaman dashboard/home saat sudah ada.
     } finally {
       if (mounted) {
         setState(() {

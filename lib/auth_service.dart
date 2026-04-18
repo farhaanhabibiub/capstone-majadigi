@@ -360,6 +360,17 @@ class AuthService {
     }
   }
 
+  Future<Map<String, dynamic>?> getUserProfile() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return null;
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      return doc.data();
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }
