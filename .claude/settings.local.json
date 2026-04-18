@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(where python3:*)",
+      "Bash(where python:*)",
+      "Bash(where py:*)",
+      "Bash(C:\\\\Users\\\\farhaanhabibi\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python314\\\\python.exe:*)",
+      "Bash(\"C:\\\\Users\\\\farhaanhabibi\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python314\\\\python.exe\" -c \"import openpyxl; print\\('ok'\\)\")",
+      "Bash(flutter analyze:*)",
+      "Bash(\"C:\\\\Users\\\\farhaanhabibi\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python314\\\\python.exe\" gen_njkb.py)",
+      "WebFetch(domain:rsusaifulanwar.jatimprov.go.id)",
+      "WebFetch(domain:rsuddahahusada.jatimprov.go.id)",
+      "WebFetch(domain:www.rsukarsahusadabatu.jatimprov.go.id)",
+      "WebFetch(domain:app.rsuhaji.jatimprov.go.id)",
+      "WebFetch(domain:rsuhaji.jatimprov.go.id)",
+      "Bash(flutter pub *)",
+      "Bash(git add *)",
+      "Bash(git rebase *)"
+    ]
+  }
+}
