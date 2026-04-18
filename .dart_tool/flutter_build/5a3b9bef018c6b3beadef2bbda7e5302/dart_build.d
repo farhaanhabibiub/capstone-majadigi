@@ -1,0 +1,1 @@
+ C:\\Users\\ghairan\\majadigi\\capstone-majadigi\\.dart_tool\\flutter_build\\5a3b9bef018c6b3beadef2bbda7e5302\\dart_build_result.json: 
