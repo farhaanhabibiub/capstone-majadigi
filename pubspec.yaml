@@ -55,6 +55,29 @@ flutter:
     - assets/images/header_texture.png
     - assets/images/dapurmbg.png
     - assets/images/ayopasok.png
+    - assets/images/avatar_placeholder.png
+    - assets/images/layanan_bapenda.png
+    - assets/images/layanan_rsud.png
+    - assets/images/layanan_transportasi.png
+    - assets/images/layanan_siskaperbapo.png
+    - assets/images/layanan_nomor_darurat.png
+    - assets/images/artikel_1.png
+    - assets/images/artikel_2.png
+    - assets/images/artikel_3.png
+    - assets/data/kendaraan_dummy.csv
+    - assets/data/njkb_database.csv
+    - assets/data/kamar_rsud.csv
+    - assets/data/jadwal_operasi.csv
+    - assets/data/info_antrean.csv
+    - assets/data/kamar_saiful_anwar.csv
+    - assets/data/jadwal_saiful_anwar.csv
+    - assets/data/antrean_saiful_anwar.csv
+    - assets/data/kamar_karsa_husada.csv
+    - assets/data/jadwal_karsa_husada.csv
+    - assets/data/antrean_karsa_husada.csv
+    - assets/data/kamar_prov_jatim.csv
+    - assets/data/jadwal_prov_jatim.csv
+    - assets/data/antrean_prov_jatim.csv
   fonts:
     - family: PlusJakartaSans
       fonts:
