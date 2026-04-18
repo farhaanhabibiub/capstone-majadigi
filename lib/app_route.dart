@@ -11,20 +11,15 @@ import 'location_manual_page.dart';
 import 'personalization_services_page.dart';
 import 'personalization_success_page.dart';
 import 'beranda/beranda_page.dart';
-import 'bapenda/bapenda_page.dart';
-import 'bapenda/info_pajak_page.dart';
-import 'bapenda/hasil_pajak_page.dart';
-import 'bapenda/estimasi_njkb_page.dart';
-import 'bapenda/hasil_njkb_page.dart';
-import 'rsud/rsud_page.dart';
-import 'rsud/ketersediaan_kamar_page.dart';
-import 'rsud/jadwal_operasi_page.dart';
-import 'rsud/info_antrean_page.dart';
-import 'rsud/hospital_config.dart';
-import 'transjatim/transjatim_page.dart';
-import 'siskaperbapo/siskaperbapo_page.dart';
-import 'etibi/etibi_page.dart';
-import 'sapabansos/sapa_bansos_page.dart';
+import 'open_data_landing_page.dart';
+import 'open_data_list_page.dart';
+import 'open_data_dapurmbg.dart';
+import 'open_data_ayopasok.dart';
+import 'klinikhoaks_permohonan.dart';
+import 'klinikhoaks_landing_page.dart';
+import 'nomordarurat_landing_page.dart';
+import 'nomordarurat_carinomor.dart';
+import 'nomordarurat_informasi.dart';
 
 class AppRoutes {
   static const String splashScreen = '/';
@@ -42,19 +37,15 @@ class AppRoutes {
   static const String personalizationSuccessPage =
       '/personalizationSuccessPage';
   static const String berandaPage = '/berandaPage';
-  static const String bapendaPage = '/bapendaPage';
-  static const String infoPajakPage = '/infoPajakPage';
-  static const String hasilPajakPage = '/hasilPajakPage';
-  static const String estimasiNjkbPage = '/estimasiNjkbPage';
-  static const String hasilNjkbPage = '/hasilNjkbPage';
-  static const String rsudPage = '/rsudPage';
-  static const String ketersediaanKamarPage = '/ketersediaanKamarPage';
-  static const String jadwalOperasiPage = '/jadwalOperasiPage';
-  static const String infoAntreanPage = '/infoAntreanPage';
-  static const String transjatimPage = '/transjatimPage';
-  static const String siskaperbapoPage = '/siskaperbapoPage';
-  static const String etibiPage = '/etibiPage';
-  static const String sapaBansosPage = '/sapaBansosPage';
+  static const String openDataLandingPage = '/openDataLandingPage';
+  static const String openDataListPage = '/openDataListPage';
+  static const String openDataDapurMBGPage = '/openDataDapurMBGPage';
+  static const String openDataAyoPasokPage = '/openDataAyoPasokPage';
+  static const String klinikHoaksPermohonanPage = '/klinikHoaksPermohonanPage';
+  static const String klinikHoaksLandingPage = '/klinikHoaksLandingPage';
+  static const String nomorDaruratLandingPage = '/nomorDaruratLandingPage';
+  static const String nomorDaruratCariNomorPage = '/nomorDaruratCariNomorPage';
+  static const String nomorDaruratInformasiPage = '/nomorDaruratInformasiPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -124,75 +115,49 @@ class AppRoutes {
           builder: (_) => const BerandaPage(),
         );
 
-      case bapendaPage:
+      case openDataLandingPage:
         return MaterialPageRoute(
-          builder: (_) => const BapendaPage(),
+          builder: (_) => const OpenDataLandingPage(),
         );
 
-      case infoPajakPage:
+      case openDataListPage:
         return MaterialPageRoute(
-          builder: (_) => const InfoPajakPage(),
+          builder: (_) => const OpenDataListPage(),
         );
 
-      case hasilPajakPage:
-        final kendaraan = settings.arguments as KendaraanData;
+      case openDataDapurMBGPage:
         return MaterialPageRoute(
-          builder: (_) => HasilPajakPage(data: kendaraan),
+          builder: (_) => const OpenDataDapurMBGPage(),
         );
 
-      case estimasiNjkbPage:
+      case openDataAyoPasokPage:
         return MaterialPageRoute(
-          builder: (_) => const EstimasiNjkbPage(),
+          builder: (_) => const OpenDataAyoPasokPage(),
         );
 
-      case hasilNjkbPage:
-        final hasil = settings.arguments as HasilNjkbData;
+      case klinikHoaksPermohonanPage:
         return MaterialPageRoute(
-          builder: (_) => HasilNjkbPage(data: hasil),
+          builder: (_) => const KlinikHoaksPermohonanPage(),
         );
 
-      case rsudPage:
-        final rsudHospital = settings.arguments as HospitalConfig;
+      case klinikHoaksLandingPage:
         return MaterialPageRoute(
-          builder: (_) => RsudPage(hospital: rsudHospital),
+          builder: (_) => const KlinikHoaksLandingPage(),
         );
 
-      case ketersediaanKamarPage:
-        final kamarHospital = settings.arguments as HospitalConfig;
+      case nomorDaruratLandingPage:
         return MaterialPageRoute(
-          builder: (_) => KetersediaanKamarPage(hospital: kamarHospital),
+          builder: (_) => const NomorDaruratLandingPage(),
         );
 
-      case jadwalOperasiPage:
-        final jadwalHospital = settings.arguments as HospitalConfig;
+      case nomorDaruratCariNomorPage:
         return MaterialPageRoute(
-          builder: (_) => JadwalOperasiPage(hospital: jadwalHospital),
+          builder: (_) => const NomorDaruratCariNomorPage(),
         );
 
-      case infoAntreanPage:
-        final antreanHospital = settings.arguments as HospitalConfig;
+      case nomorDaruratInformasiPage:
         return MaterialPageRoute(
-          builder: (_) => InfoAntreanPage(hospital: antreanHospital),
-        );
-
-      case transjatimPage:
-        return MaterialPageRoute(
-          builder: (_) => const TransjatimPage(),
-        );
-
-      case siskaperbapoPage:
-        return MaterialPageRoute(
-          builder: (_) => const SiskaperbapoPage(),
-        );
-
-      case etibiPage:
-        return MaterialPageRoute(
-          builder: (_) => const EtibiPage(),
-        );
-
-      case sapaBansosPage:
-        return MaterialPageRoute(
-          builder: (_) => const SapaBansosPage(),
+          builder: (_) => const NomorDaruratInformasiPage(),
         );
 
       default:

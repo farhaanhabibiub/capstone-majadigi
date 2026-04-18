@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'app_route.dart';
 import 'firebase_options.dart';
 
@@ -9,7 +8,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
 }
 
@@ -22,9 +20,12 @@ class MyApp extends StatelessWidget {
       title: 'Majadigi',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: const Color(0xFF007AFF),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF007AFF)),
       ),
-      initialRoute: AppRoutes.splashScreen,
+      // initialRoute: AppRoutes.openDataLandingPage,
+      // initialRoute: AppRoutes.klinikHoaksPermohonanPage,
+      initialRoute: AppRoutes.nomorDaruratLandingPage,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

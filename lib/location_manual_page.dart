@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -50,29 +49,28 @@ class _LocationManualPageState extends State<LocationManualPage> {
     try {
       final raw = await rootBundle.loadString('assets/data/jatim_kecamatan.csv');
 
+      // Remove BOM if present
       final cleanedRaw = raw.replaceFirst('\uFEFF', '');
-      final lines = cleanedRaw.split(RegExp(r'\r?\n'));
-      final firstLine =
-      lines.firstWhere((line) => line.trim().isNotEmpty, orElse: () => '');
-
-      final delimiter =
-      firstLine.contains(';') && !firstLine.contains(',') ? ';' : ',';
-
-      final rows = CsvToListConverter(
-        fieldDelimiter: delimiter,
-        shouldParseNumbers: false,
-        eol: '\n',
-      ).convert(cleanedRaw);
-
-      if (rows.isEmpty) {
+      
+      // Split into lines and filter out empty ones
+      final lines = cleanedRaw.split(RegExp(r'\r?\n')).where((l) => l.trim().isNotEmpty).toList();
+      
+      if (lines.isEmpty) {
         setState(() {
           _isLoading = false;
         });
         return;
       }
 
+      // Detect delimiter (comma or semicolon)
+      final firstLine = lines.first;
+      final delimiter = firstLine.contains(';') && !firstLine.contains(',') ? ';' : ',';
+
+      // Parse rows manually by splitting each line by the detected delimiter
+      final List<List<String>> rows = lines.map((line) => line.split(delimiter)).toList();
+
       final header = rows.first
-          .map((e) => _normalizeHeader(e.toString()))
+          .map((e) => _normalizeHeader(e.trim()))
           .toList();
 
       int findHeader(List<String> aliases, {bool required = true}) {
@@ -118,9 +116,9 @@ class _LocationManualPageState extends State<LocationManualPage> {
         final row = rows[i];
         if (row.length <= maxRequiredIndex) continue;
 
-        final kecamatan = row[kecamatanIndex].toString().trim();
-        final kabupaten = row[kabupatenIndex].toString().trim();
-        final provinsi = row[provinsiIndex].toString().trim();
+        final kecamatan = row[kecamatanIndex].trim();
+        final kabupaten = row[kabupatenIndex].trim();
+        final provinsi = row[provinsiIndex].trim();
 
         if (kecamatan.isEmpty || kabupaten.isEmpty || provinsi.isEmpty) {
           continue;
@@ -128,17 +126,17 @@ class _LocationManualPageState extends State<LocationManualPage> {
 
         final kodeKecamatan =
         (kodeKecamatanIndex != -1 && row.length > kodeKecamatanIndex)
-            ? row[kodeKecamatanIndex].toString().trim()
+            ? row[kodeKecamatanIndex].trim()
             : '';
 
         final kodeKabupaten =
         (kodeKabupatenIndex != -1 && row.length > kodeKabupatenIndex)
-            ? row[kodeKabupatenIndex].toString().trim()
+            ? row[kodeKabupatenIndex].trim()
             : '';
 
         final kodeProvinsi =
         (kodeProvinsiIndex != -1 && row.length > kodeProvinsiIndex)
-            ? row[kodeProvinsiIndex].toString().trim()
+            ? row[kodeProvinsiIndex].trim()
             : '';
 
         items.add(

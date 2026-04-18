@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'app_route.dart';
-import 'auth_service.dart';
 
 class PersonalizationSuccessPage extends StatefulWidget {
   const PersonalizationSuccessPage({super.key});
@@ -19,12 +18,11 @@ class _PersonalizationSuccessPageState
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
+  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
 
   @override
   void initState() {
     super.initState();
-
-    AuthService.instance.markOnboardingCompleted();
 
     _timer = Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
@@ -45,8 +43,8 @@ class _PersonalizationSuccessPageState
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
+    return WillPopScope(
+      onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: _whiteBg,
         body: SafeArea(
