@@ -20,6 +20,7 @@ import 'klinikhoaks_landing_page.dart';
 import 'nomordarurat_landing_page.dart';
 import 'nomordarurat_carinomor.dart';
 import 'nomordarurat_informasi.dart';
+import 'transjatim/transjatim_page.dart';
 
 class AppRoutes {
   static const String splashScreen = '/';
@@ -46,6 +47,7 @@ class AppRoutes {
   static const String nomorDaruratLandingPage = '/nomorDaruratLandingPage';
   static const String nomorDaruratCariNomorPage = '/nomorDaruratCariNomorPage';
   static const String nomorDaruratInformasiPage = '/nomorDaruratInformasiPage';
+  static const String transjatimPage = '/transjatimPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -158,6 +160,11 @@ class AppRoutes {
       case nomorDaruratInformasiPage:
         return MaterialPageRoute(
           builder: (_) => const NomorDaruratInformasiPage(),
+        );
+
+      case transjatimPage:
+        return MaterialPageRoute(
+          builder: (_) => const TransjatimPage(),
         );
 
       default:
