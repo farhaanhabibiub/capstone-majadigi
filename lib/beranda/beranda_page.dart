@@ -12,7 +12,7 @@ class BerandaPage extends StatefulWidget {
 
 class _BerandaPageState extends State<BerandaPage> {
   int _selectedIndex = 0;
-  String _locationText = '';
+  String _locationText = 'Memuat lokasi...';
   String _locationCity = '';
   String _locationRegency = '';
   bool _isLoadingProfile = true;
@@ -30,12 +30,12 @@ class _BerandaPageState extends State<BerandaPage> {
       route: AppRoutes.bapendaPage,
     ),
     _ServiceItem(
-      label: 'RSJD',
+      label: 'RSUD',
       assetPath: 'assets/images/layanan_rsjd.png',
       fallback: Icons.local_hospital_rounded,
     ),
     _ServiceItem(
-      label: 'Transportasi',
+      label: 'Transjatim',
       assetPath: 'assets/images/layanan_transportasi.png',
       fallback: Icons.directions_bus_rounded,
       route: AppRoutes.transjatimPage,
@@ -47,42 +47,36 @@ class _BerandaPageState extends State<BerandaPage> {
       route: AppRoutes.siskaperbapoPage,
     ),
     _ServiceItem(
-      label: 'E-TIBI',
-      assetPath: 'assets/images/layanan_rsjd.png',
-      fallback: Icons.health_and_safety_rounded,
-      route: AppRoutes.etibiPage,
-    ),
-    _ServiceItem(
-      label: 'Sapa Bansos',
+      label: 'Nomor Darurat',
       assetPath: 'assets/images/layanan_nomor_darurat.png',
-      fallback: Icons.volunteer_activism_rounded,
-      route: AppRoutes.sapaBansosPage,
+      fallback: Icons.emergency_rounded,
+      route: AppRoutes.nomorDaruratLandingPage,
     ),
   ];
-
 
   static const List<_ArtikelItem> _artikels = [
     _ArtikelItem(
-      title: 'BAPENDA Jatim Luncurkan Platform Digital',
+      tag: 'TEKNOLOGI',
+      tagColor: Color.fromRGBO(0, 101, 255, 1),
+      title: 'BAPENDA Jatim Luncurkan Fitur Pembayaran Digital',
       assetPath: 'assets/images/artikel_1.png',
-      date: '12 Apr 2026',
+      date: '11 April 2026',
     ),
     _ArtikelItem(
+      tag: 'KEBIJAKAN',
+      tagColor: Color.fromRGBO(202, 138, 4, 1),
       title: 'Update Aturan Pajak Kendaraan Bermotor 2026',
       assetPath: 'assets/images/artikel_2.png',
-      date: '10 Apr 2026',
+      date: '15 Maret 2026',
     ),
     _ArtikelItem(
-      title: 'Integrasi Layanan Kesehatan RSJD Di Surabaya',
+      tag: 'LAYANAN',
+      tagColor: Color.fromRGBO(13, 148, 136, 1),
+      title: 'Integrasi Layanan Kesehatan RSUD Dr. Soetomo',
       assetPath: 'assets/images/artikel_3.png',
-      date: '8 Apr 2026',
+      date: '15 Maret 2026',
     ),
   ];
-
-  void _navigateToRsud() {
-    final hospital = HospitalConfig.forLocation(_locationCity, _locationRegency);
-    Navigator.pushNamed(context, AppRoutes.rsudPage, arguments: hospital);
-  }
 
   @override
   void initState() {
@@ -93,7 +87,6 @@ class _BerandaPageState extends State<BerandaPage> {
   Future<void> _loadUserProfile() async {
     final profile = await AuthService.instance.getUserProfile();
     if (!mounted) return;
-
     setState(() {
       _isLoadingProfile = false;
       final location = profile?['location'] as Map<String, dynamic>?;
@@ -115,6 +108,11 @@ class _BerandaPageState extends State<BerandaPage> {
         _locationText = 'Lokasi belum diatur';
       }
     });
+  }
+
+  void _navigateToRsud() {
+    final hospital = HospitalConfig.forLocation(_locationCity, _locationRegency);
+    Navigator.pushNamed(context, AppRoutes.rsudPage, arguments: hospital);
   }
 
   @override
@@ -156,7 +154,6 @@ class _BerandaPageState extends State<BerandaPage> {
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
       child: Row(
         children: [
-          // Avatar
           CircleAvatar(
             radius: 22,
             backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
@@ -164,7 +161,7 @@ class _BerandaPageState extends State<BerandaPage> {
               'assets/images/avatar_placeholder.png',
               width: 44,
               height: 44,
-              errorBuilder: (_, _, _) => const Icon(
+              errorBuilder: (_, __, ___) => const Icon(
                 Icons.person_rounded,
                 color: _blue,
                 size: 24,
@@ -172,7 +169,6 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
           ),
           const SizedBox(width: 10),
-          // Lokasi
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,11 +187,7 @@ class _BerandaPageState extends State<BerandaPage> {
                   children: [
                     Flexible(
                       child: Text(
-                        _isLoadingProfile
-                            ? '...'
-                            : (_locationText.isEmpty
-                                ? 'Lokasi belum diatur'
-                                : _locationText),
+                        _isLoadingProfile ? '...' : _locationText,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: _textPrimary,
@@ -216,7 +208,6 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
           ),
           const SizedBox(width: 8),
-          // Bell notifikasi
           Container(
             width: 40,
             height: 40,
@@ -225,7 +216,7 @@ class _BerandaPageState extends State<BerandaPage> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.07),
+                  color: Colors.black.withValues(alpha: 0.07),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -242,17 +233,42 @@ class _BerandaPageState extends State<BerandaPage> {
     );
   }
 
-  // ── Banner ────────────────────────────────────────────────────────────────
+  // ── Welcome Banner ────────────────────────────────────────────────────────
 
   Widget _buildWelcomeBanner() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Image.asset(
-          'assets/images/beranda_banner_illustration.png',
-          width: double.infinity,
-          fit: BoxFit.fitWidth,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: _blue,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Selamat Datang,\nWarga Jatim!',
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                height: 1.3,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Akses berbagai layanan pemerintah Provinsi Jawa Timur dengan mudah, cepat, dan aman melalui Majadigi.',
+              style: TextStyle(
+                color: Colors.white70,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 12,
+                height: 1.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -264,7 +280,6 @@ class _BerandaPageState extends State<BerandaPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header section
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -296,7 +311,6 @@ class _BerandaPageState extends State<BerandaPage> {
           ),
         ),
         const SizedBox(height: 14),
-        // Grid layanan (3 kolom, bungkus otomatis)
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: GridView.builder(
@@ -309,9 +323,7 @@ class _BerandaPageState extends State<BerandaPage> {
               mainAxisSpacing: 10,
               childAspectRatio: 0.9,
             ),
-            itemBuilder: (context, index) {
-              return _buildServiceCard(_services[index]);
-            },
+            itemBuilder: (context, index) => _buildServiceCard(_services[index]),
           ),
         ),
       ],
@@ -319,12 +331,12 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Widget _buildServiceCard(_ServiceItem item) {
-    VoidCallback? onTap;
-    if (item.label == 'RSJD') {
-      onTap = _navigateToRsud;
-    } else if (item.route != null) {
-      onTap = () => Navigator.pushNamed(context, item.route!);
-    }
+    final VoidCallback? onTap = item.label == 'RSUD'
+        ? _navigateToRsud
+        : item.route != null
+            ? () => Navigator.pushNamed(context, item.route!)
+            : null;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -333,7 +345,7 @@ class _BerandaPageState extends State<BerandaPage> {
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha:0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -353,7 +365,7 @@ class _BerandaPageState extends State<BerandaPage> {
               child: Image.asset(
                 item.assetPath,
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => Icon(
+                errorBuilder: (_, __, ___) => Icon(
                   item.fallback,
                   color: _blue,
                   size: 26,
@@ -389,7 +401,6 @@ class _BerandaPageState extends State<BerandaPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header section
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -421,16 +432,13 @@ class _BerandaPageState extends State<BerandaPage> {
           ),
         ),
         const SizedBox(height: 14),
-        // List artikel
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: _artikels.length,
           separatorBuilder: (_, __) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            return _buildArtikelCard(_artikels[index]);
-          },
+          itemBuilder: (_, index) => _buildArtikelCard(_artikels[index]),
         ),
       ],
     );
@@ -443,7 +451,7 @@ class _BerandaPageState extends State<BerandaPage> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -451,49 +459,37 @@ class _BerandaPageState extends State<BerandaPage> {
       ),
       child: Row(
         children: [
-          // Thumbnail
           ClipRRect(
-            borderRadius: const BorderRadius.horizontal(
-              left: Radius.circular(14),
-            ),
+            borderRadius: const BorderRadius.horizontal(left: Radius.circular(14)),
             child: Image.asset(
               item.assetPath,
               width: 92,
               height: 92,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(
+              errorBuilder: (_, __, ___) => Container(
                 width: 92,
                 height: 92,
                 color: const Color.fromRGBO(220, 232, 255, 1),
-                child: const Icon(
-                  Icons.article_rounded,
-                  color: _blue,
-                  size: 32,
-                ),
+                child: const Icon(Icons.article_rounded, color: _blue, size: 32),
               ),
             ),
           ),
           const SizedBox(width: 12),
-          // Konten
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Tag
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 7,
-                      vertical: 3,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
-                      color: _blue,
+                      color: item.tagColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
-                      'MAJADIGI',
-                      style: TextStyle(
+                    child: Text(
+                      item.tag,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 9,
@@ -503,7 +499,6 @@ class _BerandaPageState extends State<BerandaPage> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  // Judul
                   Text(
                     item.title,
                     maxLines: 2,
@@ -517,15 +512,19 @@ class _BerandaPageState extends State<BerandaPage> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  // Tanggal
-                  Text(
-                    item.date,
-                    style: const TextStyle(
-                      color: _textSecondary,
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                    ),
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_today_rounded, size: 10, color: _textSecondary),
+                      const SizedBox(width: 4),
+                      Text(
+                        item.date,
+                        style: const TextStyle(
+                          color: _textSecondary,
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -571,16 +570,10 @@ class _BerandaPageState extends State<BerandaPage> {
                 onTap: () => setState(() => _selectedIndex = 1),
               ),
               _BottomNavItem(
-                icon: Icons.notifications_outlined,
-                label: 'Notifikasi',
-                isActive: _selectedIndex == 2,
-                onTap: () => setState(() => _selectedIndex = 2),
-              ),
-              _BottomNavItem(
                 icon: Icons.person_outline_rounded,
                 label: 'Profil',
-                isActive: _selectedIndex == 3,
-                onTap: () => setState(() => _selectedIndex = 3),
+                isActive: _selectedIndex == 2,
+                onTap: () => setState(() => _selectedIndex = 2),
               ),
             ],
           ),
@@ -607,11 +600,15 @@ class _ServiceItem {
 }
 
 class _ArtikelItem {
+  final String tag;
+  final Color tagColor;
   final String title;
   final String assetPath;
   final String date;
 
   const _ArtikelItem({
+    required this.tag,
+    required this.tagColor,
     required this.title,
     required this.assetPath,
     required this.date,
@@ -642,15 +639,11 @@ class _BottomNavItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: isActive ? _blue : _textSecondary,
-              size: 24,
-            ),
+            Icon(icon, color: isActive ? _blue : _textSecondary, size: 24),
             const SizedBox(height: 3),
             Text(
               label,
