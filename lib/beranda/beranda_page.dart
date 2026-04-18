@@ -38,16 +38,25 @@ class _BerandaPageState extends State<BerandaPage> {
       label: 'Transportasi',
       assetPath: 'assets/images/layanan_transportasi.png',
       fallback: Icons.directions_bus_rounded,
+      route: AppRoutes.transjatimPage,
     ),
     _ServiceItem(
-      label: 'SIKAMPERBATO',
+      label: 'SISKAPERBAPO',
       assetPath: 'assets/images/layanan_sikamperbato.png',
-      fallback: Icons.security_rounded,
+      fallback: Icons.storefront_rounded,
+      route: AppRoutes.siskaperbapoPage,
     ),
     _ServiceItem(
-      label: 'Nomor Darurat',
+      label: 'E-TIBI',
+      assetPath: 'assets/images/layanan_rsjd.png',
+      fallback: Icons.health_and_safety_rounded,
+      route: AppRoutes.etibiPage,
+    ),
+    _ServiceItem(
+      label: 'Sapa Bansos',
       assetPath: 'assets/images/layanan_nomor_darurat.png',
-      fallback: Icons.emergency_rounded,
+      fallback: Icons.volunteer_activism_rounded,
+      route: AppRoutes.sapaBansosPage,
     ),
   ];
 

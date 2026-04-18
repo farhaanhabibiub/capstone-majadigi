@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class PenerimaResult {
   final String nik;
   final String nama;

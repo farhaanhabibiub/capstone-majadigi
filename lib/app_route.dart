@@ -21,6 +21,10 @@ import 'rsud/ketersediaan_kamar_page.dart';
 import 'rsud/jadwal_operasi_page.dart';
 import 'rsud/info_antrean_page.dart';
 import 'rsud/hospital_config.dart';
+import 'transjatim/transjatim_page.dart';
+import 'siskaperbapo/siskaperbapo_page.dart';
+import 'etibi/etibi_page.dart';
+import 'sapabansos/sapa_bansos_page.dart';
 
 class AppRoutes {
   static const String splashScreen = '/';
@@ -47,6 +51,10 @@ class AppRoutes {
   static const String ketersediaanKamarPage = '/ketersediaanKamarPage';
   static const String jadwalOperasiPage = '/jadwalOperasiPage';
   static const String infoAntreanPage = '/infoAntreanPage';
+  static const String transjatimPage = '/transjatimPage';
+  static const String siskaperbapoPage = '/siskaperbapoPage';
+  static const String etibiPage = '/etibiPage';
+  static const String sapaBansosPage = '/sapaBansosPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -165,6 +173,26 @@ class AppRoutes {
         final antreanHospital = settings.arguments as HospitalConfig;
         return MaterialPageRoute(
           builder: (_) => InfoAntreanPage(hospital: antreanHospital),
+        );
+
+      case transjatimPage:
+        return MaterialPageRoute(
+          builder: (_) => const TransjatimPage(),
+        );
+
+      case siskaperbapoPage:
+        return MaterialPageRoute(
+          builder: (_) => const SiskaperbapoPage(),
+        );
+
+      case etibiPage:
+        return MaterialPageRoute(
+          builder: (_) => const EtibiPage(),
+        );
+
+      case sapaBansosPage:
+        return MaterialPageRoute(
+          builder: (_) => const SapaBansosPage(),
         );
 
       default:
