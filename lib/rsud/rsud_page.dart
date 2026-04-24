@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../app_route.dart';
 import 'hospital_config.dart';
@@ -15,6 +16,63 @@ class _RsudPageState extends State<RsudPage> {
   int _selectedTab = 0;
   bool _operasionalExpanded = true;
   bool _ketentuanExpanded = false;
+  bool _isFavorite = false;
+
+  String get _favKey => 'fav_rsud_${widget.hospital.id}';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _loadFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
+  }
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    final next = !_isFavorite;
+    await prefs.setBool(_favKey, next);
+    if (!mounted) return;
+    setState(() => _isFavorite = next);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: next
+            ? const Color.fromRGBO(0, 101, 255, 1)
+            : const Color.fromRGBO(100, 100, 100, 1),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+        content: Row(
+          children: [
+            Icon(
+              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                next
+                    ? '${widget.hospital.name} ditambahkan ke favorit'
+                    : '${widget.hospital.name} dihapus dari favorit',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
@@ -310,6 +368,27 @@ class _RsudPageState extends State<RsudPage> {
 
   String get _id => widget.hospital.id;
 
+  String get _telepon => const {
+        'saiful_anwar': '(0341) 362101',
+        'karsa_husada': '(0341) 596898',
+        'prov_jatim': '(031) 5924000',
+        'daha_husada': '0813-8230-0900',
+      }[_id] ?? '';
+
+  String get _teleponRaw => const {
+        'saiful_anwar': '+62341362101',
+        'karsa_husada': '+62341596898',
+        'prov_jatim': '+62315924000',
+        'daha_husada': '+6281382300900',
+      }[_id] ?? '';
+
+  String get _email => const {
+        'saiful_anwar': 'drsaifulanwar@jatimprov.go.id',
+        'karsa_husada': 'diklatpenelitian.rsuudkarsa@gmail.com',
+        'prov_jatim': 'rshaji@jatimprov.go.id',
+        'daha_husada': 'dahahusada@jatimprov.go.id',
+      }[_id] ?? '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -353,17 +432,22 @@ class _RsudPageState extends State<RsudPage> {
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 12),
-          child: Container(
-            width: 36,
-            height: 36,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.bookmark_border_rounded,
-              color: _blue,
-              size: 20,
+          child: GestureDetector(
+            onTap: _toggleFavorite,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _isFavorite
+                    ? Icons.bookmark_rounded
+                    : Icons.bookmark_border_rounded,
+                color: _blue,
+                size: 20,
+              ),
             ),
           ),
         ),
@@ -730,6 +814,48 @@ class _RsudPageState extends State<RsudPage> {
             children: _jamOperasional
                 .map((jam) => _BulletItem(text: jam))
                 .toList(),
+          ),
+        ),
+        const SizedBox(height: 10),
+        _infoCard(
+          label: 'Telepon',
+          child: GestureDetector(
+            onTap: () async {
+              final uri = Uri.parse('tel:$_teleponRaw');
+              if (await canLaunchUrl(uri)) launchUrl(uri);
+            },
+            child: Text(
+              _telepon,
+              style: const TextStyle(
+                color: _blue,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.underline,
+                decorationColor: _blue,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        _infoCard(
+          label: 'Email',
+          child: GestureDetector(
+            onTap: () async {
+              final uri = Uri.parse('mailto:$_email');
+              if (await canLaunchUrl(uri)) launchUrl(uri);
+            },
+            child: Text(
+              _email,
+              style: const TextStyle(
+                color: _blue,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.underline,
+                decorationColor: _blue,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 10),

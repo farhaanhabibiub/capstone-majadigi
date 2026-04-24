@@ -17,13 +17,14 @@ class _RegisterPageState extends State<RegisterPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
   late final TextEditingController _passwordController;
+  late final TextEditingController _confirmPasswordController;
 
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   bool _isSubmitting = false;
   bool _showValidationErrors = false;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
   static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
 
@@ -34,11 +35,13 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController = TextEditingController();
     _phoneController = TextEditingController();
     _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
 
     _nameController.addListener(_refresh);
     _emailController.addListener(_refresh);
     _phoneController.addListener(_refresh);
     _passwordController.addListener(_refresh);
+    _confirmPasswordController.addListener(_refresh);
   }
 
   void _refresh() {
@@ -51,11 +54,13 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.removeListener(_refresh);
     _phoneController.removeListener(_refresh);
     _passwordController.removeListener(_refresh);
+    _confirmPasswordController.removeListener(_refresh);
 
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -81,8 +86,18 @@ class _RegisterPageState extends State<RegisterPage> {
     final text = value?.trim() ?? '';
     if (text.isEmpty) return 'Nomor telepon wajib diisi';
     if (!RegExp(r'^\d+$').hasMatch(text)) return 'Nomor telepon hanya boleh angka';
-    if (text.length < 10) return 'Minimal 10 digit';
+    if (text.length < 9) return 'Minimal 9 digit';
     if (text.length > 15) return 'Maksimal 15 digit';
+    // Format Indonesia: 08xx, 628xx, atau 8xx
+    if (!RegExp(r'^(0|62|8)\d+$').hasMatch(text)) {
+      return 'Format nomor tidak valid (contoh: 08123456789)';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if ((value ?? '').isEmpty) return 'Konfirmasi kata sandi wajib diisi';
+    if (value != _passwordController.text) return 'Kata sandi tidak cocok';
     return null;
   }
 
@@ -100,7 +115,8 @@ class _RegisterPageState extends State<RegisterPage> {
     return _nameController.text.trim().isNotEmpty &&
         _emailController.text.trim().isNotEmpty &&
         _phoneController.text.trim().isNotEmpty &&
-        _passwordController.text.isNotEmpty;
+        _passwordController.text.isNotEmpty &&
+        _confirmPasswordController.text.isNotEmpty;
   }
 
   Future<void> _handleRegister() async {
@@ -308,7 +324,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           hintText: 'Kata Sandi',
                           prefixIcon: Icons.lock_outline,
                           obscureText: _obscurePassword,
-                          textInputAction: TextInputAction.done,
+                          textInputAction: TextInputAction.next,
                           validator: _validatePassword,
                           suffixIcon: IconButton(
                             onPressed: () {
@@ -318,6 +334,29 @@ class _RegisterPageState extends State<RegisterPage> {
                             },
                             icon: Icon(
                               _obscurePassword
+                                  ? Icons.remove_red_eye_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: _blue,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        _RegisterTextField(
+                          controller: _confirmPasswordController,
+                          hintText: 'Konfirmasi Kata Sandi',
+                          prefixIcon: Icons.lock_outline,
+                          obscureText: _obscureConfirmPassword,
+                          textInputAction: TextInputAction.done,
+                          validator: _validateConfirmPassword,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword = !_obscureConfirmPassword;
+                              });
+                            },
+                            icon: Icon(
+                              _obscureConfirmPassword
                                   ? Icons.remove_red_eye_outlined
                                   : Icons.visibility_off_outlined,
                               color: _blue,

@@ -24,7 +24,6 @@ class _PersonalizationLocationPageState
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
   static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
-  static const Color _textHint = Color.fromRGBO(140, 140, 140, 1);
   static const Color _borderGray = Color.fromRGBO(210, 210, 210, 1);
 
   Future<void> _handleEnableLocation() async {
@@ -77,7 +76,7 @@ class _PersonalizationLocationPageState
       }
 
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
       );
 
       final placemarks = await placemarkFromCoordinates(
@@ -389,81 +388,3 @@ class _StepProgressIndicator extends StatelessWidget {
   }
 }
 
-class _ManualLocationField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hintText;
-
-  const _ManualLocationField({
-    required this.controller,
-    required this.hintText,
-  });
-
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _hint = Color.fromRGBO(140, 140, 140, 1);
-  static const Color _gray = Color.fromRGBO(170, 170, 170, 1);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      validator: (value) {
-        if ((value ?? '').trim().isEmpty) {
-          return '$hintText wajib diisi';
-        }
-        return null;
-      },
-      style: const TextStyle(
-        color: _blue,
-        fontFamily: 'PlusJakartaSans',
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-      ),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(
-          color: _hint,
-          fontFamily: 'PlusJakartaSans',
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(
-            color: _gray,
-            width: 1.2,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(
-            color: _blue,
-            width: 1.4,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(
-            color: Colors.redAccent,
-            width: 1.2,
-          ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
-          borderSide: const BorderSide(
-            color: Colors.redAccent,
-            width: 1.4,
-          ),
-        ),
-        errorStyle: const TextStyle(
-          color: Colors.red,
-          fontSize: 11,
-          height: 1.2,
-        ),
-      ),
-    );
-  }
-}

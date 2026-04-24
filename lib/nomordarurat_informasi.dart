@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'nomordarurat_landing_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NomorDaruratInformasiPage extends StatefulWidget {
   const NomorDaruratInformasiPage({super.key});
@@ -12,7 +12,60 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage> {
   bool _isTentangExpanded = true;
   bool _isOperasionalExpanded = true;
   bool _isKetentuanExpanded = true;
-  final String _selectedTab = 'Informasi';
+  bool _isFavorite = false;
+
+  static const Color _blue = Color(0xFF007AFF);
+  static const String _favKey = 'fav_nomordarurat';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _loadFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
+  }
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    final next = !_isFavorite;
+    await prefs.setBool(_favKey, next);
+    if (!mounted) return;
+    setState(() => _isFavorite = next);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+        content: Row(
+          children: [
+            Icon(
+              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              next
+                  ? 'Nomor Darurat ditambahkan ke favorit'
+                  : 'Nomor Darurat dihapus dari favorit',
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +129,14 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage> {
                             ),
                             child: IconButton(
                               padding: EdgeInsets.zero,
-                              icon: const Icon(Icons.bookmark_border, color: Color(0xFF007AFF), size: 26),
-                              onPressed: () {},
+                              icon: Icon(
+                                _isFavorite
+                                    ? Icons.bookmark_rounded
+                                    : Icons.bookmark_border_rounded,
+                                color: _blue,
+                                size: 26,
+                              ),
+                              onPressed: _toggleFavorite,
                             ),
                           ),
                         ),
@@ -168,7 +227,7 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage> {
                             // Tentang Nomor Darurat Card
                             _buildExpandableCard(
                               title: 'Tentang Nomor Darurat',
-                              subtitle: 'Lorem Ipsum',
+                              subtitle: 'Informasi & latar belakang layanan',
                               icon: Icons.info_outline,
                               isExpanded: _isTentangExpanded,
                               onTap: () => setState(() => _isTentangExpanded = !_isTentangExpanded),
@@ -178,7 +237,7 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage> {
                             // Operasional Card
                             _buildExpandableCard(
                               title: 'Operasional',
-                              subtitle: 'lorem ipsum',
+                              subtitle: 'Jam layanan & kontak resmi',
                               icon: Icons.access_time_filled,
                               isExpanded: _isOperasionalExpanded,
                               onTap: () => setState(() => _isOperasionalExpanded = !_isOperasionalExpanded),
@@ -188,7 +247,7 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage> {
                             // Ketentuan Umum Card
                             _buildExpandableCard(
                               title: 'Ketentuan Umum',
-                              subtitle: 'Lorem Ipsum',
+                              subtitle: 'Cara penggunaan & panduan darurat',
                               icon: Icons.description,
                               isExpanded: _isKetentuanExpanded,
                               onTap: () => setState(() => _isKetentuanExpanded = !_isKetentuanExpanded),

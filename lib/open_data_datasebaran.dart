@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OpenDataDataSebaranPage extends StatefulWidget {
   const OpenDataDataSebaranPage({super.key});
@@ -12,6 +13,36 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
   bool _isMetadataExpanded = true;
   bool _isPeriodeExpanded = true;
   bool _is2025Expanded = true;
+  bool _showAllRows = false;
+
+  static const _allKecamatan = <Map<String, dynamic>>[
+    {'nama': 'Majalengka', 'kuliner': '1.250', 'fashion': '450', 'kerajinan': '120'},
+    {'nama': 'Jatiwangi', 'kuliner': '890', 'fashion': '320', 'kerajinan': '560'},
+    {'nama': 'Kadipaten', 'kuliner': '1.100', 'fashion': '510', 'kerajinan': '95'},
+    {'nama': 'Cigasong', 'kuliner': '750', 'fashion': '280', 'kerajinan': '150'},
+    {'nama': 'Dawuan', 'kuliner': '630', 'fashion': '195', 'kerajinan': '88'},
+    {'nama': 'Kasokandel', 'kuliner': '540', 'fashion': '170', 'kerajinan': '63'},
+    {'nama': 'Sukahaji', 'kuliner': '480', 'fashion': '145', 'kerajinan': '74'},
+    {'nama': 'Sindangwangi', 'kuliner': '420', 'fashion': '130', 'kerajinan': '91'},
+    {'nama': 'Leuwimunding', 'kuliner': '395', 'fashion': '120', 'kerajinan': '55'},
+    {'nama': 'Palasah', 'kuliner': '360', 'fashion': '108', 'kerajinan': '47'},
+    {'nama': 'Rajagaluh', 'kuliner': '510', 'fashion': '185', 'kerajinan': '210'},
+    {'nama': 'Sindang', 'kuliner': '330', 'fashion': '98', 'kerajinan': '42'},
+    {'nama': 'Panyingkiran', 'kuliner': '310', 'fashion': '92', 'kerajinan': '38'},
+    {'nama': 'Ligung', 'kuliner': '580', 'fashion': '210', 'kerajinan': '120'},
+    {'nama': 'Kertajati', 'kuliner': '470', 'fashion': '160', 'kerajinan': '85'},
+    {'nama': 'Jatitujuh', 'kuliner': '290', 'fashion': '85', 'kerajinan': '32'},
+    {'nama': 'Lemahsugih', 'kuliner': '260', 'fashion': '75', 'kerajinan': '95'},
+    {'nama': 'Malausma', 'kuliner': '215', 'fashion': '62', 'kerajinan': '78'},
+    {'nama': 'Banjaran', 'kuliner': '380', 'fashion': '115', 'kerajinan': '140'},
+    {'nama': 'Cingambul', 'kuliner': '245', 'fashion': '70', 'kerajinan': '110'},
+    {'nama': 'Talaga', 'kuliner': '440', 'fashion': '148', 'kerajinan': '165'},
+    {'nama': 'Bantarujeg', 'kuliner': '200', 'fashion': '58', 'kerajinan': '85'},
+    {'nama': 'Cikijing', 'kuliner': '320', 'fashion': '95', 'kerajinan': '120'},
+    {'nama': 'Cikalong', 'kuliner': '175', 'fashion': '50', 'kerajinan': '62'},
+    {'nama': 'Maja', 'kuliner': '560', 'fashion': '195', 'kerajinan': '105'},
+    {'nama': 'Argapura', 'kuliner': '185', 'fashion': '54', 'kerajinan': '235'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +50,10 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
       backgroundColor: const Color(0xFFF8F9FA),
       body: Stack(
         children: [
-          // Header Background (Matched with OpenDataLandingPage)
           Container(
             width: double.infinity,
             height: 250,
             decoration: const BoxDecoration(
-              color: Color(0xFF007AFF),
-              image: DecorationImage(
-                image: AssetImage('assets/images/header_texture.png'),
-                fit: BoxFit.cover,
-                opacity: 0.6,
-              ),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -40,9 +64,8 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
           SafeArea(
             child: Column(
               children: [
-                // Header
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: SizedBox(
                     height: 56,
                     child: Stack(
@@ -56,10 +79,10 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
                           ),
                         ),
                         const Text(
-                          'Cari Data',
+                          'Detail Data',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 25,
+                            fontSize: 22,
                             fontFamily: 'PlusJakartaSans',
                             fontWeight: FontWeight.w600,
                           ),
@@ -69,70 +92,63 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Content Area
                 Expanded(
                   child: Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
                       color: Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                     ),
                     child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Data Sebaran UMKM Berdasarkan Sektor Per Kecamatan Tahun 2025',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'PlusJakartaSans',
-                                color: Colors.black,
-                              ),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Data Sebaran UMKM Berdasarkan Sektor Per Kecamatan Tahun 2025',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'PlusJakartaSans',
+                              color: Color(0xFF1F2937),
                             ),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                _buildMetaInfo(Icons.calendar_today_outlined, '07 Oktober 2021'),
-                                const SizedBox(width: 16),
-                                _buildMetaInfo(Icons.business_outlined, 'Ekonomi'),
-                                const SizedBox(width: 16),
-                                _buildMetaInfo(Icons.filter_list, 'Dataset'),
-                              ],
-                            ),
-                            const SizedBox(height: 24),
-                            // Deskripsi Dataset Card
-                            _buildExpandableCard(
-                              title: 'Deskripsi Dataset',
-                              isExpanded: _isDeskripsiExpanded,
-                              onTap: () => setState(() => _isDeskripsiExpanded = !_isDeskripsiExpanded),
-                              content: _buildDeskripsiContent(),
-                            ),
-                            const SizedBox(height: 16),
-                            // Informasi Metadata Card
-                            _buildExpandableCard(
-                              title: 'Informasi Metadata',
-                              isExpanded: _isMetadataExpanded,
-                              onTap: () => setState(() => _isMetadataExpanded = !_isMetadataExpanded),
-                              content: _buildMetadataContent(),
-                            ),
-                            const SizedBox(height: 16),
-                            // Periode Update Card
-                            _buildExpandableCard(
-                              title: 'Periode Update',
-                              isExpanded: _isPeriodeExpanded,
-                              onTap: () => setState(() => _isPeriodeExpanded = !_isPeriodeExpanded),
-                              content: _buildPeriodeContent(),
-                            ),
-                            const SizedBox(height: 40),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 6,
+                            children: [
+                              _metaChip(Icons.calendar_today_outlined, '31 Maret 2025'),
+                              _metaChip(Icons.business_outlined, 'Ekonomi'),
+                              _metaChip(Icons.table_chart_outlined, 'Dataset'),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          _buildExpandableCard(
+                            title: 'Deskripsi Dataset',
+                            isExpanded: _isDeskripsiExpanded,
+                            onTap: () => setState(
+                                () => _isDeskripsiExpanded = !_isDeskripsiExpanded),
+                            content: _buildDeskripsiContent(),
+                          ),
+                          const SizedBox(height: 16),
+                          _buildExpandableCard(
+                            title: 'Informasi Metadata',
+                            isExpanded: _isMetadataExpanded,
+                            onTap: () => setState(
+                                () => _isMetadataExpanded = !_isMetadataExpanded),
+                            content: _buildMetadataContent(),
+                          ),
+                          const SizedBox(height: 16),
+                          _buildExpandableCard(
+                            title: 'Periode Update',
+                            isExpanded: _isPeriodeExpanded,
+                            onTap: () => setState(
+                                () => _isPeriodeExpanded = !_isPeriodeExpanded),
+                            content: _buildPeriodeContent(),
+                          ),
+                          const SizedBox(height: 40),
+                        ],
                       ),
                     ),
                   ),
@@ -145,20 +161,17 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
     );
   }
 
-  Widget _buildMetaInfo(IconData icon, String text) {
+  Widget _metaChip(IconData icon, String text) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: Colors.black87),
-        const SizedBox(width: 6),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 12,
-            fontFamily: 'PlusJakartaSans',
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
+        Icon(icon, size: 14, color: const Color(0xFF6B7280)),
+        const SizedBox(width: 4),
+        Text(text,
+            style: const TextStyle(
+                fontSize: 12,
+                fontFamily: 'PlusJakartaSans',
+                color: Color(0xFF6B7280))),
       ],
     );
   }
@@ -174,13 +187,8 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(
-            color: Color(0x08000000),
-            blurRadius: 15,
-            offset: Offset(0, 4),
-          ),
+          BoxShadow(color: Color(0x08000000), blurRadius: 15, offset: Offset(0, 4)),
         ],
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
       ),
       child: Column(
         children: [
@@ -190,7 +198,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             title: Text(
               title,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontFamily: 'PlusJakartaSans',
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF1F2937),
@@ -198,8 +206,8 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             ),
             trailing: Container(
               padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEBF5FF),
+              decoration: const BoxDecoration(
+                color: Color(0xFFEBF5FF),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -228,7 +236,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
         child: const Text(
           'Dataset ini berisi rincian jumlah unit Usaha Mikro, Kecil, dan Menengah (UMKM) yang tersebar di 26 kecamatan di Kabupaten Majalengka. Data dikelompokkan berdasarkan sektor usaha (Kuliner, Fashion, Kerajinan, Jasa, dll) untuk mempermudah pemetaan potensi ekonomi daerah.',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 13,
             fontFamily: 'PlusJakartaSans',
             color: Color(0xFF4B5563),
             height: 1.6,
@@ -251,23 +259,22 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildMetadataRow('Dataset diperbarui', '31 Maret 2026'),
-            _buildMetadataRow('Dataset dibuat', '10 Januari 2025'),
-            _buildMetadataRow('Pengukuran dataset', 'DATA SEBARAN UMKM BERDASARKAN SEKTOR PER KECAMATAN Tingkat Penyajian PEMERINTAH KABUPATEN MAJALENGKA'),
-            _buildMetadataRow('Cakupan dataset', 'DATA SEBARAN UMKM BERDASARKAN SEKTOR PER KECAMATAN'),
-            _buildMetadataRow('Produsen', 'Dinas Koperasi dan UKM Kabupaten Majalengka'),
-            _buildMetadataRow('Kontak produsen', '0233 281XXX — diskopukm@majalengkakab.go.id'),
-            _buildMetadataRow('Satuan dataset', 'Unit Usaha'),
-            _buildMetadataRow('Frekuensi Dataset', 'Tahunan'),
+            _metaRow('Dataset diperbarui', '31 Maret 2025'),
+            _metaRow('Dataset dibuat', '10 Januari 2025'),
+            _metaRow('Cakupan dataset', 'Seluruh kecamatan di Kabupaten Majalengka'),
+            _metaRow('Produsen', 'Dinas Koperasi dan UKM Kabupaten Majalengka'),
+            _metaRow('Kontak produsen', '0233-281XXX — diskopukm@majalengkakab.go.id'),
+            _metaRow('Satuan dataset', 'Unit Usaha'),
+            _metaRow('Frekuensi Update', 'Tahunan'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMetadataRow(String key, String value) {
+  Widget _metaRow(String key, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6.0),
+      padding: const EdgeInsets.only(bottom: 6),
       child: RichText(
         text: TextSpan(
           style: const TextStyle(
@@ -277,8 +284,12 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             height: 1.5,
           ),
           children: [
-            TextSpan(text: '$key : ', style: const TextStyle(fontWeight: FontWeight.bold)),
-            TextSpan(text: value, style: const TextStyle(color: Color(0xFF4B5563))),
+            TextSpan(
+                text: '$key: ',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: value,
+                style: const TextStyle(color: Color(0xFF4B5563))),
           ],
         ),
       ),
@@ -305,15 +316,15 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
       ),
       child: Text(
-        year,
+        '$year — Data sedang dipersiapkan',
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 14,
           fontFamily: 'PlusJakartaSans',
           fontWeight: FontWeight.w500,
-          color: Color(0xFF1F2937),
+          color: Color(0xFF6B7280),
         ),
       ),
     );
@@ -330,20 +341,24 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _is2025Expanded ? const Color(0xFF007AFF) : Colors.grey.withOpacity(0.2)),
+              border: Border.all(
+                color: _is2025Expanded
+                    ? const Color(0xFF007AFF)
+                    : Colors.grey.withValues(alpha: 0.2),
+              ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   year,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontFamily: 'PlusJakartaSans',
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF1F2937),
                   ),
                 ),
+                const Spacer(),
                 Icon(
                   _is2025Expanded ? Icons.expand_less : Icons.expand_more,
                   color: const Color(0xFF4B5563),
@@ -359,7 +374,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -367,10 +382,19 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
                 const Text(
                   'Preview Dataset',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'PlusJakartaSans',
-                    color: Colors.black,
+                    color: Color(0xFF1F2937),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '26 kecamatan • 3 sektor ditampilkan',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontFamily: 'PlusJakartaSans',
+                    color: Colors.grey.shade500,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -378,23 +402,24 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: () {},
+            height: 52,
+            child: ElevatedButton.icon(
+              onPressed: _downloadDataset,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF007AFF),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(26),
                 ),
                 elevation: 0,
               ),
-              child: const Text(
+              icon: const Icon(Icons.download_outlined, color: Colors.white, size: 20),
+              label: const Text(
                 'Unduh Dataset',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'PlusJakartaSans',
                   color: Colors.white,
@@ -402,26 +427,29 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
               ),
             ),
           ),
-        ]
+        ],
       ],
     );
   }
 
   Widget _buildDatasetTable() {
+    final displayRows =
+        _showAllRows ? _allKecamatan : _allKecamatan.take(5).toList();
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
       ),
       child: Column(
         children: [
-          // Table Header
+          // Header
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             decoration: const BoxDecoration(
-              color: Color(0xFFF9FAFB),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+              color: Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: const Row(
               children: [
@@ -432,30 +460,44 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
               ],
             ),
           ),
-          // Table Body
-          _buildTableRow('Majalengka', '1250', '450', '120', fashionColor: const Color(0xFFDC2626), craftColor: const Color(0xFF2563EB)),
-          _buildTableRow('Jatiwangi', '890', '320', '560', fashionColor: const Color(0xFFDC2626), craftColor: const Color(0xFF2563EB)),
-          _buildTableRow('Kadipaten', '1100', '510', '95', fashionColor: const Color(0xFFDC2626), craftColor: const Color(0xFF2563EB)),
-          _buildTableRow('Cigasong', '750', '280', '150', fashionColor: const Color(0xFFDC2626), craftColor: const Color(0xFF2563EB)),
-          
-          // Table Footer
+          // Rows
+          ...displayRows.map((row) => _buildTableRow(
+                row['nama'] as String,
+                row['kuliner'] as String,
+                row['fashion'] as String,
+                row['kerajinan'] as String,
+              )),
+          // Toggle footer
           InkWell(
-            onTap: () {},
+            onTap: () => setState(() => _showAllRows = !_showAllRows),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.1))),
+                border: Border(
+                    top: BorderSide(color: Colors.grey.withValues(alpha: 0.1))),
               ),
-              child: const Text(
-                'Lihat Selengkapnya',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'PlusJakartaSans',
-                  color: Color(0xFF007AFF),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _showAllRows
+                        ? 'Tutup'
+                        : 'Lihat Semua ${_allKecamatan.length} Kecamatan',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'PlusJakartaSans',
+                      color: Color(0xFF007AFF),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    _showAllRows ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    size: 16,
+                    color: const Color(0xFF007AFF),
+                  ),
+                ],
               ),
             ),
           ),
@@ -464,20 +506,67 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
     );
   }
 
-  Widget _buildTableRow(String kecamatan, String kuliner, String fashion, String kerajinan, {Color? fashionColor, Color? craftColor}) {
+  Widget _buildTableRow(
+      String kecamatan, String kuliner, String fashion, String kerajinan) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.1))),
+        border: Border(
+            top: BorderSide(color: Colors.grey.withValues(alpha: 0.08))),
       ),
       child: Row(
         children: [
-          Expanded(flex: 3, child: Text(kecamatan, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF1F2937)))),
-          Expanded(flex: 2, child: Text(kuliner, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF1F2937)))),
-          Expanded(flex: 2, child: Text(fashion, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: fashionColor ?? const Color(0xFF1F2937)))),
-          Expanded(flex: 2, child: Text(kerajinan, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: craftColor ?? const Color(0xFF1F2937)))),
+          Expanded(
+              flex: 3,
+              child: Text(kecamatan,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'PlusJakartaSans',
+                      color: Color(0xFF1F2937)))),
+          Expanded(
+              flex: 2,
+              child: Text(kuliner,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'PlusJakartaSans',
+                      color: Color(0xFF1F2937)))),
+          Expanded(
+              flex: 2,
+              child: Text(fashion,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'PlusJakartaSans',
+                      color: Color(0xFFDC2626)))),
+          Expanded(
+              flex: 2,
+              child: Text(kerajinan,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'PlusJakartaSans',
+                      color: Color(0xFF2563EB)))),
         ],
       ),
     );
+  }
+
+  Future<void> _downloadDataset() async {
+    const url = 'https://opendata.jatimprov.go.id/';
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Tidak dapat membuka portal. Kunjungi opendata.jatimprov.go.id'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 }

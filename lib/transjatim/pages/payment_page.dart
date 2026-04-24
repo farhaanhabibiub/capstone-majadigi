@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/transjatim_model.dart';
+import '../ticket_history_service.dart';
 import 'ticket_result_page.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -57,9 +58,10 @@ class _PaymentPageState extends State<PaymentPage> {
     return buf.toString();
   }
 
-  void _pay() {
+  Future<void> _pay() async {
     if (_selectedMethod == null) return;
-    final orderId = 'TJ${DateTime.now().millisecondsSinceEpoch}${Random().nextInt(999)}';
+    final now = DateTime.now();
+    final orderId = 'TJ${now.millisecondsSinceEpoch}${Random().nextInt(999)}';
     final order = TicketOrder(
       orderId: orderId,
       route: widget.route,
@@ -68,8 +70,22 @@ class _PaymentPageState extends State<PaymentPage> {
       ticketClass: widget.ticketClass,
       passengerCount: widget.passengerCount,
       paymentMethod: _selectedMethod!,
-      bookingTime: DateTime.now(),
+      bookingTime: now,
     );
+    await TicketHistoryService.saveTicket({
+      'orderId': orderId,
+      'routeId': widget.route.id,
+      'routeTitle': widget.route.title,
+      'city': widget.route.city,
+      'fromStop': widget.route.stops[widget.fromIndex].name,
+      'toStop': widget.route.stops[widget.toIndex].name,
+      'ticketClass': widget.ticketClass.label,
+      'passengerCount': widget.passengerCount,
+      'paymentMethod': _selectedMethod!,
+      'bookingTime': now.toIso8601String(),
+      'totalPrice': _totalPrice,
+    });
+    if (!mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => TicketResultPage(order: order)),

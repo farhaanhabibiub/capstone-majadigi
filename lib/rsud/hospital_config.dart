@@ -73,11 +73,11 @@ class HospitalConfig {
 
     // Extended East Java coverage — map nearby regions to nearest hospital
     if (loc.contains('blitar') || loc.contains('tulungagung') ||
-        loc.contains('nganjuk') || loc.contains('jombang')) return dahaHusada;
+        loc.contains('nganjuk') || loc.contains('jombang')) { return dahaHusada; }
     if (loc.contains('pasuruan') || loc.contains('probolinggo') ||
-        loc.contains('lumajang')) return saifulAnwar;
+        loc.contains('lumajang')) { return saifulAnwar; }
     if (loc.contains('sidoarjo') || loc.contains('gresik') ||
-        loc.contains('mojokerto') || loc.contains('lamongan')) return provJatim;
+        loc.contains('mojokerto') || loc.contains('lamongan')) { return provJatim; }
 
     return dahaHusada; // fallback
   }

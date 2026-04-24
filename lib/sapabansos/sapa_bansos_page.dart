@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/penerima_tab.dart';
 import 'widgets/program_tab.dart';
 import 'widgets/tentang_tab.dart';
 
 class SapaBansosPage extends StatefulWidget {
-  const SapaBansosPage({Key? key}) : super(key: key);
+  const SapaBansosPage({super.key});
 
   @override
   State<SapaBansosPage> createState() => _SapaBansosPageState();
@@ -16,6 +17,59 @@ class _SapaBansosPageState extends State<SapaBansosPage> {
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
 
   int _selectedTabIndex = 0;
+  bool _isFavorite = false;
+
+  static const String _favKey = 'fav_sapabansos';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _loadFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
+  }
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    final next = !_isFavorite;
+    await prefs.setBool(_favKey, next);
+    if (!mounted) return;
+    setState(() => _isFavorite = next);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+        content: Row(
+          children: [
+            Icon(
+              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              next
+                  ? 'SAPA BANSOS ditambahkan ke favorit'
+                  : 'SAPA BANSOS dihapus dari favorit',
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +106,14 @@ class _SapaBansosPageState extends State<SapaBansosPage> {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: Image.asset('assets/images/Bookmark.png', width: 18, height: 18, errorBuilder: (c,e,s) => const Icon(Icons.bookmark_border, color: _blue, size: 18)),
-              onPressed: () {},
+              icon: Icon(
+                _isFavorite
+                    ? Icons.bookmark_rounded
+                    : Icons.bookmark_border_rounded,
+                color: _blue,
+                size: 20,
+              ),
+              onPressed: _toggleFavorite,
               constraints: const BoxConstraints(),
               padding: EdgeInsets.zero,
             ),

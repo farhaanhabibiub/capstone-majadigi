@@ -18,7 +18,6 @@ class _PersonalizationSuccessPageState
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
 
   @override
   void initState() {
@@ -43,8 +42,8 @@ class _PersonalizationSuccessPageState
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         backgroundColor: _whiteBg,
         body: SafeArea(

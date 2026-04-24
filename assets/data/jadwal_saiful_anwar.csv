@@ -1,0 +1,11 @@
+no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_terakhir
+1|19/04/2026|Minggu|07:00|09:00|Apendektomi Laparoskopi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Selesai|19 Apr 2026 06:00
+2|19/04/2026|Minggu|09:00|11:30|Histerektomi|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Berlangsung|
+3|19/04/2026|Minggu|10:00|12:00|Katarak Phacoemulsifikasi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|
+4|19/04/2026|Minggu|13:00|15:00|Herniorafi Inguinal|dr. Dedi Kurniawan, Sp.B|BEDAH UMUM|Terjadwal|
+5|20/04/2026|Senin|07:30|09:30|ORIF Femur|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Terjadwal|
+6|20/04/2026|Senin|10:00|12:00|Tonsilektomi|dr. Fitri Handayani, Sp.THT|THT|Terjadwal|
+7|20/04/2026|Senin|13:00|15:00|Kolesistektomi Laparoskopi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Terjadwal|
+8|21/04/2026|Selasa|07:00|09:00|Sectio Caesarea|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+9|21/04/2026|Selasa|09:30|11:30|Artroskopi Lutut|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Terjadwal|
+10|21/04/2026|Selasa|13:00|14:30|Pterigium Eksisi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|

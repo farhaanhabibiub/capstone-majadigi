@@ -137,11 +137,11 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            Icon(Icons.king_bed_outlined,
+          children: [
+            const Icon(Icons.king_bed_outlined,
                 size: 56, color: Color.fromRGBO(180, 180, 180, 1)),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Data kamar tidak tersedia',
               style: TextStyle(
                 color: Color.fromRGBO(120, 120, 120, 1),
@@ -150,11 +150,11 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 6),
+            const SizedBox(height: 6),
             Text(
-              'Pastikan file kamar_rsud.csv sudah tersedia\ndan jalankan ulang aplikasi.',
+              'Data kamar ${widget.hospital.name} belum tersedia.',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color.fromRGBO(160, 160, 160, 1),
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 12,
@@ -167,6 +167,11 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
     );
   }
 
+  Future<void> _refresh() async {
+    setState(() => _isLoading = true);
+    await _loadData();
+  }
+
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: _blue,
@@ -176,15 +181,36 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
         onPressed: () => Navigator.pop(context),
         icon: const Icon(Icons.arrow_back, color: Colors.white),
       ),
-      title: const Text(
-        'Ketersediaan Kamar Rawat',
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily: 'PlusJakartaSans',
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            widget.hospital.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const Text(
+            'Ketersediaan Kamar Rawat',
+            style: TextStyle(
+              color: Colors.white70,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 11,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
       ),
+      actions: [
+        IconButton(
+          onPressed: _isLoading ? null : _refresh,
+          icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+          tooltip: 'Refresh',
+        ),
+      ],
     );
   }
 
@@ -446,105 +472,143 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: displayed.length,
-            separatorBuilder: (_, __) => const Divider(
+            separatorBuilder: (context, index) => const Divider(
               height: 1,
               thickness: 1,
               color: Color.fromRGBO(240, 240, 240, 1),
             ),
             itemBuilder: (context, i) => _buildKamarRow(displayed[i]),
           ),
-          // Toggle button
-          const Divider(height: 1, thickness: 1,
-              color: Color.fromRGBO(240, 240, 240, 1)),
-          GestureDetector(
-            onTap: () => setState(() => _showAll = !_showAll),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: Center(
-                child: Text(
-                  _showAll ? 'Sembunyikan' : 'Lihat Selengkapnya',
-                  style: const TextStyle(
-                    color: _blue,
-                    fontFamily: 'PlusJakartaSans',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+          if (_kamarList.length > _collapsedCount) ...[
+            const Divider(height: 1, thickness: 1,
+                color: Color.fromRGBO(240, 240, 240, 1)),
+            GestureDetector(
+              onTap: () => setState(() => _showAll = !_showAll),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Center(
+                  child: Text(
+                    _showAll ? 'Sembunyikan' : 'Lihat Selengkapnya',
+                    style: const TextStyle(
+                      color: _blue,
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
   }
 
   Widget _buildKamarRow(KamarData k) {
+    final pct = k.kapasitas == 0 ? 0.0 : (k.terisi / k.kapasitas).clamp(0.0, 1.0);
+    final barColor = pct >= 0.9
+        ? _red
+        : pct >= 0.7
+            ? const Color.fromRGBO(245, 124, 0, 1)
+            : _blue;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
         children: [
-          // Ruang + badge
-          Expanded(
-            flex: 5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  k.ruang,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Ruang + badge
+              Expanded(
+                flex: 5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      k.ruang,
+                      style: const TextStyle(
+                        color: _textPrimary,
+                        fontFamily: 'PlusJakartaSans',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    _KelasChip(kelas: k.kelas),
+                  ],
+                ),
+              ),
+              // Kapasitas
+              Expanded(
+                flex: 3,
+                child: Text(
+                  '${k.kapasitas}',
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: _textPrimary,
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 4),
-                _KelasChip(kelas: k.kelas),
-              ],
-            ),
-          ),
-          // Kapasitas
-          Expanded(
-            flex: 3,
-            child: Text(
-              '${k.kapasitas}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: _textPrimary,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
               ),
-            ),
-          ),
-          // ISI (red)
-          Expanded(
-            flex: 2,
-            child: Text(
-              '${k.terisi}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: _red,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+              // ISI (red)
+              Expanded(
+                flex: 2,
+                child: Text(
+                  '${k.terisi}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: _red,
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-            ),
-          ),
-          // SISA (blue)
-          Expanded(
-            flex: 2,
-            child: Text(
-              '${k.sisa}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: _blue,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+              // SISA (blue)
+              Expanded(
+                flex: 2,
+                child: Text(
+                  '${k.sisa}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: _blue,
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-            ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: pct,
+                    minHeight: 5,
+                    backgroundColor: const Color.fromRGBO(230, 230, 230, 1),
+                    valueColor: AlwaysStoppedAnimation<Color>(barColor),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${(pct * 100).round()}%',
+                style: TextStyle(
+                  color: barColor,
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
         ],
       ),

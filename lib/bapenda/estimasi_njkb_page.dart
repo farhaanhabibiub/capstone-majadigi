@@ -177,6 +177,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
       merk: _selMerk!,
       tipe: _selTipe!,
       tahun: _selTahun!,
+      njkb: njkb,
       pkbPlatHitam: (njkb * 0.02).round(),
       opsenPkbPlatHitam: (njkb * 0.02 * 0.66).round(),
       pkbPlatMerah: (njkb * 0.005).round(),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../app_route.dart';
 import '../auth_service.dart';
 import '../rsud/hospital_config.dart';
+import 'service_registry.dart';
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({super.key});
@@ -16,6 +18,7 @@ class _BerandaPageState extends State<BerandaPage> {
   String _locationCity = '';
   String _locationRegency = '';
   bool _isLoadingProfile = true;
+  List<AddableService> _addedServices = [];
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
@@ -31,7 +34,7 @@ class _BerandaPageState extends State<BerandaPage> {
     ),
     _ServiceItem(
       label: 'RSUD',
-      assetPath: 'assets/images/layanan_rsjd.png',
+      assetPath: 'assets/images/layanan_rsud.png',
       fallback: Icons.local_hospital_rounded,
     ),
     _ServiceItem(
@@ -42,7 +45,7 @@ class _BerandaPageState extends State<BerandaPage> {
     ),
     _ServiceItem(
       label: 'SISKAPERBAPO',
-      assetPath: 'assets/images/layanan_sikamperbato.png',
+      assetPath: 'assets/images/layanan_siskaperbapo.png',
       fallback: Icons.storefront_rounded,
       route: AppRoutes.siskaperbapoPage,
     ),
@@ -61,6 +64,7 @@ class _BerandaPageState extends State<BerandaPage> {
       title: 'BAPENDA Jatim Luncurkan Fitur Pembayaran Digital',
       assetPath: 'assets/images/artikel_1.png',
       date: '11 April 2026',
+      url: 'https://rri.co.id/surabaya/regional/1189034/bapenda-jatim-mudahkan-bayar-pajak-dengan-inovasi-digital',
     ),
     _ArtikelItem(
       tag: 'KEBIJAKAN',
@@ -68,6 +72,7 @@ class _BerandaPageState extends State<BerandaPage> {
       title: 'Update Aturan Pajak Kendaraan Bermotor 2026',
       assetPath: 'assets/images/artikel_2.png',
       date: '15 Maret 2026',
+      url: 'https://nasional.kontan.co.id/news/resmi-berlaku-april-2026-pajak-mobil-motor-listrik-tak-lagi-rp-0-ini-aturannya',
     ),
     _ArtikelItem(
       tag: 'LAYANAN',
@@ -75,6 +80,7 @@ class _BerandaPageState extends State<BerandaPage> {
       title: 'Integrasi Layanan Kesehatan RSUD Dr. Soetomo',
       assetPath: 'assets/images/artikel_3.png',
       date: '15 Maret 2026',
+      url: 'https://rsudrsoetomo.jatimprov.go.id/',
     ),
   ];
 
@@ -107,6 +113,15 @@ class _BerandaPageState extends State<BerandaPage> {
       } else {
         _locationText = 'Lokasi belum diatur';
       }
+
+      final savedIds = (profile?['addedServices'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [];
+      _addedServices = savedIds
+          .map((id) => ServiceRegistry.findById(id))
+          .whereType<AddableService>()
+          .toList();
     });
   }
 
@@ -161,7 +176,7 @@ class _BerandaPageState extends State<BerandaPage> {
               'assets/images/avatar_placeholder.png',
               width: 44,
               height: 44,
-              errorBuilder: (_, __, ___) => const Icon(
+              errorBuilder: (context, error, stackTrace) => const Icon(
                 Icons.person_rounded,
                 color: _blue,
                 size: 24,
@@ -280,34 +295,16 @@ class _BerandaPageState extends State<BerandaPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  'Layanan Unggulan',
-                  style: TextStyle(
-                    color: _textPrimary,
-                    fontFamily: 'PlusJakartaSans',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: const Text(
-                  'Lihat Semua',
-                  style: TextStyle(
-                    color: _blue,
-                    fontFamily: 'PlusJakartaSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Layanan Unggulan',
+            style: TextStyle(
+              color: _textPrimary,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         const SizedBox(height: 14),
@@ -316,14 +313,23 @@ class _BerandaPageState extends State<BerandaPage> {
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: _services.length,
+            itemCount: _services.length + _addedServices.length + 1,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               childAspectRatio: 0.9,
             ),
-            itemBuilder: (context, index) => _buildServiceCard(_services[index]),
+            itemBuilder: (context, index) {
+              if (index < _services.length) {
+                return _buildServiceCard(_services[index]);
+              }
+              final addedIndex = index - _services.length;
+              if (addedIndex < _addedServices.length) {
+                return _buildAddedServiceCard(_addedServices[addedIndex]);
+              }
+              return _buildTambahLayananCard();
+            },
           ),
         ),
       ],
@@ -331,7 +337,12 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Widget _buildServiceCard(_ServiceItem item) {
-    final VoidCallback? onTap = item.label == 'RSUD'
+    final isRsud = item.label == 'RSUD';
+    final displayLabel = isRsud
+        ? HospitalConfig.forLocation(_locationCity, _locationRegency).name
+        : item.label;
+
+    final VoidCallback? onTap = isRsud
         ? _navigateToRsud
         : item.route != null
             ? () => Navigator.pushNamed(context, item.route!)
@@ -365,11 +376,74 @@ class _BerandaPageState extends State<BerandaPage> {
               child: Image.asset(
                 item.assetPath,
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => Icon(
+                errorBuilder: (context, error, stackTrace) => Icon(
                   item.fallback,
                   color: _blue,
                   size: 26,
                 ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                displayLabel,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: _textPrimary,
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  height: 1.3,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddedServiceCard(AddableService item) {
+    final VoidCallback? onTap = item.hospital != null
+        ? () => Navigator.pushNamed(context, AppRoutes.rsudPage,
+            arguments: item.hospital)
+        : item.route != null
+            ? () => Navigator.pushNamed(context, item.route!)
+            : null;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(235, 243, 255, 1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.all(10),
+              child: Image.asset(
+                item.assetPath,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) =>
+                    Icon(item.fallback, color: _blue, size: 26),
               ),
             ),
             const SizedBox(height: 8),
@@ -381,6 +455,66 @@ class _BerandaPageState extends State<BerandaPage> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
+                  color: _textPrimary,
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  height: 1.3,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTambahLayananCard() {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, AppRoutes.tambahLayananPage)
+          .then((_) { if (mounted) _loadUserProfile(); }),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(235, 243, 255, 1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.all(10),
+              child: Image.asset(
+                'assets/images/icon_tambah_layanan.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.add_rounded,
+                  color: _blue,
+                  size: 26,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                'Tambah Layanan',
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
                   color: _textPrimary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 11,
@@ -437,15 +571,22 @@ class _BerandaPageState extends State<BerandaPage> {
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: _artikels.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
-          itemBuilder: (_, index) => _buildArtikelCard(_artikels[index]),
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
+          itemBuilder: (context, index) => _buildArtikelCard(_artikels[index]),
         ),
       ],
     );
   }
 
   Widget _buildArtikelCard(_ArtikelItem item) {
-    return Container(
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.parse(item.url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      },
+      child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -466,7 +607,7 @@ class _BerandaPageState extends State<BerandaPage> {
               width: 92,
               height: 92,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (context, error, stackTrace) => Container(
                 width: 92,
                 height: 92,
                 color: const Color.fromRGBO(220, 232, 255, 1),
@@ -533,6 +674,7 @@ class _BerandaPageState extends State<BerandaPage> {
           const SizedBox(width: 12),
         ],
       ),
+    ),
     );
   }
 
@@ -605,6 +747,7 @@ class _ArtikelItem {
   final String title;
   final String assetPath;
   final String date;
+  final String url;
 
   const _ArtikelItem({
     required this.tag,
@@ -612,6 +755,7 @@ class _ArtikelItem {
     required this.title,
     required this.assetPath,
     required this.date,
+    required this.url,
   });
 }
 

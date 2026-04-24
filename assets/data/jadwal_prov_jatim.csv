@@ -1,0 +1,12 @@
+no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_terakhir
+1|19/04/2026|Minggu|06:30|09:00|CABG (Bypass Jantung)|dr. Wahyu Pradana, Sp.JP|JANTUNG|Selesai|19 Apr 2026 06:00
+2|19/04/2026|Minggu|07:00|10:00|Kraniotomi|dr. Surya Nugroho, Sp.BS|BEDAH SARAF|Berlangsung|
+3|19/04/2026|Minggu|08:00|10:00|Laparotomi|dr. Andi Wicaksono, Sp.B|BEDAH UMUM|Terjadwal|
+4|19/04/2026|Minggu|10:00|12:00|Total Knee Replacement|dr. Bayu Kurniawan, Sp.OT|ORTOPEDI|Terjadwal|
+5|19/04/2026|Minggu|13:00|15:30|Gastrektomi|dr. Andi Wicaksono, Sp.B|BEDAH DIGESTIF|Terjadwal|
+6|20/04/2026|Senin|07:00|09:00|Reseksi Paru|dr. Citra Dewi, Sp.P|PARU|Terjadwal|
+7|20/04/2026|Senin|09:00|11:00|Histerektomi Radikal|dr. Dewi Anggraini, Sp.OG|KEBIDANAN|Terjadwal|
+8|20/04/2026|Senin|11:00|13:00|ORIF Pelvis|dr. Bayu Kurniawan, Sp.OT|ORTOPEDI|Terjadwal|
+9|20/04/2026|Senin|13:30|15:30|Nefrektomi|dr. Eko Santoso, Sp.U|UROLOGI|Terjadwal|
+10|21/04/2026|Selasa|07:00|10:00|Transplantasi Ginjal|dr. Eko Santoso, Sp.U|UROLOGI|Terjadwal|
+12|21/04/2026|Selasa|10:00|12:00|TAVI|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|

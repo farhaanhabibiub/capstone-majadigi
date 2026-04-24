@@ -4,7 +4,7 @@ class IndicatorBadge extends StatelessWidget {
   final int status;
   final String statusText;
 
-  const IndicatorBadge({Key? key, required this.status, required this.statusText}) : super(key: key);
+  const IndicatorBadge({super.key, required this.status, required this.statusText});
 
   @override
   Widget build(BuildContext context) {

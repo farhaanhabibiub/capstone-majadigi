@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'app_route.dart';
 import 'open_data_datasebaran.dart';
+import 'open_data_dapurmbg.dart';
+import 'open_data_ayopasok.dart';
+import 'open_data_detail_page.dart';
 
 class OpenDataListPage extends StatefulWidget {
   const OpenDataListPage({super.key});
@@ -10,74 +12,176 @@ class OpenDataListPage extends StatefulWidget {
 }
 
 class _OpenDataListPageState extends State<OpenDataListPage> {
-  final List<String> _categories = [
-    'Semua',
-    'Dataset',
-    'Artikel',
-    'Infografis',
-    'Publikasi',
-    'Statistik',
-    'Berita'
-  ];
+  static const _blue = Color(0xFF007AFF);
+
+  final _searchController = TextEditingController();
   String _selectedCategory = 'Semua';
 
-  final List<Map<String, dynamic>> _dataItems = [
+  static const _categories = [
+    'Semua', 'Dataset', 'Artikel', 'Infografis', 'Publikasi', 'Statistik', 'Berita',
+  ];
+
+  static const _allItems = <Map<String, dynamic>>[
     {
-      'title': 'Cara buat dapur MBG',
-      'date': '07 Oktober 2021',
-      'category': 'Ekonomi',
-      'type': 'Artikel',
-    },
-    {
-      'title': 'Ayo pasok bahan panganmu!!!',
-      'date': '07 Oktober 2021',
-      'category': 'Ekonomi',
-      'type': 'Infografis',
-    },
-    {
-      'title': 'Data Sebaran UMKM Berdasarkan Sektor Per Kecamatan Tahun 2025',
-      'date': '07 Oktober 2021',
+      'title': 'Data Sebaran UMKM Per Kecamatan Tahun 2025',
+      'date': '31 Maret 2025',
       'category': 'Ekonomi',
       'type': 'Dataset',
+      'iconData': Icons.table_chart_outlined,
+      'iconColor': Color(0xFF2563EB),
+      'route': 'datasebaran',
     },
     {
-      'title': 'Cara buat dapur MBG',
-      'date': '07 Oktober 2021',
-      'category': 'Ekonomi',
+      'title': 'Cara Membuat Dapur Makan Bergizi Gratis (MBG)',
+      'date': '07 Oktober 2024',
+      'category': 'Sosial',
       'type': 'Artikel',
+      'iconData': Icons.article_outlined,
+      'iconColor': Color(0xFF16A34A),
+      'route': 'dapurmbg',
     },
     {
-      'title': 'Cara buat dapur MBG',
-      'date': '07 Oktober 2021',
+      'title': 'Ayo Pasok Bahan Pangan ke Program MBG',
+      'date': '07 Oktober 2024',
       'category': 'Ekonomi',
-      'type': 'Artikel',
+      'type': 'Infografis',
+      'iconData': Icons.bar_chart_outlined,
+      'iconColor': Color(0xFFEA580C),
+      'route': 'ayopasok',
     },
     {
-      'title': 'Cara buat dapur MBG',
-      'date': '07 Oktober 2021',
+      'title': 'Jumlah Penduduk Jawa Timur Per Kabupaten/Kota 2024',
+      'date': '01 Januari 2025',
+      'category': 'Kependudukan',
+      'type': 'Dataset',
+      'iconData': Icons.people_outline,
+      'iconColor': Color(0xFF7C3AED),
+      'route': 'penduduk',
+    },
+    {
+      'title': 'Angka Kemiskinan Jawa Timur 2020–2024',
+      'date': '15 Maret 2025',
+      'category': 'Sosial',
+      'type': 'Statistik',
+      'iconData': Icons.trending_down_outlined,
+      'iconColor': Color(0xFFDC2626),
+      'route': 'kemiskinan',
+    },
+    {
+      'title': 'Indeks Pembangunan Manusia (IPM) Jatim 2024',
+      'date': '20 Februari 2025',
+      'category': 'Sosial',
+      'type': 'Publikasi',
+      'iconData': Icons.school_outlined,
+      'iconColor': Color(0xFF0891B2),
+      'route': 'ipm',
+    },
+    {
+      'title': 'Realisasi APBD Jawa Timur Tahun 2024',
+      'date': '28 Februari 2025',
+      'category': 'Keuangan',
+      'type': 'Dataset',
+      'iconData': Icons.account_balance_outlined,
+      'iconColor': Color(0xFF059669),
+      'route': 'apbd',
+    },
+    {
+      'title': 'Sebaran Fasilitas Kesehatan Jawa Timur 2024',
+      'date': '10 Januari 2025',
+      'category': 'Kesehatan',
+      'type': 'Dataset',
+      'iconData': Icons.local_hospital_outlined,
+      'iconColor': Color(0xFFE11D48),
+      'route': 'faskes',
+    },
+    {
+      'title': 'Statistik Pariwisata Jawa Timur Q4 2024',
+      'date': '05 April 2025',
+      'category': 'Pariwisata',
+      'type': 'Statistik',
+      'iconData': Icons.beach_access_outlined,
+      'iconColor': Color(0xFF0284C7),
+      'route': 'pariwisata',
+    },
+    {
+      'title': 'Tren Inflasi Harga Pangan Jawa Timur 2024',
+      'date': '12 Maret 2025',
       'category': 'Ekonomi',
-      'type': 'Artikel',
+      'type': 'Berita',
+      'iconData': Icons.show_chart,
+      'iconColor': Color(0xFFB45309),
+      'route': 'inflasi',
+    },
+    {
+      'title': 'Data Infrastruktur Jalan Provinsi Jawa Timur 2024',
+      'date': '03 Maret 2025',
+      'category': 'Infrastruktur',
+      'type': 'Dataset',
+      'iconData': Icons.alt_route_outlined,
+      'iconColor': Color(0xFF475569),
+      'route': 'infrastruktur',
+    },
+    {
+      'title': 'Tingkat Pengangguran Terbuka (TPT) Jatim 2024',
+      'date': '22 Februari 2025',
+      'category': 'Ketenagakerjaan',
+      'type': 'Statistik',
+      'iconData': Icons.work_outline,
+      'iconColor': Color(0xFF9333EA),
+      'route': 'tpt',
     },
   ];
+
+  List<Map<String, dynamic>> get _filteredItems {
+    final query = _searchController.text.trim().toLowerCase();
+    return _allItems.where((item) {
+      final matchesSearch =
+          query.isEmpty || (item['title'] as String).toLowerCase().contains(query);
+      final matchesCategory =
+          _selectedCategory == 'Semua' || item['type'] == _selectedCategory;
+      return matchesSearch && matchesCategory;
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _openItem(Map<String, dynamic> item) {
+    final route = item['route'] as String?;
+    if (route == 'datasebaran') {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const OpenDataDataSebaranPage()));
+    } else if (route == 'dapurmbg') {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const OpenDataDapurMBGPage()));
+    } else if (route == 'ayopasok') {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const OpenDataAyoPasokPage()));
+    } else if (route != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => OpenDataDetailPage(dataRoute: route)));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Data "${item['title']}" akan segera tersedia'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final items = _filteredItems;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: Stack(
         children: [
-          // Simplified Header using BoxDecoration for better renderer stability
           Container(
             width: double.infinity,
             height: 250,
-            decoration: BoxDecoration(
-              color: const Color(0xFF007AFF),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/header_texture.png'),
-                fit: BoxFit.cover,
-                opacity: 0.6,
-              ),
-              gradient: const LinearGradient(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [Color(0xFF007AFF), Color(0xFF0062D1)],
@@ -87,9 +191,8 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
           SafeArea(
             child: Column(
               children: [
-                // App Bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: SizedBox(
                     height: 56,
                     child: Stack(
@@ -106,110 +209,133 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
                           'Cari Data',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 25,
+                            fontSize: 22,
                             fontFamily: 'PlusJakartaSans',
                             fontWeight: FontWeight.w600,
                           ),
-                        ),
-                        const Align(
-                          alignment: Alignment.centerRight,
-                          child: SizedBox(width: 44),
                         ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Main Content Area
                 Expanded(
                   child: Container(
-                    width: double.infinity,
                     decoration: const BoxDecoration(
                       color: Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Search Bar
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                          padding: const EdgeInsets.fromLTRB(20, 28, 20, 16),
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(30),
-                              border: Border.all(color: const Color(0xFF007AFF).withOpacity(0.5)),
+                              border: Border.all(
+                                color: _blue.withValues(alpha: 0.3),
+                              ),
                               boxShadow: const [
                                 BoxShadow(
-                                  color: Color(0x0D000000), // Hex for 0.05 opacity black
+                                  color: Color(0x0D000000),
                                   blurRadius: 10,
                                   offset: Offset(0, 4),
                                 ),
                               ],
                             ),
-                            child: const TextField(
+                            child: TextField(
+                              controller: _searchController,
+                              onChanged: (_) => setState(() {}),
+                              style: const TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                fontSize: 14,
+                                color: Color(0xFF1F2937),
+                              ),
                               decoration: InputDecoration(
-                                hintText: 'Cari Sesuatu...',
-                                hintStyle: TextStyle(
-                                  color: Color(0xFF007AFF),
+                                hintText: 'Cari dataset, artikel, infografis...',
+                                hintStyle: const TextStyle(
+                                  color: Color(0xFF9CA3AF),
                                   fontFamily: 'PlusJakartaSans',
-                                  fontSize: 15,
+                                  fontSize: 14,
                                 ),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 15,
+                                ),
                                 border: InputBorder.none,
-                                suffixIcon: Padding(
-                                  padding: EdgeInsets.only(right: 8.0),
-                                  child: Icon(Icons.search, color: Color(0xFF007AFF), size: 28),
-                                ),
+                                suffixIcon: _searchController.text.isNotEmpty
+                                    ? IconButton(
+                                        icon: const Icon(Icons.close,
+                                            color: Colors.grey, size: 20),
+                                        onPressed: () {
+                                          _searchController.clear();
+                                          setState(() {});
+                                        },
+                                      )
+                                    : const Padding(
+                                        padding: EdgeInsets.only(right: 8),
+                                        child: Icon(Icons.search,
+                                            color: _blue, size: 26),
+                                      ),
                               ),
                             ),
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24.0),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 24, bottom: 12),
                           child: Text(
-                            'Hasil Pencarian',
-                            style: TextStyle(
-                              fontSize: 18,
+                            items.isEmpty
+                                ? 'Tidak ditemukan hasil'
+                                : '${items.length} hasil ditemukan',
+                            style: const TextStyle(
+                              fontSize: 15,
                               fontFamily: 'PlusJakartaSans',
                               fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              color: Color(0xFF1F2937),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        // Categories Horizontal List
                         SizedBox(
-                          height: 44,
+                          height: 40,
                           child: ListView.separated(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20),
                             scrollDirection: Axis.horizontal,
-                            physics: const BouncingScrollPhysics(),
                             itemCount: _categories.length,
-                            separatorBuilder: (context, index) => const SizedBox(width: 12),
-                            itemBuilder: (context, index) {
-                              final category = _categories[index];
-                              final isSelected = _selectedCategory == category;
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: 8),
+                            itemBuilder: (_, i) {
+                              final cat = _categories[i];
+                              final isSelected = _selectedCategory == cat;
                               return GestureDetector(
-                                onTap: () => setState(() => _selectedCategory = category),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                                onTap: () =>
+                                    setState(() => _selectedCategory = cat),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 180),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: isSelected ? const Color(0xFF007AFF) : const Color(0xFF8E8E93),
-                                    borderRadius: BorderRadius.circular(22),
+                                    color: isSelected
+                                        ? _blue
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? _blue
+                                          : const Color(0xFFE0E0E0),
+                                    ),
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      category,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'PlusJakartaSans',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
+                                  child: Text(
+                                    cat,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : const Color(0xFF4B5563),
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
                                     ),
                                   ),
                                 ),
@@ -217,31 +343,19 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
                             },
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        // Data Items List
+                        const SizedBox(height: 12),
                         Expanded(
-                          child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            itemCount: _dataItems.length,
-                            itemBuilder: (context, index) {
-                              final item = _dataItems[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  if (item['title'] == 'Cara buat dapur MBG') {
-                                    Navigator.pushNamed(context, AppRoutes.openDataDapurMBGPage);
-                                  } else if (item['title'] == 'Ayo pasok bahan panganmu!!!') {
-                                    Navigator.pushNamed(context, AppRoutes.openDataAyoPasokPage);
-                                  } else if (item['title'] == 'Data Sebaran UMKM Berdasarkan Sektor Per Kecamatan Tahun 2025') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => const OpenDataDataSebaranPage()),
-                                    );
-                                  }
-                                },
-                                child: _buildResultCard(item),
-                              );
-                            },
-                          ),
+                          child: items.isEmpty
+                              ? _buildEmptyState()
+                              : ListView.separated(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      16, 8, 16, 24),
+                                  itemCount: items.length,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: 12),
+                                  itemBuilder: (_, i) =>
+                                      _buildCard(items[i]),
+                                ),
                         ),
                       ],
                     ),
@@ -255,61 +369,29 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
     );
   }
 
-  Widget _buildResultCard(Map<String, dynamic> item) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x05000000), // Hex for 0.02 opacity black
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: const BoxDecoration(
-              color: Color(0xFFD1D1D6),
-              shape: BoxShape.circle,
+          Icon(Icons.search_off_outlined, size: 64, color: Colors.grey.shade300),
+          const SizedBox(height: 12),
+          const Text(
+            'Tidak ada data yang cocok',
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 14,
+              color: Colors.grey,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(width: 16),
-          // Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item['title'],
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontFamily: 'PlusJakartaSans',
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    _buildMetaInfo(Icons.calendar_today_outlined, item['date']),
-                    const SizedBox(width: 12),
-                    _buildMetaInfo(Icons.business_outlined, item['category']),
-                    const SizedBox(width: 12),
-                    _buildMetaInfo(Icons.filter_list, item['type']),
-                  ],
-                ),
-              ],
+          const SizedBox(height: 6),
+          const Text(
+            'Coba kata kunci atau kategori lain',
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 12,
+              color: Colors.grey,
             ),
           ),
         ],
@@ -317,20 +399,116 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
     );
   }
 
-  Widget _buildMetaInfo(IconData icon, String text) {
+  Widget _buildCard(Map<String, dynamic> item) {
+    final iconData = item['iconData'] as IconData;
+    final iconColor = item['iconColor'] as Color;
+
+    return GestureDetector(
+      onTap: () => _openItem(item),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(color: Color(0x08000000), blurRadius: 12, offset: Offset(0, 4)),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(iconData, color: iconColor, size: 24),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item['title'] as String,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'PlusJakartaSans',
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1F2937),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 4,
+                    children: [
+                      _meta(Icons.calendar_today_outlined, item['date'] as String),
+                      _meta(Icons.business_outlined, item['category'] as String),
+                      _metaBadge(item['type'] as String),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 18, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _meta(IconData icon, String text) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: const Color(0xFF3A3A3C)),
-        const SizedBox(width: 4),
+        Icon(icon, size: 12, color: const Color(0xFF6B7280)),
+        const SizedBox(width: 3),
         Text(
           text,
           style: const TextStyle(
-            fontSize: 10,
+            fontSize: 11,
             fontFamily: 'PlusJakartaSans',
-            color: Color(0xFF3A3A3C),
+            color: Color(0xFF6B7280),
           ),
         ),
       ],
     );
+  }
+
+  Widget _metaBadge(String type) {
+    final color = _typeColor(type);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        type,
+        style: TextStyle(
+          fontSize: 10,
+          fontFamily: 'PlusJakartaSans',
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Color _typeColor(String type) {
+    switch (type) {
+      case 'Dataset':     return const Color(0xFF2563EB);
+      case 'Artikel':     return const Color(0xFF16A34A);
+      case 'Infografis':  return const Color(0xFFEA580C);
+      case 'Publikasi':   return const Color(0xFF0891B2);
+      case 'Statistik':   return const Color(0xFF7C3AED);
+      case 'Berita':      return const Color(0xFFB45309);
+      default:            return const Color(0xFF6B7280);
+    }
   }
 }

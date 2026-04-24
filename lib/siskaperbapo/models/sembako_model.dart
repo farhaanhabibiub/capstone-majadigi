@@ -1,3 +1,23 @@
+class KecamatanPrice {
+  final String kecamatan;
+  final int price;
+  KecamatanPrice(this.kecamatan, this.price);
+}
+
+class KabupatenPrice {
+  final String kabupaten;
+  final List<KecamatanPrice> kecamatanPrices;
+  final List<int> historyPrices;
+  final List<String> historyDates;
+  KabupatenPrice({
+    required this.kabupaten,
+    required this.kecamatanPrices,
+    required this.historyPrices,
+    required this.historyDates,
+  });
+}
+
+// kept for backward compatibility (cityPrices removed)
 class CityPrice {
   final String city;
   final int price;
@@ -13,7 +33,7 @@ class SembakoItem {
   final String imagePath;
   final List<int> historyPrices;
   final List<String> historyDates;
-  final List<CityPrice> cityPrices;
+  final List<KabupatenPrice> kabupatenPrices;
 
   SembakoItem({
     required this.id,
@@ -24,6 +44,6 @@ class SembakoItem {
     required this.imagePath,
     required this.historyPrices,
     required this.historyDates,
-    required this.cityPrices,
+    required this.kabupatenPrices,
   });
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OpenDataInformasiPage extends StatefulWidget {
   const OpenDataInformasiPage({super.key});
@@ -10,6 +12,65 @@ class OpenDataInformasiPage extends StatefulWidget {
 class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
   bool _isOperasionalExpanded = false;
   bool _isKetentuanExpanded = false;
+  bool _isFavorite = false;
+
+  static const Color _blue = Color(0xFF007AFF);
+  static const String _favKey = 'fav_opendata';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _loadFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
+  }
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    final next = !_isFavorite;
+    await prefs.setBool(_favKey, next);
+    if (!mounted) return;
+    setState(() => _isFavorite = next);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+        content: Row(
+          children: [
+            Icon(
+              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              next
+                  ? 'Open Data ditambahkan ke favorit'
+                  : 'Open Data dihapus dari favorit',
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +134,12 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
                             ),
                             child: IconButton(
                               padding: EdgeInsets.zero,
-                              icon: const Icon(Icons.bookmark_border, color: Color(0xFF007AFF), size: 26),
-                              onPressed: () {},
+                              icon: Icon(
+                                _isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                                color: _blue,
+                                size: 26,
+                              ),
+                              onPressed: _toggleFavorite,
                             ),
                           ),
                         ),
@@ -165,7 +230,7 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
                             // Operasional Card
                             _buildExpandableCard(
                               title: 'Operasional',
-                              subtitle: 'lorem ipsum',
+                              subtitle: 'Jam layanan & kontak resmi',
                               icon: Icons.access_time_filled,
                               isExpanded: _isOperasionalExpanded,
                               onTap: () {
@@ -179,7 +244,7 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
                             // Ketentuan Umum Card
                             _buildExpandableCard(
                               title: 'Ketentuan Umum',
-                              subtitle: 'Lorem Ipsum',
+                              subtitle: 'Cara penggunaan & panduan data',
                               icon: Icons.description,
                               isExpanded: _isKetentuanExpanded,
                               onTap: () {
@@ -282,7 +347,7 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
           _buildInfoSection(
             title: 'Link Layanan',
             content: InkWell(
-              onTap: () {},
+              onTap: () => _launchUrl('https://opendata.jatimprov.go.id/'),
               child: const Text(
                 'https://opendata.jatimprov.go.id/',
                 style: TextStyle(
@@ -392,7 +457,7 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildNumberedItem(1, 'Akses website Open Data Jawa Timur', isLink: true),
+                _buildNumberedItem(1, 'Akses website Open Data Jawa Timur', isLink: true, url: 'https://opendata.jatimprov.go.id/'),
                 _buildNumberedItem(2, 'Cari dataset, publikasi, dan infografik dari OPD atau sesuai kategori topik, seperti sosial, ekonomi, kependudukan, dan sebagainya'),
                 _buildNumberedItem(3, 'Buka metadata dataset yang dituju, lalu klik menu atur kolom sesuai kebutuhan'),
                 _buildNumberedItem(4, 'Unduh data sesuai format yang diinginkan, yaitu excel, CSV, dan API'),
@@ -415,7 +480,7 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
     );
   }
 
-  Widget _buildNumberedItem(int number, String text, {bool isLink = false}) {
+  Widget _buildNumberedItem(int number, String text, {bool isLink = false, String? url}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
@@ -432,13 +497,13 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
           Expanded(
             child: isLink
                 ? InkWell(
-                    onTap: () {},
+                    onTap: () => _launchUrl(url ?? 'https://opendata.jatimprov.go.id/'),
                     child: Text(
                       text,
                       style: const TextStyle(
                         fontSize: 14,
                         fontFamily: 'PlusJakartaSans',
-                        color: Color(0xFF4B5563),
+                        color: Color(0xFF007AFF),
                         decoration: TextDecoration.underline,
                       ),
                     ),

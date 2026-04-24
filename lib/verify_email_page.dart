@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'app_route.dart';
 import 'auth_service.dart';
@@ -17,6 +18,9 @@ class VerifyEmailPage extends StatefulWidget {
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
   bool _isChecking = false;
   bool _isResending = false;
+  int _resendCooldown = 0;
+  Timer? _cooldownTimer;
+  Timer? _pollTimer;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _cardBg = Color.fromRGBO(248, 248, 245, 1);
@@ -24,40 +28,81 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   static const Color _subtitleColor = Color.fromRGBO(140, 140, 140, 1);
   static const Color _overlayBg = Color.fromRGBO(58, 58, 58, 1);
 
-  Future<void> _handleResend() async {
-    if (_isResending) return;
+  @override
+  void initState() {
+    super.initState();
+    _startCooldown(60);
+    _startPolling();
+  }
 
-    setState(() {
-      _isResending = true;
+  @override
+  void dispose() {
+    _cooldownTimer?.cancel();
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startCooldown(int seconds) {
+    _resendCooldown = seconds;
+    _cooldownTimer?.cancel();
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) { t.cancel(); return; }
+      setState(() {
+        _resendCooldown--;
+        if (_resendCooldown <= 0) t.cancel();
+      });
     });
+  }
+
+  void _startPolling() {
+    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
+      if (!mounted) return;
+      final user = AuthService.instance.currentUser;
+      if (user == null) return;
+      await user.reload();
+      if (!mounted) return;
+      if (AuthService.instance.currentUser?.emailVerified == true) {
+        _pollTimer?.cancel();
+        await _navigateToLogin();
+      }
+    });
+  }
+
+  Future<void> _navigateToLogin() async {
+    await AuthService.instance.signOut();
+    if (!mounted) return;
+    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.loginPage, (r) => false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email berhasil diverifikasi. Silakan login.')),
+      );
+    });
+  }
+
+  Future<void> _handleResend() async {
+    if (_isResending || _resendCooldown > 0) return;
+
+    setState(() => _isResending = true);
 
     try {
       final result = await AuthService.instance.resendVerificationEmail();
-
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(result.message)),
       );
+      if (result.success) _startCooldown(60);
     } finally {
-      if (mounted) {
-        setState(() {
-          _isResending = false;
-        });
-      }
+      if (mounted) setState(() => _isResending = false);
     }
   }
 
   Future<void> _handleGoToLogin() async {
     if (_isChecking) return;
 
-    setState(() {
-      _isChecking = true;
-    });
+    setState(() => _isChecking = true);
 
     try {
       final result = await AuthService.instance.refreshVerificationStatus();
-
       if (!mounted) return;
 
       if (!result.success) {
@@ -67,29 +112,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         return;
       }
 
-      await AuthService.instance.signOut();
-
-      if (!mounted) return;
-
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        AppRoutes.loginPage,
-            (route) => false,
-      );
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Email berhasil diverifikasi. Silakan login.'),
-          ),
-        );
-      });
+      _pollTimer?.cancel();
+      await _navigateToLogin();
     } finally {
-      if (mounted) {
-        setState(() {
-          _isChecking = false;
-        });
-      }
+      if (mounted) setState(() => _isChecking = false);
     }
   }
 
@@ -182,11 +208,15 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: _isResending ? null : _handleResend,
+                        onTap: (_isResending || _resendCooldown > 0) ? null : _handleResend,
                         child: Text(
-                          _isResending ? 'Mengirim...' : 'Kirim kembali',
-                          style: const TextStyle(
-                            color: _blue,
+                          _isResending
+                              ? 'Mengirim...'
+                              : _resendCooldown > 0
+                                  ? 'Kirim ulang (${_resendCooldown}s)'
+                                  : 'Kirim kembali',
+                          style: TextStyle(
+                            color: _resendCooldown > 0 ? _subtitleColor : _blue,
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 12,
                             fontWeight: FontWeight.w700,

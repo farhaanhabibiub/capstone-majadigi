@@ -7,11 +7,11 @@ class SembakoCard extends StatelessWidget {
   final String Function(int) formatRupiah;
 
   const SembakoCard({
-    Key? key,
+    super.key,
     required this.item,
     required this.onTap,
     required this.formatRupiah,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

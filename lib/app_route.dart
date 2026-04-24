@@ -11,6 +11,7 @@ import 'location_manual_page.dart';
 import 'personalization_services_page.dart';
 import 'personalization_success_page.dart';
 import 'beranda/beranda_page.dart';
+import 'beranda/tambah_layanan_page.dart';
 import 'bapenda/bapenda_page.dart';
 import 'bapenda/info_pajak_page.dart';
 import 'bapenda/hasil_pajak_page.dart';
@@ -31,6 +32,7 @@ import 'open_data_dapurmbg.dart';
 import 'open_data_ayopasok.dart';
 import 'klinikhoaks_permohonan.dart';
 import 'klinikhoaks_landing_page.dart';
+import 'admin/admin_page.dart';
 import 'nomordarurat_landing_page.dart';
 import 'nomordarurat_carinomor.dart';
 import 'nomordarurat_informasi.dart';
@@ -70,6 +72,8 @@ class AppRoutes {
   static const String nomorDaruratLandingPage = '/nomorDaruratLandingPage';
   static const String nomorDaruratCariNomorPage = '/nomorDaruratCariNomorPage';
   static const String nomorDaruratInformasiPage = '/nomorDaruratInformasiPage';
+  static const String tambahLayananPage = '/tambahLayananPage';
+  static const String adminPage = '/adminPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -186,6 +190,12 @@ class AppRoutes {
 
       case nomorDaruratInformasiPage:
         return MaterialPageRoute(builder: (_) => const NomorDaruratInformasiPage());
+
+      case tambahLayananPage:
+        return MaterialPageRoute(builder: (_) => const TambahLayananPage());
+
+      case adminPage:
+        return MaterialPageRoute(builder: (_) => const AdminPage());
 
       default:
         return MaterialPageRoute(builder: (_) => const SplashScreen());

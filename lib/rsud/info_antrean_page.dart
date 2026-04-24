@@ -258,7 +258,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
                   child: ListView.separated(
                     controller: scrollCtrl,
                     itemCount: items.length,
-                    separatorBuilder: (_, __) => const Divider(
+                    separatorBuilder: (context, index) => const Divider(
                       height: 1,
                       color: Color.fromRGBO(240, 240, 240, 1),
                     ),
@@ -326,6 +326,17 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
     );
   }
 
+  Future<void> _refresh() async {
+    setState(() {
+      _isLoading = true;
+      _selectedPoli = null;
+      _selectedDokter = null;
+      _hasilApplied = false;
+      _hasilData = null;
+    });
+    await _loadData();
+  }
+
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: _blue,
@@ -335,15 +346,36 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
         onPressed: () => Navigator.pop(context),
         icon: const Icon(Icons.arrow_back, color: Colors.white),
       ),
-      title: const Text(
-        'Info Antrean Pasien',
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily: 'PlusJakartaSans',
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            widget.hospital.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const Text(
+            'Info Antrean Pasien',
+            style: TextStyle(
+              color: Colors.white70,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 11,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
       ),
+      actions: [
+        IconButton(
+          onPressed: _isLoading ? null : _refresh,
+          icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+          tooltip: 'Refresh',
+        ),
+      ],
     );
   }
 
@@ -525,7 +557,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
             const Spacer(),
             AnimatedBuilder(
               animation: _liveAnim,
-              builder: (_, __) => Opacity(
+              builder: (context, child) => Opacity(
                 opacity: _liveAnim.value,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

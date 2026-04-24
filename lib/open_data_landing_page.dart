@@ -1,9 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'open_data_list_page.dart';
-import 'open_data_informasi.dart';
 
-class OpenDataLandingPage extends StatelessWidget {
+class OpenDataLandingPage extends StatefulWidget {
   const OpenDataLandingPage({super.key});
+
+  @override
+  State<OpenDataLandingPage> createState() => _OpenDataLandingPageState();
+}
+
+class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
+  static const _blue = Color(0xFF007AFF);
+
+  int _selectedTab = 0;
+  bool _isOperasionalExpanded = true;
+  bool _isKetentuanExpanded = true;
+  bool _isFavorite = false;
+
+  static const String _favKey = 'fav_opendata';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _loadFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
+  }
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    final next = !_isFavorite;
+    await prefs.setBool(_favKey, next);
+    if (!mounted) return;
+    setState(() => _isFavorite = next);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+        content: Row(
+          children: [
+            Icon(
+              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              next
+                  ? 'Open Data ditambahkan ke favorit'
+                  : 'Open Data dihapus dari favorit',
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,17 +76,10 @@ class OpenDataLandingPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF8F9FA),
       body: Stack(
         children: [
-          // Simplified Header using BoxDecoration for renderer stability
           Container(
             width: double.infinity,
             height: 320,
             decoration: const BoxDecoration(
-              color: Color(0xFF007AFF),
-              image: DecorationImage(
-                image: AssetImage('assets/images/header_texture.png'),
-                fit: BoxFit.cover,
-                opacity: 0.6,
-              ),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -32,9 +90,8 @@ class OpenDataLandingPage extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                // Centered Header
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: SizedBox(
                     height: 56,
                     child: Stack(
@@ -51,7 +108,7 @@ class OpenDataLandingPage extends StatelessWidget {
                           'Open Data',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 25,
+                            fontSize: 22,
                             fontFamily: 'PlusJakartaSans',
                             fontWeight: FontWeight.w600,
                           ),
@@ -59,16 +116,19 @@ class OpenDataLandingPage extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
+                            width: 40,
+                            height: 40,
+                            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                             child: IconButton(
                               padding: EdgeInsets.zero,
-                              icon: const Icon(Icons.bookmark_border, color: Color(0xFF007AFF), size: 26),
-                              onPressed: () {},
+                              icon: Icon(
+                                _isFavorite
+                                    ? Icons.bookmark_rounded
+                                    : Icons.bookmark_border_rounded,
+                                color: _blue,
+                                size: 22,
+                              ),
+                              onPressed: _toggleFavorite,
                             ),
                           ),
                         ),
@@ -77,178 +137,22 @@ class OpenDataLandingPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // White Content Area
                 Expanded(
                   child: Container(
-                    width: double.infinity,
                     decoration: const BoxDecoration(
                       color: Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                     ),
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-                        child: Column(
-                          children: [
-                            // Layanan / Informasi Toggle
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x0A000000), // 4% black
-                                    blurRadius: 6,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF007AFF),
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          'Layanan',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'PlusJakartaSans',
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => const OpenDataInformasiPage(),
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 14),
-                                        color: Colors.transparent,
-                                        child: const Center(
-                                          child: Text(
-                                            'Informasi',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'PlusJakartaSans',
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-                            // Cari Data Card
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(24),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x0D000000), // 5% black
-                                    blurRadius: 20,
-                                    offset: Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFEBF5FF),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.search,
-                                      color: Color(0xFF007AFF),
-                                      size: 30,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  const Text(
-                                    'Cari Data',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: 'PlusJakartaSans',
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF1F2937),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    'Temukan kumpulan data-data yang anda butuhkan mulai dari data mentah, kependudukan, kesehatan, dan lain-lainnya',
-                                    textAlign: TextAlign.justify,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'PlusJakartaSans',
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey,
-                                      height: 1.6,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 28),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 52,
-                                    child: OutlinedButton(
-                                      style: OutlinedButton.styleFrom(
-                                        side: const BorderSide(color: Color(0xFF007AFF), width: 2),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(26),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => const OpenDataListPage(),
-                                          ),
-                                        );
-                                      },
-                                      child: const Text(
-                                        'Cari Data Sekarang',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontFamily: 'PlusJakartaSans',
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF007AFF),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        _buildTabSwitcher(),
+                        Expanded(
+                          child: _selectedTab == 0
+                              ? _buildLayananTab()
+                              : _buildInformasiTab(),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
@@ -258,5 +162,404 @@ class OpenDataLandingPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildTabSwitcher() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: const [
+            BoxShadow(color: Color(0x0A000000), blurRadius: 6, offset: Offset(0, 3)),
+          ],
+        ),
+        child: Row(
+          children: [
+            _tabItem('Layanan', 0),
+            _tabItem('Informasi', 1),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _tabItem(String label, int index) {
+    final selected = _selectedTab == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedTab = index),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 13),
+          decoration: BoxDecoration(
+            color: selected ? _blue : Colors.transparent,
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: selected ? Colors.white : const Color(0xFF4B5563),
+                fontWeight: FontWeight.w600,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Tab Layanan ────────────────────────────────────────────────────────────
+
+  Widget _buildLayananTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [
+            BoxShadow(color: Color(0x0D000000), blurRadius: 20, offset: Offset(0, 8)),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(color: Color(0xFFEBF5FF), shape: BoxShape.circle),
+              child: const Icon(Icons.search, color: _blue, size: 28),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Cari Data',
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'PlusJakartaSans',
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1F2937),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Temukan kumpulan data yang Anda butuhkan mulai dari data mentah, kependudukan, kesehatan, ekonomi, dan lain-lainnya.',
+              style: TextStyle(
+                fontSize: 14,
+                fontFamily: 'PlusJakartaSans',
+                color: Colors.grey,
+                height: 1.6,
+              ),
+            ),
+            const SizedBox(height: 28),
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: _blue, width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const OpenDataListPage()),
+                ),
+                child: const Text(
+                  'Cari Data Sekarang',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'PlusJakartaSans',
+                    fontWeight: FontWeight.w600,
+                    color: _blue,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Tab Informasi ──────────────────────────────────────────────────────────
+
+  Widget _buildInformasiTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          _buildExpandableCard(
+            title: 'Operasional',
+            subtitle: 'Akses portal & informasi layanan',
+            icon: Icons.access_time_filled,
+            isExpanded: _isOperasionalExpanded,
+            onTap: () => setState(() => _isOperasionalExpanded = !_isOperasionalExpanded),
+            content: _buildOperasionalContent(),
+          ),
+          const SizedBox(height: 16),
+          _buildExpandableCard(
+            title: 'Ketentuan Umum',
+            subtitle: 'Manfaat & prosedur penggunaan',
+            icon: Icons.description,
+            isExpanded: _isKetentuanExpanded,
+            onTap: () => setState(() => _isKetentuanExpanded = !_isKetentuanExpanded),
+            content: _buildKetentuanContent(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExpandableCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isExpanded,
+    required VoidCallback onTap,
+    required Widget content,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(color: Color(0x0D000000), blurRadius: 20, offset: Offset(0, 8)),
+        ],
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            onTap: onTap,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(color: Color(0xFFEBF5FF), shape: BoxShape.circle),
+              child: Icon(icon, color: _blue, size: 22),
+            ),
+            title: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                fontFamily: 'PlusJakartaSans',
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1F2937),
+              ),
+            ),
+            subtitle: Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 12,
+                fontFamily: 'PlusJakartaSans',
+                color: Colors.grey,
+              ),
+            ),
+            trailing: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(color: Color(0xFFEBF5FF), shape: BoxShape.circle),
+              child: Icon(
+                isExpanded ? Icons.expand_less : Icons.expand_more,
+                color: _blue,
+                size: 18,
+              ),
+            ),
+          ),
+          if (isExpanded)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+              child: content,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOperasionalContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _infoSection(
+          'Link Layanan',
+          GestureDetector(
+            onTap: () => _launchUrl('https://opendata.jatimprov.go.id/'),
+            child: const Text(
+              'opendata.jatimprov.go.id',
+              style: TextStyle(
+                color: _blue,
+                decoration: TextDecoration.underline,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        _infoSection(
+          'Alamat',
+          const Text(
+            'Jl. Ahmad Yani No.242-244, Gayungan, Surabaya, Jawa Timur 60235',
+            style: TextStyle(
+              color: Color(0xFF4B5563),
+              height: 1.5,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 13,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        _infoSection(
+          'Akses Portal',
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEBF5FF),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.cloud_outlined, color: _blue, size: 15),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Portal web dapat diakses 24 jam / 7 hari',
+                        style: TextStyle(
+                          color: Color(0xFF1D4ED8),
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Pertanyaan & aduan melalui email pada jam kerja:\nSenin–Jumat, 08:00–16:00 WIB',
+                style: TextStyle(
+                  color: Color(0xFF4B5563),
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 12,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildKetentuanContent() {
+    return Column(
+      children: [
+        _ketentuanSection('Manfaat', [
+          'Transparansi pemerintah: masyarakat dapat mengakses informasi kebijakan dan kinerja pemerintah secara terbuka.',
+          'Pengambilan keputusan berbasis data yang lebih tepat dan akurat.',
+          'Pemberdayaan masyarakat Jatim untuk berinovasi dan membuat keputusan strategis di lingkungannya.',
+          'Kolaborasi multi-sektor antara pemerintah, akademisi, dan dunia usaha.',
+        ]),
+        const SizedBox(height: 12),
+        _ketentuanSection('Sistem, Mekanisme, dan Prosedur', [
+          'Akses aplikasi MajaDigitalJatim dan pilih fitur Open Data.',
+          'Pilih tab "Layanan" lalu tekan "Cari Data Sekarang".',
+          'Gunakan kolom pencarian atau filter kategori untuk menemukan data.',
+          'Buka detail data yang dituju, baca deskripsi dan metadata.',
+          'Tekan "Unduh Dataset" untuk mengunduh atau kunjungi portal resmi Open Data Jatim.',
+        ]),
+      ],
+    );
+  }
+
+  Widget _infoSection(String title, Widget content) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              fontFamily: 'PlusJakartaSans',
+              color: Color(0xFF1F2937),
+            ),
+          ),
+          const SizedBox(height: 6),
+          content,
+        ],
+      ),
+    );
+  }
+
+  Widget _ketentuanSection(String title, List<String> items) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              fontFamily: 'PlusJakartaSans',
+              color: Color(0xFF1F2937),
+            ),
+          ),
+          const SizedBox(height: 8),
+          ...List.generate(
+            items.length,
+            (i) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${i + 1}. ',
+                      style: const TextStyle(
+                          fontSize: 13, fontFamily: 'PlusJakartaSans', color: Color(0xFF4B5563))),
+                  Expanded(
+                    child: Text(
+                      items[i],
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontFamily: 'PlusJakartaSans',
+                        color: Color(0xFF4B5563),
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 }

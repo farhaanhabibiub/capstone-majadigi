@@ -1,9 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'nomordarurat_carinomor.dart';
 import 'nomordarurat_informasi.dart';
 
-class NomorDaruratLandingPage extends StatelessWidget {
+class NomorDaruratLandingPage extends StatefulWidget {
   const NomorDaruratLandingPage({super.key});
+
+  @override
+  State<NomorDaruratLandingPage> createState() => _NomorDaruratLandingPageState();
+}
+
+class _NomorDaruratLandingPageState extends State<NomorDaruratLandingPage> {
+  static const Color _blue = Color(0xFF007AFF);
+  static const String _favKey = 'fav_nomordarurat';
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _loadFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
+  }
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    final next = !_isFavorite;
+    await prefs.setBool(_favKey, next);
+    if (!mounted) return;
+    setState(() => _isFavorite = next);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+        content: Row(
+          children: [
+            Icon(
+              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              next
+                  ? 'Nomor Darurat ditambahkan ke favorit'
+                  : 'Nomor Darurat dihapus dari favorit',
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +127,14 @@ class NomorDaruratLandingPage extends StatelessWidget {
                             ),
                             child: IconButton(
                               padding: EdgeInsets.zero,
-                              icon: const Icon(Icons.bookmark_border, color: Color(0xFF007AFF), size: 26),
-                              onPressed: () {},
+                              icon: Icon(
+                                _isFavorite
+                                    ? Icons.bookmark_rounded
+                                    : Icons.bookmark_border_rounded,
+                                color: _blue,
+                                size: 26,
+                              ),
+                              onPressed: _toggleFavorite,
                             ),
                           ),
                         ),

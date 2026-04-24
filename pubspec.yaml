@@ -21,9 +21,15 @@ dependencies:
   csv: ^8.0.0
   url_launcher: ^6.3.1
   intl: ^0.20.2
+  flutter_local_notifications: 18.0.1
+  timezone: ^0.9.4
+  file_picker: 8.1.7
+  firebase_storage: ^13.3.0
   qr_flutter: ^4.1.0
-  flutter_map: ^7.0.2
+  flutter_map: ^8.3.0
   latlong2: ^0.9.0
+  shared_preferences: ^2.3.5
+  firebase_messaging: ^16.2.0
 
 dev_dependencies:
   flutter_test:
@@ -55,16 +61,34 @@ flutter:
     - assets/images/header_texture.png
     - assets/images/dapurmbg.png
     - assets/images/ayopasok.png
-    - assets/images/avatar_placeholder.png
+#    - assets/images/avatar_placeholder.png
     - assets/images/layanan_bapenda.png
     - assets/images/layanan_rsud.png
-    - assets/images/layanan_transportasi.png
+    - assets/images/layanan_transjatim.png
     - assets/images/layanan_siskaperbapo.png
     - assets/images/layanan_nomor_darurat.png
+    - assets/images/icon_tambah_layanan.png
+    - assets/images/layanan_sapa_bansos.png
+    - assets/images/layanan_etibi.png
+    - assets/images/layanan_klinik_hoaks.png
+    - assets/images/layanan_open_data.png
+    - assets/images/bawang_merah.png
+    - assets/images/bawang_putih.png
+    - assets/images/beras_medium.png
+    - assets/images/beras_premium.png
+    - assets/images/cabe_merah.png
+    - assets/images/cabe_merah_keriting.png
+    - assets/images/cabe_rawit.png
+    - assets/images/daging_sapi.png
+    - assets/images/icon_disabilitas.png
+    - assets/images/icon_info.png
+    - assets/images/icon_program.png
+    - assets/images/icon_storage.png
+    - assets/images/icon_tambah_layanan.png
     - assets/images/artikel_1.png
     - assets/images/artikel_2.png
     - assets/images/artikel_3.png
-    - assets/data/kendaraan_dummy.csv
+    - assets/data/kendaraan_jatim.csv
     - assets/data/njkb_database.csv
     - assets/data/kamar_rsud.csv
     - assets/data/jadwal_operasi.csv
@@ -78,6 +102,7 @@ flutter:
     - assets/data/kamar_prov_jatim.csv
     - assets/data/jadwal_prov_jatim.csv
     - assets/data/antrean_prov_jatim.csv
+    - assets/data/penerima_bansos.csv
   fonts:
     - family: PlusJakartaSans
       fonts:

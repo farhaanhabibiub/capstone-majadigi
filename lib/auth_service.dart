@@ -435,4 +435,30 @@ class AuthService {
         return 'Terjadi kesalahan. (${e.code})';
     }
   }
+
+  Future<void> saveAddedServices(List<String> serviceIds) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    await _firestore.collection('users').doc(user.uid).set({
+      'addedServices': serviceIds,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  Future<List<String>> getAddedServices() async {
+    final profile = await getUserProfile();
+    final list = profile?['addedServices'] as List<dynamic>?;
+    return list?.map((e) => e.toString()).toList() ?? [];
+  }
+
+  Future<bool> isAdmin() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return false;
+    try {
+      final doc = await _firestore.collection('admins').doc(uid).get();
+      return doc.exists;
+    } catch (_) {
+      return false;
+    }
+  }
 }

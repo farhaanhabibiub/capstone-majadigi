@@ -4,7 +4,7 @@ import '../models/transjatim_model.dart';
 class TimelineGraph extends StatelessWidget {
   final List<TransjatimStop> stops;
 
-  const TimelineGraph({Key? key, required this.stops}) : super(key: key);
+  const TimelineGraph({super.key, required this.stops});
 
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
 

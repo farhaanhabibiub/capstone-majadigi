@@ -1,11 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/etibi_model.dart';
 
 class SkriningTab extends StatefulWidget {
   final Function(RiwayatSkrining) onSubmit;
+  final VoidCallback onSelesai;
 
-  const SkriningTab({Key? key, required this.onSubmit}) : super(key: key);
+  const SkriningTab({super.key, required this.onSubmit, required this.onSelesai});
 
   @override
   State<SkriningTab> createState() => _SkriningTabState();
@@ -63,12 +65,60 @@ class _SkriningTabState extends State<SkriningTab> {
     'Lansia (diatas 60 tahun)',
   ];
 
-  // For final result state
-  bool _isTerindikasi = false;
+  // Hasil skrining
+  int _skorAkhir = 0;
+  String _levelRisiko = 'Rendah';
+  RiwayatSkrining? _pendingRiwayat; // disimpan setelah hitung, dikirim saat Selesai
+  // Skor per kategori
+  int _skorGejalaUtama = 0;
+  int _skorGejalaPendukung = 0;
+  int _skorRiwayatKontak = 0;
+  int _skorFaktorRisiko = 0;
+
+  static const int _skorMax = 46;
+  static const int _maxGejalaUtama = 11;
+  static const int _maxGejalaPendukung = 11;
+  static const int _maxRiwayatKontak = 13;
+  static const int _maxFaktorRisiko = 11;
+
+  // Bobot tiap pertanyaan (index sesuai _pertanyaanList)
+  static const Map<int, int> _bobot = {
+    0: 3,  // Batuk > 2 minggu
+    1: 2,  // Demam
+    2: 2,  // Keringat malam
+    3: 2,  // Sesak nafas
+    4: 1,  // Nyeri dada
+    5: 2,  // Benjolan leher/ketiak
+    6: 5,  // Batuk berdarah
+    7: 1,  // Batuk < 2 minggu
+    8: 1,  // Nafsu makan turun
+    9: 1,  // Mudah lelah
+    10: 2, // BB turun
+    11: 3, // Keluarga serumah TBC
+    12: 2, // Satu ruangan penderita TBC
+    13: 3, // Pernah tinggal serumah penderita TBC
+    14: 2, // TBC tuntas
+    15: 3, // TBC tidak tuntas
+    16: 2, // Diabetes melitus
+    17: 3, // HIV
+    18: 1, // Ibu hamil
+    19: 1, // Merokok
+    20: 1, // Usia 0-14
+    21: 2, // Kurang gizi
+    22: 1, // Lansia
+  };
+
+  static const Set<int> _idxGejalaUtama      = {0, 3, 4, 6};
+  static const Set<int> _idxGejalaPendukung  = {1, 2, 5, 7, 8, 9, 10};
+  static const Set<int> _idxRiwayatKontak    = {11, 12, 13, 14, 15};
+  static const Set<int> _idxFaktorRisiko     = {16, 17, 18, 19, 20, 21, 22};
 
   @override
   void initState() {
     super.initState();
+    // Pre-fill nama dari akun yang sedang login
+    final displayName = FirebaseAuth.instance.currentUser?.displayName ?? '';
+    if (displayName.isNotEmpty) _namaController.text = displayName;
     _namaController.addListener(_onTextChanged);
     _nikController.addListener(_onTextChanged);
     _noTelpController.addListener(_onTextChanged);
@@ -129,66 +179,78 @@ class _SkriningTabState extends State<SkriningTab> {
     });
   }
 
-  String _hitungHasilSkrining(Map<int, bool?> jawaban) {
-    // 1. CEK GEJALA UTAMA
-    // Index 0: Batuk > 2 mgg, Index 6: Batuk berdarah
-    bool adaGejalaUtama = 
-    (jawaban[0] == true) || 
-    (jawaban[3] == true) || 
-    (jawaban[6] == true);
+  void _hitungHasilSkrining(Map<int, bool?> jawaban) {
+    int gu = 0, gp = 0, rk = 0, fr = 0;
 
-    // 2. HITUNG GEJALA MINOR
-    int minorCount = 0;
-    final List<int> gejalaMinorIndices = [1, 2, 4, 5, 7, 8, 9, 10];
-    
-    for (int idx in gejalaMinorIndices) {
-      if (jawaban[idx] == true) {
-        minorCount++;
-      }
-    }
+    jawaban.forEach((idx, ya) {
+      if (ya != true) return;
+      final bobot = _bobot[idx] ?? 0;
+      if (_idxGejalaUtama.contains(idx))     gu += bobot;
+      if (_idxGejalaPendukung.contains(idx)) gp += bobot;
+      if (_idxRiwayatKontak.contains(idx))   rk += bobot;
+      if (_idxFaktorRisiko.contains(idx))    fr += bobot;
+    });
 
-    // 3. LOGIKA KEPUTUSAN FINAL (Kombinasi)
-    if (adaGejalaUtama && minorCount >= 2) {
-      // Punya batuk parah + dibarengi gejala lain (misal: demam)
-      return 'Terindikasi TBC';
-    } else if (minorCount >= 4) {
-      // Tidak ada batuk parah, tapi keluhan minor numpuk (misal: demam + lelah + BB turun)
-      return 'Terindikasi TBC';
+    final total = gu + gp + rk + fr;
+
+    String level;
+    // Batuk berdarah langsung Tinggi
+    if (jawaban[6] == true) {
+      level = 'Tinggi';
+    } else if (total >= 13) {
+      level = 'Tinggi';
+    } else if (total >= 6) {
+      level = 'Sedang';
     } else {
-      // Cuma batuk doang tanpa gejala lain, atau cuma demam doang
-      return 'Tidak Terindikasi TBC';
+      level = 'Rendah';
     }
+
+    _skorAkhir          = total;
+    _levelRisiko        = level;
+    _skorGejalaUtama    = gu;
+    _skorGejalaPendukung = gp;
+    _skorRiwayatKontak  = rk;
+    _skorFaktorRisiko   = fr;
   }
 
   void _submitForm() {
-    String hasilAkhir = _hitungHasilSkrining(_jawabanSkrining);
-    _isTerindikasi = (hasilAkhir == 'Terindikasi TBC');
+    _hitungHasilSkrining(_jawabanSkrining);
 
     String tanggal;
     try {
       tanggal = DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.now());
     } catch (e) {
-      final List<String> months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
       final now = DateTime.now();
       tanggal = '${now.day.toString().padLeft(2, '0')} ${months[now.month - 1]} ${now.year}';
     }
 
-    final riwayatBaru = RiwayatSkrining(
+    // Simpan dulu, baru dikirim ke parent saat "Selesai" diklik
+    _pendingRiwayat = RiwayatSkrining(
       tanggal: tanggal,
-      hasil: hasilAkhir,
+      hasil: 'Risiko $_levelRisiko',
+      levelRisiko: _levelRisiko,
+      skor: _skorAkhir,
+      skorMax: _skorMax,
       faskes: '-',
       kabupaten: _kotaController.text.trim(),
       noTelp: _noTelpController.text.trim(),
     );
 
-    widget.onSubmit(riwayatBaru);
-    _nextStep(); // Go to Step 4
+    _nextStep();
   }
 
   void _resetForm() {
+    // Kirim hasil ke parent (simpan ke list + Firestore) tepat saat Selesai diklik
+    if (_pendingRiwayat != null) {
+      widget.onSubmit(_pendingRiwayat!);
+      _pendingRiwayat = null;
+    }
+
+    final displayName = FirebaseAuth.instance.currentUser?.displayName ?? '';
     setState(() {
       _currentFormStep = 0;
-      _namaController.clear();
+      _namaController.text = displayName;
       _nikController.clear();
       _jenisKelamin = null;
       _tahunLahir = null;
@@ -200,6 +262,8 @@ class _SkriningTabState extends State<SkriningTab> {
       _kotaController.clear();
       _jawabanSkrining.clear();
     });
+
+    widget.onSelesai();
   }
 
   @override
@@ -389,7 +453,7 @@ class _SkriningTabState extends State<SkriningTab> {
           }
 
           return questionWidget;
-        }).toList(),
+        }),
         const SizedBox(height: 24),
         _buildButton('Sebelumnya', _prevStep, isPrimary: false),
         const SizedBox(height: 12),
@@ -399,40 +463,214 @@ class _SkriningTabState extends State<SkriningTab> {
   }
 
   Widget _buildStep4() {
+    final Color levelColor = _levelRisiko == 'Tinggi'
+        ? const Color(0xFFD32F2F)
+        : _levelRisiko == 'Sedang'
+            ? const Color(0xFFF59E0B)
+            : const Color(0xFF2E7D32);
+    final Color levelBg = _levelRisiko == 'Tinggi'
+        ? const Color(0xFFFFEBEE)
+        : _levelRisiko == 'Sedang'
+            ? const Color(0xFFFFF8E1)
+            : const Color(0xFFE8F5E9);
+    final IconData levelIcon = _levelRisiko == 'Tinggi'
+        ? Icons.warning_amber_rounded
+        : _levelRisiko == 'Sedang'
+            ? Icons.info_outline_rounded
+            : Icons.check_circle_outline;
+
+    final String rekomendasiText = _levelRisiko == 'Tinggi'
+        ? 'Segera periksakan diri ke Puskesmas atau fasilitas kesehatan terdekat. Jangan tunda, deteksi dini sangat penting.'
+        : _levelRisiko == 'Sedang'
+            ? 'Disarankan untuk berkonsultasi dengan dokter atau tenaga kesehatan untuk pemeriksaan lanjutan.'
+            : 'Tidak ditemukan indikasi risiko tinggi. Tetap jaga kesehatan dan periksakan diri jika keluhan berlanjut.';
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ── Level Badge ──────────────────────────────────────────────────────────
         Container(
-          padding: const EdgeInsets.all(16),
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(color: levelBg, borderRadius: BorderRadius.circular(14)),
           child: Row(
-             crossAxisAlignment: CrossAxisAlignment.start,
-             children: [
-               Icon(_isTerindikasi ? Icons.warning_amber_rounded : Icons.check_circle_outline, color: _isTerindikasi ? const Color(0xFFD32F2F) : _blue, size: 40),
-               const SizedBox(width: 16),
-               Expanded(
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                       Text(
-                         _isTerindikasi 
-                            ? 'Anda menunjukkan gejala TBC. Segera periksakan diri ke fasilitas kesehatan terdekat.' 
-                            : 'Anda tidak menunjukkan gejala TBC. Tetap waspada, dan periksakan diri bila ada keluhan.',
-                         style: const TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700, color: _textPrimary),
-                       ),
-                       const SizedBox(height: 8),
-                       const Text(
-                         'Kunjungi Puskesmas atau faskes terdekat untuk mendeteksi kemungkinan adanya penyakit lain.',
-                         style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: _textSecondary),
-                       ),
-                   ],
-                 )
-               )
-             ]
-          )
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(color: levelColor.withValues(alpha: 0.15), shape: BoxShape.circle),
+                child: Icon(levelIcon, color: levelColor, size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Risiko $_levelRisiko',
+                      style: TextStyle(color: levelColor, fontFamily: 'PlusJakartaSans', fontSize: 18, fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      rekomendasiText,
+                      style: TextStyle(color: levelColor.withValues(alpha: 0.85), fontFamily: 'PlusJakartaSans', fontSize: 12, height: 1.5),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 32),
+
+        const SizedBox(height: 20),
+
+        // ── Skor Total ───────────────────────────────────────────────────────────
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 8, offset: const Offset(0, 3))]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Skor Total Risiko', style: TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Text(
+                    '$_skorAkhir',
+                    style: TextStyle(color: levelColor, fontFamily: 'PlusJakartaSans', fontSize: 36, fontWeight: FontWeight.w800),
+                  ),
+                  Text(
+                    ' / $_skorMax',
+                    style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                  const Spacer(),
+                  _levelPill('≤ 5', 'Rendah', const Color(0xFF2E7D32), _levelRisiko == 'Rendah'),
+                  const SizedBox(width: 6),
+                  _levelPill('6–12', 'Sedang', const Color(0xFFF59E0B), _levelRisiko == 'Sedang'),
+                  const SizedBox(width: 6),
+                  _levelPill('≥ 13', 'Tinggi', const Color(0xFFD32F2F), _levelRisiko == 'Tinggi'),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: (_skorAkhir / _skorMax).clamp(0.0, 1.0),
+                  minHeight: 10,
+                  backgroundColor: const Color(0xFFF0F0F0),
+                  valueColor: AlwaysStoppedAnimation<Color>(levelColor),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // ── Breakdown per Kategori ───────────────────────────────────────────────
+        const Text('Detail per Kategori', style: TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 10),
+        _kategoriRow(Icons.coronavirus_outlined,     'Gejala Utama',       _skorGejalaUtama,    _maxGejalaUtama,    const Color(0xFFD32F2F)),
+        const SizedBox(height: 8),
+        _kategoriRow(Icons.sick_outlined,             'Gejala Pendukung',   _skorGejalaPendukung,_maxGejalaPendukung,const Color(0xFFF59E0B)),
+        const SizedBox(height: 8),
+        _kategoriRow(Icons.people_outline,            'Riwayat & Kontak',   _skorRiwayatKontak,  _maxRiwayatKontak,  const Color(0xFF7C3AED)),
+        const SizedBox(height: 8),
+        _kategoriRow(Icons.health_and_safety_outlined,'Faktor Risiko',      _skorFaktorRisiko,   _maxFaktorRisiko,   const Color(0xFF0284C7)),
+
+        const SizedBox(height: 20),
+
+        // ── Disclaimer ───────────────────────────────────────────────────────────
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0F4FF),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: _blue.withValues(alpha: 0.2)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.info_outline, color: _blue, size: 16),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'Hasil skrining ini bersifat indikatif dan bukan diagnosis medis. Konfirmasi diagnosis hanya dapat dilakukan oleh tenaga kesehatan.',
+                  style: TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 11, height: 1.5),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 24),
         _buildButton('Selesai', _resetForm, isPrimary: true),
       ],
+    );
+  }
+
+  Widget _levelPill(String range, String label, Color color, bool active) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: active ? color : Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: active ? color : const Color(0xFFDDDDDD)),
+      ),
+      child: Column(
+        children: [
+          Text(range, style: TextStyle(color: active ? Colors.white : _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 9, fontWeight: FontWeight.w600)),
+          Text(label, style: TextStyle(color: active ? Colors.white : _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 9)),
+        ],
+      ),
+    );
+  }
+
+  Widget _kategoriRow(IconData icon, String label, int skor, int max, Color color) {
+    final double pct = max > 0 ? skor / max : 0;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 6, offset: const Offset(0, 2))],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36, height: 36,
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(label, style: const TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w600)),
+                    Text('$skor / $max', style: TextStyle(color: color, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w700)),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: pct,
+                    minHeight: 6,
+                    backgroundColor: const Color(0xFFF0F0F0),
+                    valueColor: AlwaysStoppedAnimation<Color>(color),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

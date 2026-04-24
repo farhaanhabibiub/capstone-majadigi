@@ -7,6 +7,7 @@ class HasilNjkbData {
   final String merk;
   final String tipe;
   final String tahun;
+  final int njkb;
   final int pkbPlatHitam;
   final int opsenPkbPlatHitam;
   final int pkbPlatMerah;
@@ -22,6 +23,7 @@ class HasilNjkbData {
     required this.merk,
     required this.tipe,
     required this.tahun,
+    required this.njkb,
     required this.pkbPlatHitam,
     required this.opsenPkbPlatHitam,
     required this.pkbPlatMerah,
@@ -88,6 +90,11 @@ class HasilNjkbPage extends StatelessWidget {
           children: [
             // ── Header card ─────────────────────────────────────────────────
             _buildHeaderCard(),
+
+            const SizedBox(height: 16),
+
+            // ── NJKB Banner ──────────────────────────────────────────────────
+            _buildNjkbBanner(),
 
             const SizedBox(height: 20),
 
@@ -162,6 +169,63 @@ class HasilNjkbPage extends StatelessWidget {
   }
 
   // ── Widgets ────────────────────────────────────────────────────────────────
+
+  Widget _buildNjkbBanner() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color.fromRGBO(0, 101, 255, 1), Color.fromRGBO(0, 60, 180, 1)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromRGBO(0, 101, 255, 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'ESTIMASI NILAI JUAL KENDARAAN',
+            style: TextStyle(
+              color: Colors.white70,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            data.fmt(data.njkb),
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${data.merk} ${data.model} ${data.tipe} (${data.tahun})',
+            style: const TextStyle(
+              color: Colors.white70,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildHeaderCard() {
     return Container(
@@ -332,21 +396,81 @@ class HasilNjkbPage extends StatelessWidget {
   }
 
   Widget _buildPkb() {
-    final rows = [
-      ('PKB Plat Hitam', data.fmt(data.pkbPlatHitam)),
-      ('Opsen PKB Plat Hitam', data.fmt(data.opsenPkbPlatHitam)),
-      ('PKB Plat Merah', data.fmt(data.pkbPlatMerah)),
-      ('Opsen PKB Plat Merah', data.fmt(data.opsenPkbPlatMerah)),
-      ('PKB Plat Kuning', data.fmt(data.pkbPlatKuning)),
-      ('Opsen PKB Plat Kuning', data.fmt(data.opsenPkbPlatKuning)),
-    ];
+    final platHitamTotal = data.pkbPlatHitam + data.opsenPkbPlatHitam;
+    final platMerahTotal = data.pkbPlatMerah + data.opsenPkbPlatMerah;
+    final platKuningTotal = data.pkbPlatKuning + data.opsenPkbPlatKuning;
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (int i = 0; i < rows.length; i++) ...[
-          if (i > 0) const SizedBox(height: 10),
-          _biayaRow(rows[i].$1, rows[i].$2),
-        ],
+        _kategoriLabel('Plat Hitam (Kendaraan Pribadi)'),
+        const SizedBox(height: 8),
+        _biayaRow('PKB Plat Hitam', data.fmt(data.pkbPlatHitam)),
+        const SizedBox(height: 8),
+        _biayaRow('Opsen PKB Plat Hitam', data.fmt(data.opsenPkbPlatHitam)),
+        const SizedBox(height: 8),
+        _totalKategoriRow('Total Plat Hitam', data.fmt(platHitamTotal)),
+        const SizedBox(height: 16),
+
+        _kategoriLabel('Plat Merah (Kendaraan Dinas)'),
+        const SizedBox(height: 8),
+        _biayaRow('PKB Plat Merah', data.fmt(data.pkbPlatMerah)),
+        const SizedBox(height: 8),
+        _biayaRow('Opsen PKB Plat Merah', data.fmt(data.opsenPkbPlatMerah)),
+        const SizedBox(height: 8),
+        _totalKategoriRow('Total Plat Merah', data.fmt(platMerahTotal)),
+        const SizedBox(height: 16),
+
+        _kategoriLabel('Plat Kuning (Kendaraan Umum)'),
+        const SizedBox(height: 8),
+        _biayaRow('PKB Plat Kuning', data.fmt(data.pkbPlatKuning)),
+        const SizedBox(height: 8),
+        _biayaRow('Opsen PKB Plat Kuning', data.fmt(data.opsenPkbPlatKuning)),
+        const SizedBox(height: 8),
+        _totalKategoriRow('Total Plat Kuning', data.fmt(platKuningTotal)),
+        const SizedBox(height: 12),
+
+        Text(
+          '* Nilai PKB dihitung berdasarkan tarif 2% (Plat Hitam), 0,5% (Plat Merah), dan 1% (Plat Kuning) dari NJKB. Opsen PKB sebesar 66% dari PKB. Ini merupakan estimasi — nilai aktual dapat berbeda.',
+          style: TextStyle(
+            color: const Color.fromRGBO(120, 120, 120, 1),
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 11,
+            fontWeight: FontWeight.w400,
+            height: 1.5,
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget _kategoriLabel(String label) {
+    return Text(
+      label,
+      style: const TextStyle(
+        color: _blue,
+        fontFamily: 'PlusJakartaSans',
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.2,
+      ),
+    );
+  }
+
+  Widget _totalKategoriRow(String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color.fromRGBO(235, 243, 255, 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w700)),
+          Text(value, style: const TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w700)),
+        ],
+      ),
     );
   }
 

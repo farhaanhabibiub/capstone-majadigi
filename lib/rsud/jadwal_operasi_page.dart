@@ -210,8 +210,8 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     final picked = await showDatePicker(
       context: context,
       initialDate: now,
-      firstDate: DateTime(2026, 1, 1),
-      lastDate: DateTime(2027, 12, 31),
+      firstDate: DateTime(now.year - 1, 1, 1),
+      lastDate: DateTime(now.year + 2, 12, 31),
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
           colorScheme:
@@ -350,6 +350,18 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     );
   }
 
+  Future<void> _refresh() async {
+    _searchCtrl.clear();
+    setState(() {
+      _isLoading = true;
+      _isFilterApplied = false;
+      _hasilList = [];
+      _selectedTanggal = null;
+      _selectedKlinik = null;
+    });
+    await _loadData();
+  }
+
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: _blue,
@@ -359,15 +371,36 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
         onPressed: () => Navigator.pop(context),
         icon: const Icon(Icons.arrow_back, color: Colors.white),
       ),
-      title: const Text(
-        'Jadwal Operasi',
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily: 'PlusJakartaSans',
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            widget.hospital.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const Text(
+            'Jadwal Operasi',
+            style: TextStyle(
+              color: Colors.white70,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 11,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
       ),
+      actions: [
+        IconButton(
+          onPressed: _isLoading ? null : _refresh,
+          icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+          tooltip: 'Refresh',
+        ),
+      ],
     );
   }
 
@@ -804,7 +837,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: items.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                separatorBuilder: (context, index) => const SizedBox(width: 10),
                 itemBuilder: (ctx, i) =>
                     _JadwalCard(data: items[i], klinikColors: _klinikColors),
               ),
@@ -854,7 +887,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _hasilList.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            separatorBuilder: (context, index) => const SizedBox(height: 10),
             itemBuilder: (ctx, i) => _JadwalCard(
               data: _hasilList[i],
               fullWidth: true,

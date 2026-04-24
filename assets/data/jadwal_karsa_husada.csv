@@ -1,0 +1,9 @@
+no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_terakhir
+1|19/04/2026|Minggu|07:30|09:00|Apendektomi|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Selesai|19 Apr 2026 06:00
+2|19/04/2026|Minggu|09:30|11:00|Sectio Caesarea|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Berlangsung|
+3|19/04/2026|Minggu|11:00|12:30|Katarak|dr. Hendra Wijaya, Sp.M|MATA|Terjadwal|
+4|20/04/2026|Senin|07:00|09:00|Hernia Repair|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
+5|20/04/2026|Senin|10:00|11:30|Tonsilektomi|dr. Nina Kusuma, Sp.THT|THT|Terjadwal|
+6|21/04/2026|Selasa|07:30|09:30|ORIF Radius|dr. Agus Setiawan, Sp.OT|ORTOPEDI|Terjadwal|
+7|21/04/2026|Selasa|10:00|11:30|Miomektomi|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
+8|22/04/2026|Rabu|07:00|08:30|Polipektomi Nasal|dr. Nina Kusuma, Sp.THT|THT|Terjadwal|

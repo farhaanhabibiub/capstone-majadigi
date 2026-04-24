@@ -5,7 +5,7 @@ import 'timeline_graph.dart';
 class RouteCard extends StatefulWidget {
   final TransjatimRoute route;
 
-  const RouteCard({Key? key, required this.route}) : super(key: key);
+  const RouteCard({super.key, required this.route});
 
   @override
   State<RouteCard> createState() => _RouteCardState();

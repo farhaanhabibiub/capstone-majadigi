@@ -26,6 +26,9 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
   List<KendaraanData> _database = [];
   bool _dbLoaded = false;
   bool _isSearching = false;
+  String? _platError;
+
+  static final _platRegex = RegExp(r'^[A-Z]{1,2}\s?\d{1,4}\s?[A-Z]{0,3}$');
 
   bool get _isFormFilled =>
       _platController.text.trim().isNotEmpty &&
@@ -54,7 +57,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
 
   Future<void> _loadDatabase() async {
     try {
-      final raw = await rootBundle.loadString('assets/data/kendaraan_dummy.csv');
+      final raw = await rootBundle.loadString('assets/data/kendaraan_jatim.csv');
       final rows = Csv(fieldDelimiter: ',', lineDelimiter: '\n').decode(raw);
 
       if (rows.length <= 1) return;
@@ -77,8 +80,15 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
     }
   }
 
-  void _handleCari() {
+  Future<void> _handleCari() async {
     FocusScope.of(context).unfocus();
+
+    final inputPlat = _platController.text.trim().toUpperCase();
+    if (!_platRegex.hasMatch(inputPlat)) {
+      setState(() => _platError = 'Format tidak valid. Contoh: L 1234 AB atau W 5678 C');
+      return;
+    }
+    setState(() => _platError = null);
 
     if (!_dbLoaded) {
       _showErrorAlert('Database belum selesai dimuat. Coba lagi sebentar.');
@@ -86,8 +96,9 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
     }
 
     setState(() => _isSearching = true);
+    // beri frame untuk update UI sebelum pencarian blocking
+    await Future.delayed(const Duration(milliseconds: 50));
 
-    final inputPlat = _platController.text.trim().toUpperCase();
     final inputRangka = _rangkaController.text.trim().toUpperCase();
 
     KendaraanData? found;
@@ -99,8 +110,10 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
       }
     }
 
+    if (!mounted) return;
     setState(() => _isSearching = false);
 
+    if (!mounted) return;
     if (found == null) {
       _showErrorAlert(
         'Data kendaraan tidak ditemukan.\nPeriksa kembali plat nomor dan nomor rangka Anda.',
@@ -176,7 +189,25 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: !_dbLoaded
+          ? const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text(
+                    'Memuat database kendaraan...',
+                    style: TextStyle(
+                      color: Color.fromRGBO(120, 120, 120, 1),
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,6 +287,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
             _buildInputField(
               controller: _platController,
               hint: 'X 0000 XX',
+              hasError: _platError != null,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9 ]')),
                 UpperCaseTextFormatter(),
@@ -263,6 +295,20 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.text,
             ),
+            if (_platError != null) ...[
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(
+                  _platError!,
+                  style: const TextStyle(
+                    color: Color.fromRGBO(220, 38, 38, 1),
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
 
             const SizedBox(height: 18),
 
@@ -336,19 +382,24 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
     required String hint,
     required TextInputAction textInputAction,
     required TextInputType keyboardType,
+    bool hasError = false,
     List<TextInputFormatter>? inputFormatters,
   }) {
     final bool isFilled = controller.text.trim().isNotEmpty;
-    final Color borderColor =
-        isFilled ? _blue : const Color.fromRGBO(225, 225, 225, 1);
+    final Color borderColor = hasError
+        ? const Color.fromRGBO(220, 38, 38, 1)
+        : isFilled
+            ? _blue
+            : const Color.fromRGBO(225, 225, 225, 1);
 
     return TextField(
       controller: controller,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
+      onChanged: hasError ? (_) => setState(() => _platError = null) : null,
       style: TextStyle(
-        color: isFilled ? _blue : _textPrimary,
+        color: hasError ? const Color.fromRGBO(220, 38, 38, 1) : isFilled ? _blue : _textPrimary,
         fontFamily: 'PlusJakartaSans',
         fontSize: 14,
         fontWeight: FontWeight.w500,
@@ -373,7 +424,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(999),
-          borderSide: const BorderSide(color: _blue, width: 1.4),
+          borderSide: BorderSide(color: hasError ? const Color.fromRGBO(220, 38, 38, 1) : _blue, width: 1.4),
         ),
       ),
     );
