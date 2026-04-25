@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../common/favorite_mixin.dart';
 import '../notification_service.dart';
+import '../theme/app_theme.dart';
 import 'widgets/skrining_tab.dart';
 import 'widgets/riwayat_tab.dart';
 import 'widgets/tentang_tab.dart';
@@ -15,18 +16,17 @@ class EtibiPage extends StatefulWidget {
   State<EtibiPage> createState() => _EtibiPageState();
 }
 
-class _EtibiPageState extends State<EtibiPage> {
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-
+class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
   int _selectedTabIndex = 0;
   List<RiwayatSkrining> _riwayatList = [];
   bool _isLoadingRiwayat = true;
   DateTime? _reminderDate;
-  bool _isFavorite = false;
 
-  static const String _favKey = 'fav_etibi';
+  @override
+  String get favoriteKey => 'fav_etibi';
+
+  @override
+  String get favoriteLabel => 'E-TIBI';
 
   CollectionReference<Map<String, dynamic>>? get _riwayatCol {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -42,56 +42,8 @@ class _EtibiPageState extends State<EtibiPage> {
     super.initState();
     _loadRiwayat();
     _loadReminderDate();
-    _loadFavorite();
   }
 
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next
-            ? _blue
-            : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              next
-                  ? 'E-TIBI ditambahkan ke favorit'
-                  : 'E-TIBI dihapus dari favorit',
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // placeholder agar initState lama tidak error — method sudah dipindah ke atas
   Future<void> _loadReminderDate() async {
     final date = await NotificationService.getReminderDate();
     if (mounted) setState(() => _reminderDate = date);
@@ -182,7 +134,7 @@ class _EtibiPageState extends State<EtibiPage> {
               ),
               child: const Icon(
                 Icons.notifications_active_outlined,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 32,
               ),
             ),
@@ -256,7 +208,7 @@ class _EtibiPageState extends State<EtibiPage> {
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: _blue,
+          backgroundColor: AppTheme.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -282,7 +234,7 @@ class _EtibiPageState extends State<EtibiPage> {
     final double headerHeight = kToolbarHeight + statusBarHeight + 36;
 
     return Scaffold(
-      backgroundColor: _blue,
+      backgroundColor: AppTheme.primary,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
@@ -309,13 +261,13 @@ class _EtibiPageState extends State<EtibiPage> {
             decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
             child: IconButton(
               icon: Icon(
-                _isFavorite
+                isFavorite
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_border_rounded,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 20,
               ),
-              onPressed: _toggleFavorite,
+              onPressed: toggleFavorite,
               constraints: const BoxConstraints(),
               padding: EdgeInsets.zero,
             ),
@@ -329,7 +281,7 @@ class _EtibiPageState extends State<EtibiPage> {
             height: headerHeight + 50,
             child: Container(
               decoration: const BoxDecoration(
-                color: _blue,
+                color: AppTheme.primary,
                 image: DecorationImage(
                   image: AssetImage('assets/images/tekstur.png'),
                   fit: BoxFit.cover,
@@ -345,7 +297,7 @@ class _EtibiPageState extends State<EtibiPage> {
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: _whiteBg,
+                    color: AppTheme.background,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: Column(
@@ -367,7 +319,7 @@ class _EtibiPageState extends State<EtibiPage> {
   Widget _buildTabContent() {
     if (_selectedTabIndex == 1) {
       if (_isLoadingRiwayat) {
-        return const Center(child: CircularProgressIndicator(color: _blue));
+        return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
       }
       return Column(
         children: [
@@ -406,7 +358,7 @@ class _EtibiPageState extends State<EtibiPage> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.notifications_active, color: _blue, size: 20),
+          const Icon(Icons.notifications_active, color: AppTheme.primary, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -418,7 +370,7 @@ class _EtibiPageState extends State<EtibiPage> {
                     fontFamily: 'PlusJakartaSans',
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
-                    color: _blue,
+                    color: AppTheme.primary,
                   ),
                 ),
                 Text(
@@ -448,7 +400,7 @@ class _EtibiPageState extends State<EtibiPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: _blue,
+                color: AppTheme.primary,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(
@@ -500,7 +452,7 @@ class _EtibiPageState extends State<EtibiPage> {
             child: const Text(
               'Mulai Skrining',
               style: TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -536,14 +488,14 @@ class _EtibiPageState extends State<EtibiPage> {
         onTap: () => setState(() => _selectedTabIndex = index),
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? _blue : Colors.transparent,
+            color: isSelected ? AppTheme.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
           ),
           alignment: Alignment.center,
           child: Text(
             title,
             style: TextStyle(
-              color: isSelected ? Colors.white : _textPrimary,
+              color: isSelected ? Colors.white : AppTheme.textPrimary,
               fontFamily: 'PlusJakartaSans',
               fontWeight: FontWeight.w600,
               fontSize: 13,

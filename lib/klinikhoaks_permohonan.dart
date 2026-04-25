@@ -2,14 +2,15 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'admin/admin_page.dart';
 import 'auth_service.dart';
+import 'common/favorite_mixin.dart';
 import 'klinikhoaks_landing_page.dart';
 import 'klinikhoaks_lihatdetail.dart';
 import 'klinikhoaks_model.dart';
 import 'notification_service.dart';
+import 'theme/app_theme.dart';
 
 class KlinikHoaksPermohonanPage extends StatefulWidget {
   final int initialTab;
@@ -19,25 +20,26 @@ class KlinikHoaksPermohonanPage extends StatefulWidget {
   State<KlinikHoaksPermohonanPage> createState() => _KlinikHoaksPermohonanPageState();
 }
 
-class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
-  static const _blue = Color(0xFF007AFF);
-
+class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
+    with FavoriteMixin {
   late int _selectedTab;
   List<LaporanHoaks> _laporanList = [];
   bool _isLoadingLaporan = true;
   bool _isAdmin = false;
-  bool _isFavorite = false;
   StreamSubscription<QuerySnapshot>? _statusStream;
   final Map<String, String> _knownStatuses = {};
 
-  static const String _favKey = 'fav_klinikhoaks';
+  @override
+  String get favoriteKey => 'fav_klinikhoaks';
+
+  @override
+  String get favoriteLabel => 'Klinik Hoaks';
 
   String? get _uid => FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
-    _loadFavorite();
     _selectedTab = widget.initialTab;
     _loadLaporan();
     _checkAdmin();
@@ -48,52 +50,6 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
   void dispose() {
     _statusStream?.cancel();
     super.dispose();
-  }
-
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next
-            ? _blue
-            : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              next
-                  ? 'Klinik Hoaks ditambahkan ke favorit'
-                  : 'Klinik Hoaks dihapus dari favorit',
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Future<void> _checkAdmin() async {
@@ -230,7 +186,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
                                       color: Colors.white,
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(Icons.admin_panel_settings, color: _blue, size: 22),
+                                    child: const Icon(Icons.admin_panel_settings, color: AppTheme.primary, size: 22),
                                   ),
                                 ),
                               Container(
@@ -243,13 +199,13 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
                                 child: IconButton(
                                   padding: EdgeInsets.zero,
                                   icon: Icon(
-                                    _isFavorite
+                                    isFavorite
                                         ? Icons.bookmark_rounded
                                         : Icons.bookmark_border_rounded,
-                                    color: _blue,
+                                    color: AppTheme.primary,
                                     size: 22,
                                   ),
-                                  onPressed: _toggleFavorite,
+                                  onPressed: toggleFavorite,
                                 ),
                               ),
                             ],
@@ -314,7 +270,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? _blue : Colors.transparent,
+            color: isSelected ? AppTheme.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
           child: Center(
@@ -363,7 +319,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: const BoxDecoration(color: Color(0xFFEBF5FF), shape: BoxShape.circle),
-              child: const Icon(Icons.description, color: _blue, size: 28),
+              child: const Icon(Icons.description, color: AppTheme.primary, size: 28),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -391,7 +347,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
               height: 52,
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: _blue, width: 1.5),
+                  side: const BorderSide(color: AppTheme.primary, width: 1.5),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
                 ),
                 onPressed: () async {
@@ -412,7 +368,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
                     fontSize: 16,
                     fontFamily: 'PlusJakartaSans',
                     fontWeight: FontWeight.w600,
-                    color: _blue,
+                    color: AppTheme.primary,
                   ),
                 ),
               ),
@@ -426,13 +382,13 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
   // ── Tab 1: Tiket Saya ─────────────────────────────────────────────────────────
   Widget _buildTiketSayaTab() {
     if (_isLoadingLaporan) {
-      return const Center(child: CircularProgressIndicator(color: _blue));
+      return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
     }
     if (_laporanList.isEmpty) {
       return _buildEmptyTiket();
     }
     return RefreshIndicator(
-      color: _blue,
+      color: AppTheme.primary,
       onRefresh: _refreshLaporan,
       child: ListView.separated(
         padding: const EdgeInsets.all(20),
@@ -478,7 +434,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
               child: const Text(
                 'Ajukan Laporan',
                 style: TextStyle(
-                  color: _blue,
+                  color: AppTheme.primary,
                   fontFamily: 'PlusJakartaSans',
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
@@ -495,7 +451,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
     final statusColor = laporan.status == 'Selesai'
         ? const Color(0xFF32D583)
         : laporan.status == 'Diverifikasi'
-            ? _blue
+            ? AppTheme.primary
             : const Color(0xFFFDB022);
 
     return Container(
@@ -567,7 +523,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
             height: 44,
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: _blue, width: 1.5),
+                side: const BorderSide(color: AppTheme.primary, width: 1.5),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
               ),
               onPressed: () {
@@ -584,7 +540,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
                   fontSize: 13,
                   fontFamily: 'PlusJakartaSans',
                   fontWeight: FontWeight.w600,
-                  color: _blue,
+                  color: AppTheme.primary,
                 ),
               ),
             ),
@@ -629,7 +585,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
             child: const Text(
               'klinikhoaks.jatimprov.go.id',
               style: TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 decoration: TextDecoration.underline,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
@@ -671,7 +627,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage> {
           child: const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.info_outline, color: _blue, size: 16),
+              Icon(Icons.info_outline, color: AppTheme.primary, size: 16),
               SizedBox(width: 8),
               Expanded(
                 child: Text(

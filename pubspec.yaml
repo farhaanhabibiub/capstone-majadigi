@@ -30,6 +30,8 @@ dependencies:
   latlong2: ^0.9.0
   shared_preferences: ^2.3.5
   firebase_messaging: ^16.2.0
+  image_picker: ^1.1.2
+  google_generative_ai: ^0.4.0
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +64,7 @@ flutter:
     - assets/images/dapurmbg.png
     - assets/images/ayopasok.png
 #    - assets/images/avatar_placeholder.png
+    - assets/images/maja_ai.png
     - assets/images/layanan_bapenda.png
     - assets/images/layanan_rsud.png
     - assets/images/layanan_transjatim.png

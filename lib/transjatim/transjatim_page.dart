@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../common/favorite_mixin.dart';
+import '../theme/app_theme.dart';
+import '../widgets/empty_state.dart';
+import '../widgets/error_retry.dart';
 import 'data/transjatim_dummy_data.dart';
 import 'models/transjatim_model.dart';
 import 'ticket_history_service.dart';
@@ -14,69 +17,16 @@ class TransjatimPage extends StatefulWidget {
   State<TransjatimPage> createState() => _TransjatimPageState();
 }
 
-class _TransjatimPageState extends State<TransjatimPage> {
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
-
+class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
   int _selectedTabIndex = 0;
-  bool _isFavorite = false;
 
-  static const String _favKey = 'fav_transjatim';
   static const List<String> _tabs = ['Beli Tiket', 'Rute', 'Peta', 'Riwayat'];
 
   @override
-  void initState() {
-    super.initState();
-    _loadFavorite();
-  }
+  String get favoriteKey => 'fav_transjatim';
 
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next
-            ? _blue
-            : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              next
-                  ? 'Transjatim ditambahkan ke favorit'
-                  : 'Transjatim dihapus dari favorit',
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  @override
+  String get favoriteLabel => 'Transjatim';
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +34,7 @@ class _TransjatimPageState extends State<TransjatimPage> {
     final double headerHeight = kToolbarHeight + statusBarHeight + 36;
 
     return Scaffold(
-      backgroundColor: _blue,
+      backgroundColor: AppTheme.primary,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
@@ -111,13 +61,13 @@ class _TransjatimPageState extends State<TransjatimPage> {
             decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
             child: IconButton(
               icon: Icon(
-                _isFavorite
+                isFavorite
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_outline_rounded,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 20,
               ),
-              onPressed: _toggleFavorite,
+              onPressed: toggleFavorite,
               constraints: const BoxConstraints(),
               padding: EdgeInsets.zero,
             ),
@@ -130,7 +80,7 @@ class _TransjatimPageState extends State<TransjatimPage> {
             top: 0, left: 0, right: 0,
             height: headerHeight + 50,
             child: Container(
-              decoration: const BoxDecoration(color: _blue),
+              decoration: const BoxDecoration(color: AppTheme.primary),
             ),
           ),
           Column(
@@ -140,7 +90,7 @@ class _TransjatimPageState extends State<TransjatimPage> {
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: _whiteBg,
+                    color: AppTheme.background,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: Column(
@@ -174,14 +124,14 @@ class _TransjatimPageState extends State<TransjatimPage> {
                 onTap: () => setState(() => _selectedTabIndex = i),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isSelected ? _blue : Colors.transparent,
+                    color: isSelected ? AppTheme.primary : Colors.transparent,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     _tabs[i],
                     style: TextStyle(
-                      color: isSelected ? Colors.white : _textPrimary,
+                      color: isSelected ? Colors.white : AppTheme.textPrimary,
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
@@ -226,7 +176,7 @@ class _TransjatimPageState extends State<TransjatimPage> {
           return [
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 10),
-              child: Text(city, style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w600)),
+              child: Text(city, style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w600)),
             ),
             ...cityRoutes.map((r) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -253,7 +203,7 @@ class _TransjatimPageState extends State<TransjatimPage> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: _blue, borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(20)),
                 child: Text(route.id, style: const TextStyle(color: Colors.white, fontFamily: 'PlusJakartaSans', fontSize: 11, fontWeight: FontWeight.w700)),
               ),
               const SizedBox(width: 8),
@@ -273,17 +223,17 @@ class _TransjatimPageState extends State<TransjatimPage> {
                   ),
                 ),
               const Spacer(),
-              const Icon(Icons.access_time_rounded, size: 12, color: _textSecondary),
+              const Icon(Icons.access_time_rounded, size: 12, color: AppTheme.textSecondary),
               const SizedBox(width: 4),
-              Text(route.operationalHours, style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
+              Text(route.operationalHours, style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
             ],
           ),
           const SizedBox(height: 10),
-          Text(route.title, style: const TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700)),
+          Text(route.title, style: const TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text(
             '${route.stops.length} halte  •  Ekonomi mulai Rp 2.500',
-            style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12),
+            style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12),
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -294,7 +244,7 @@ class _TransjatimPageState extends State<TransjatimPage> {
                 MaterialPageRoute(builder: (_) => BuyTicketPage(route: route)),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: _blue,
+                backgroundColor: AppTheme.primary,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
@@ -324,27 +274,23 @@ class _TransjatimPageState extends State<TransjatimPage> {
       future: TicketHistoryService.getAll(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
+        }
+        if (snapshot.hasError) {
+          return ErrorRetry(
+            title: 'Gagal memuat riwayat tiket',
+            subtitle: ErrorRetry.fromException(snapshot.error!),
+            onRetry: () => setState(() {}),
+          );
         }
         final tickets = snapshot.data ?? [];
         if (tickets.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.confirmation_number_outlined, size: 64, color: Colors.grey.shade300),
-                const SizedBox(height: 12),
-                const Text(
-                  'Belum ada riwayat tiket',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Tiket yang dibeli akan muncul di sini',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey),
-                ),
-              ],
-            ),
+          return EmptyState(
+            icon: Icons.confirmation_number_outlined,
+            title: 'Belum ada riwayat tiket',
+            subtitle: 'Tiket yang Anda beli akan muncul di sini.',
+            actionLabel: 'Beli Tiket Sekarang',
+            onAction: () => setState(() => _selectedTabIndex = 0),
           );
         }
         return Column(
@@ -356,7 +302,7 @@ class _TransjatimPageState extends State<TransjatimPage> {
                 children: [
                   Text(
                     '${tickets.length} tiket tersimpan',
-                    style: const TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 13, color: _textSecondary),
+                    style: const TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 13, color: AppTheme.textSecondary),
                   ),
                   TextButton(
                     onPressed: () async {
@@ -413,12 +359,12 @@ class _TransjatimPageState extends State<TransjatimPage> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: _blue, borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(20)),
                 child: Text(t['routeId'] as String? ?? '', style: const TextStyle(color: Colors.white, fontFamily: 'PlusJakartaSans', fontSize: 11, fontWeight: FontWeight.w700)),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(t['city'] as String? ?? '', style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
+                child: Text(t['city'] as String? ?? '', style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -430,24 +376,24 @@ class _TransjatimPageState extends State<TransjatimPage> {
           const SizedBox(height: 8),
           Text(
             '${t['fromStop']} → ${t['toStop']}',
-            style: const TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700),
+            style: const TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.person_outline, size: 13, color: _textSecondary),
+              const Icon(Icons.person_outline, size: 13, color: AppTheme.textSecondary),
               const SizedBox(width: 4),
-              Text('${t['passengerCount']} orang • ${t['ticketClass']}', style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12)),
+              Text('${t['passengerCount']} orang • ${t['ticketClass']}', style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12)),
               const Spacer(),
-              Text(totalStr, style: const TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700)),
+              Text(totalStr, style: const TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700)),
             ],
           ),
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.access_time, size: 13, color: _textSecondary),
+              const Icon(Icons.access_time, size: 13, color: AppTheme.textSecondary),
               const SizedBox(width: 4),
-              Text(dateStr, style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
+              Text(dateStr, style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
             ],
           ),
         ],

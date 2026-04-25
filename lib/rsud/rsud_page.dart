@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../app_route.dart';
+import '../common/favorite_mixin.dart';
+import '../theme/app_theme.dart';
 import 'hospital_config.dart';
 
 class RsudPage extends StatefulWidget {
@@ -12,72 +13,16 @@ class RsudPage extends StatefulWidget {
   State<RsudPage> createState() => _RsudPageState();
 }
 
-class _RsudPageState extends State<RsudPage> {
+class _RsudPageState extends State<RsudPage> with FavoriteMixin {
   int _selectedTab = 0;
   bool _operasionalExpanded = true;
   bool _ketentuanExpanded = false;
-  bool _isFavorite = false;
-
-  String get _favKey => 'fav_rsud_${widget.hospital.id}';
 
   @override
-  void initState() {
-    super.initState();
-    _loadFavorite();
-  }
+  String get favoriteKey => 'fav_rsud_${widget.hospital.id}';
 
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next
-            ? const Color.fromRGBO(0, 101, 255, 1)
-            : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                next
-                    ? '${widget.hospital.name} ditambahkan ke favorit'
-                    : '${widget.hospital.name} dihapus dari favorit',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'PlusJakartaSans',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
+  @override
+  String get favoriteLabel => widget.hospital.name;
 
   // ── Per-hospital Operasional data ─────────────────────────────────────────
 
@@ -392,7 +337,7 @@ class _RsudPageState extends State<RsudPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _whiteBg,
+      backgroundColor: AppTheme.background,
       appBar: _buildAppBar(),
       body: Column(
         children: [
@@ -413,7 +358,7 @@ class _RsudPageState extends State<RsudPage> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: _blue,
+      backgroundColor: AppTheme.primary,
       elevation: 0,
       centerTitle: true,
       leading: IconButton(
@@ -433,7 +378,7 @@ class _RsudPageState extends State<RsudPage> {
         Padding(
           padding: const EdgeInsets.only(right: 12),
           child: GestureDetector(
-            onTap: _toggleFavorite,
+            onTap: toggleFavorite,
             child: Container(
               width: 36,
               height: 36,
@@ -442,10 +387,10 @@ class _RsudPageState extends State<RsudPage> {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                _isFavorite
+                isFavorite
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_border_rounded,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 20,
               ),
             ),
@@ -492,14 +437,14 @@ class _RsudPageState extends State<RsudPage> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isActive ? _blue : Colors.transparent,
+            color: isActive ? AppTheme.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(999),
           ),
           alignment: Alignment.center,
           child: Text(
             label,
             style: TextStyle(
-              color: isActive ? Colors.white : _textSecondary,
+              color: isActive ? Colors.white : AppTheme.textSecondary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
@@ -584,13 +529,13 @@ class _RsudPageState extends State<RsudPage> {
               color: Color.fromRGBO(235, 243, 255, 1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: _blue, size: 24),
+            child: Icon(icon, color: AppTheme.primary, size: 24),
           ),
           const SizedBox(height: 14),
           Text(
             title,
             style: const TextStyle(
-              color: _textPrimary,
+              color: AppTheme.textPrimary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -601,7 +546,7 @@ class _RsudPageState extends State<RsudPage> {
           Text(
             description,
             style: const TextStyle(
-              color: _textSecondary,
+              color: AppTheme.textSecondary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -615,7 +560,7 @@ class _RsudPageState extends State<RsudPage> {
             child: OutlinedButton(
               onPressed: onButtonTap,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: _blue, width: 1.2),
+                side: const BorderSide(color: AppTheme.primary, width: 1.2),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(999),
                 ),
@@ -623,7 +568,7 @@ class _RsudPageState extends State<RsudPage> {
               child: Text(
                 buttonLabel,
                 style: const TextStyle(
-                  color: _blue,
+                  color: AppTheme.primary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -710,7 +655,7 @@ class _RsudPageState extends State<RsudPage> {
                       color: Color.fromRGBO(235, 243, 255, 1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(icon, color: _blue, size: 20),
+                    child: Icon(icon, color: AppTheme.primary, size: 20),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -720,7 +665,7 @@ class _RsudPageState extends State<RsudPage> {
                         Text(
                           title,
                           style: const TextStyle(
-                            color: _textPrimary,
+                            color: AppTheme.textPrimary,
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -730,7 +675,7 @@ class _RsudPageState extends State<RsudPage> {
                         Text(
                           subtitle,
                           style: const TextStyle(
-                            color: _textSecondary,
+                            color: AppTheme.textSecondary,
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
@@ -744,7 +689,7 @@ class _RsudPageState extends State<RsudPage> {
                     turns: isExpanded ? 0 : 0.5,
                     child: const Icon(
                       Icons.keyboard_arrow_up_rounded,
-                      color: _textSecondary,
+                      color: AppTheme.textSecondary,
                       size: 22,
                     ),
                   ),
@@ -782,12 +727,12 @@ class _RsudPageState extends State<RsudPage> {
             child: Text(
               _hospitalUrl,
               style: const TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline,
-                decorationColor: _blue,
+                decorationColor: AppTheme.primary,
               ),
             ),
           ),
@@ -798,7 +743,7 @@ class _RsudPageState extends State<RsudPage> {
           child: Text(
             _alamat,
             style: const TextStyle(
-              color: _textPrimary,
+              color: AppTheme.textPrimary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -827,12 +772,12 @@ class _RsudPageState extends State<RsudPage> {
             child: Text(
               _telepon,
               style: const TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline,
-                decorationColor: _blue,
+                decorationColor: AppTheme.primary,
               ),
             ),
           ),
@@ -848,12 +793,12 @@ class _RsudPageState extends State<RsudPage> {
             child: Text(
               _email,
               style: const TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline,
-                decorationColor: _blue,
+                decorationColor: AppTheme.primary,
               ),
             ),
           ),
@@ -896,12 +841,12 @@ class _RsudPageState extends State<RsudPage> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: _blue, size: 16),
+            Icon(icon, color: AppTheme.primary, size: 16),
             const SizedBox(width: 4),
             Text(
               label,
               style: const TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -922,7 +867,7 @@ class _RsudPageState extends State<RsudPage> {
         const Text(
           'Manfaat',
           style: TextStyle(
-            color: _textPrimary,
+            color: AppTheme.textPrimary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w700,
@@ -933,7 +878,7 @@ class _RsudPageState extends State<RsudPage> {
         Text(
           _ketentuanIntro,
           style: const TextStyle(
-            color: _textPrimary,
+            color: AppTheme.textPrimary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w400,
@@ -950,7 +895,7 @@ class _RsudPageState extends State<RsudPage> {
                 Text(
                   '${i + 1}. ',
                   style: const TextStyle(
-                    color: _textPrimary,
+                    color: AppTheme.textPrimary,
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
@@ -961,7 +906,7 @@ class _RsudPageState extends State<RsudPage> {
                   child: Text(
                     _manfaatList[i],
                     style: const TextStyle(
-                      color: _textPrimary,
+                      color: AppTheme.textPrimary,
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -976,7 +921,7 @@ class _RsudPageState extends State<RsudPage> {
         const Text(
           'Sistem, Mekanisme, dan Prosedur',
           style: TextStyle(
-            color: _textPrimary,
+            color: AppTheme.textPrimary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w700,
@@ -987,7 +932,7 @@ class _RsudPageState extends State<RsudPage> {
         Text(
           _pendaftaranPoliTitle,
           style: const TextStyle(
-            color: _textPrimary,
+            color: AppTheme.textPrimary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -1004,7 +949,7 @@ class _RsudPageState extends State<RsudPage> {
                 Text(
                   '${i + 1}. ',
                   style: const TextStyle(
-                    color: _textPrimary,
+                    color: AppTheme.textPrimary,
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
@@ -1015,7 +960,7 @@ class _RsudPageState extends State<RsudPage> {
                   child: Text(
                     _pendaftaranPoliSteps[i],
                     style: const TextStyle(
-                      color: _textPrimary,
+                      color: AppTheme.textPrimary,
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -1030,7 +975,7 @@ class _RsudPageState extends State<RsudPage> {
         Text(
           _pendaftaranBpjsTitle,
           style: const TextStyle(
-            color: _textPrimary,
+            color: AppTheme.textPrimary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -1047,7 +992,7 @@ class _RsudPageState extends State<RsudPage> {
                 Text(
                   '${i + 1}. ',
                   style: const TextStyle(
-                    color: _textPrimary,
+                    color: AppTheme.textPrimary,
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
@@ -1058,7 +1003,7 @@ class _RsudPageState extends State<RsudPage> {
                   child: Text(
                     _pendaftaranBpjsSteps[i],
                     style: const TextStyle(
-                      color: _textPrimary,
+                      color: AppTheme.textPrimary,
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -1089,7 +1034,7 @@ class _RsudPageState extends State<RsudPage> {
           Text(
             label,
             style: const TextStyle(
-              color: _textPrimary,
+              color: AppTheme.textPrimary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -1119,8 +1064,6 @@ class _BulletItem extends StatelessWidget {
   final String text;
   const _BulletItem({required this.text});
 
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -1132,7 +1075,7 @@ class _BulletItem extends StatelessWidget {
             padding: EdgeInsets.only(top: 6),
             child: CircleAvatar(
               radius: 3,
-              backgroundColor: _textPrimary,
+              backgroundColor: AppTheme.textPrimary,
             ),
           ),
           const SizedBox(width: 8),
@@ -1140,7 +1083,7 @@ class _BulletItem extends StatelessWidget {
             child: Text(
               text,
               style: const TextStyle(
-                color: _textPrimary,
+                color: AppTheme.textPrimary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w400,

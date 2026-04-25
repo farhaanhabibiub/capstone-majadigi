@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../app_route.dart';
+import '../theme/app_theme.dart';
 import 'hasil_njkb_page.dart';
 
 // ── Model record database ──────────────────────────────────────────────────────
@@ -44,10 +45,6 @@ class EstimasiNjkbPage extends StatefulWidget {
 }
 
 class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
 
   // ── Database ────────────────────────────────────────────────────────────────
   List<_NjkbRecord> _db = [];
@@ -197,9 +194,9 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
     return GestureDetector(
       onTap: () => setState(() => _open = null),
       child: Scaffold(
-        backgroundColor: _whiteBg,
+        backgroundColor: AppTheme.background,
         appBar: AppBar(
-          backgroundColor: _blue,
+          backgroundColor: AppTheme.primary,
           elevation: 0,
           centerTitle: true,
           leading: IconButton(
@@ -281,7 +278,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
                       child: ElevatedButton(
                         onPressed: _isFormFilled ? _handleCariData : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _blue,
+                          backgroundColor: AppTheme.primary,
                           disabledBackgroundColor: const Color.fromRGBO(210, 210, 210, 1),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(999)),
@@ -328,18 +325,18 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
             decoration: const BoxDecoration(
               color: Color.fromRGBO(235, 243, 255, 1), shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.account_balance_wallet_rounded, color: _blue, size: 22),
+            child: const Icon(Icons.account_balance_wallet_rounded, color: AppTheme.primary, size: 22),
           ),
           const SizedBox(width: 12),
           const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Cek Estimasi Jual Kendaraan',
-                  style: TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans',
+                  style: TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans',
                       fontSize: 14, fontWeight: FontWeight.w700)),
               SizedBox(height: 2),
               Text('BAPENDA Provinsi Jawa Timur',
-                  style: TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans',
+                  style: TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans',
                       fontSize: 12, fontWeight: FontWeight.w400)),
             ],
           ),
@@ -351,7 +348,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
   Widget _buildLabel(String text) => Text(
         text,
         style: const TextStyle(
-          color: _textPrimary, fontFamily: 'PlusJakartaSans',
+          color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans',
           fontSize: 13, fontWeight: FontWeight.w600,
         ),
       );
@@ -371,19 +368,19 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
     final Color border = isDisabled
         ? const Color.fromRGBO(220, 220, 220, 1)
         : hasVal || isOpen
-            ? _blue
+            ? AppTheme.primary
             : const Color.fromRGBO(225, 225, 225, 1);
 
     final Color labelColor = isDisabled
         ? const Color.fromRGBO(190, 190, 190, 1)
         : hasVal
-            ? _blue
+            ? AppTheme.primary
             : const Color.fromRGBO(180, 180, 180, 1);
 
     final Color chevron = isDisabled
         ? const Color.fromRGBO(200, 200, 200, 1)
         : hasVal || isOpen
-            ? _blue
+            ? AppTheme.primary
             : const Color.fromRGBO(160, 160, 160, 1);
 
     return Container(
@@ -394,7 +391,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
         border: Border.all(color: border, width: 1.2),
         boxShadow: hasVal && !isOpen
             ? [BoxShadow(
-                color: _blue.withValues(alpha: 0.08),
+                color: AppTheme.primary.withValues(alpha: 0.08),
                 blurRadius: 6, offset: const Offset(0, 2))]
             : null,
       ),
@@ -443,7 +440,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
                         child: Text(
                           items[i],
                           style: TextStyle(
-                            color: selected == items[i] ? _blue : _textPrimary,
+                            color: selected == items[i] ? AppTheme.primary : AppTheme.textPrimary,
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 14,
                             fontWeight: selected == items[i] ? FontWeight.w600 : FontWeight.w400,
@@ -451,7 +448,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
                         ),
                       ),
                       if (selected == items[i])
-                        const Icon(Icons.check_rounded, color: _blue, size: 18),
+                        const Icon(Icons.check_rounded, color: AppTheme.primary, size: 18),
                     ],
                   ),
                 ),

@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'app_route.dart';
 import 'firebase_options.dart';
 import 'notification_service.dart';
+import 'theme/theme_controller.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -18,6 +19,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDateFormatting('id_ID', null);
   await NotificationService.initialize();
+  await ThemeController.init();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.onMessage.listen((message) {
@@ -62,15 +64,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Majadigi',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: const Color(0xFF007AFF),
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF007AFF)),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeController.notifier,
+      builder: (_, themeMode, __) => MaterialApp(
+        title: 'Majadigi',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: const Color(0xFF0065FF),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0065FF)),
+        ),
+        darkTheme: ThemeData.dark().copyWith(
+          primaryColor: const Color(0xFF0065FF),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF0065FF),
+            brightness: Brightness.dark,
+          ),
+        ),
+        themeMode: themeMode,
+        initialRoute: AppRoutes.splashScreen,
+        onGenerateRoute: AppRoutes.generateRoute,
       ),
-      initialRoute: AppRoutes.splashScreen,
-      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }

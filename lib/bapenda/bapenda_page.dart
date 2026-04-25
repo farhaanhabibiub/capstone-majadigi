@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../app_route.dart';
+import '../common/favorite_mixin.dart';
+import '../theme/app_theme.dart';
 
 class BapendaPage extends StatefulWidget {
   const BapendaPage({super.key});
@@ -10,70 +11,16 @@ class BapendaPage extends StatefulWidget {
   State<BapendaPage> createState() => _BapendaPageState();
 }
 
-class _BapendaPageState extends State<BapendaPage> {
+class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
   int _selectedTab = 0;
   bool _operasionalExpanded = true;
   bool _ketentuanExpanded = true;
-  bool _isFavorite = false;
-
-  static const String _favKey = 'fav_bapenda';
 
   @override
-  void initState() {
-    super.initState();
-    _loadFavorite();
-  }
+  String get favoriteKey => 'fav_bapenda';
 
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next
-            ? const Color.fromRGBO(0, 101, 255, 1)
-            : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              next
-                  ? 'BAPENDA ditambahkan ke favorit'
-                  : 'BAPENDA dihapus dari favorit',
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
+  @override
+  String get favoriteLabel => 'BAPENDA';
 
   static const List<String> _pendaftaranSteps = [
     'Kunjungi laman resmi Bapenda Jatim.',
@@ -86,7 +33,7 @@ class _BapendaPageState extends State<BapendaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _whiteBg,
+      backgroundColor: AppTheme.background,
       appBar: _buildAppBar(),
       body: Column(
         children: [
@@ -105,7 +52,7 @@ class _BapendaPageState extends State<BapendaPage> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: _blue,
+      backgroundColor: AppTheme.primary,
       elevation: 0,
       centerTitle: true,
       leading: IconButton(
@@ -125,7 +72,7 @@ class _BapendaPageState extends State<BapendaPage> {
         Padding(
           padding: const EdgeInsets.only(right: 12),
           child: GestureDetector(
-            onTap: _toggleFavorite,
+            onTap: toggleFavorite,
             child: Container(
               width: 36,
               height: 36,
@@ -134,10 +81,10 @@ class _BapendaPageState extends State<BapendaPage> {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                _isFavorite
+                isFavorite
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_border_rounded,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 20,
               ),
             ),
@@ -184,14 +131,14 @@ class _BapendaPageState extends State<BapendaPage> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isActive ? _blue : Colors.transparent,
+            color: isActive ? AppTheme.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(999),
           ),
           alignment: Alignment.center,
           child: Text(
             label,
             style: TextStyle(
-              color: isActive ? Colors.white : _textSecondary,
+              color: isActive ? Colors.white : AppTheme.textSecondary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
@@ -271,7 +218,7 @@ class _BapendaPageState extends State<BapendaPage> {
               fit: BoxFit.contain,
               errorBuilder: (_, _, _) => Icon(
                 fallbackIcon,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 24,
               ),
             ),
@@ -280,7 +227,7 @@ class _BapendaPageState extends State<BapendaPage> {
           Text(
             title,
             style: const TextStyle(
-              color: _textPrimary,
+              color: AppTheme.textPrimary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -291,7 +238,7 @@ class _BapendaPageState extends State<BapendaPage> {
           Text(
             description,
             style: const TextStyle(
-              color: _textSecondary,
+              color: AppTheme.textSecondary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -305,7 +252,7 @@ class _BapendaPageState extends State<BapendaPage> {
             child: OutlinedButton(
               onPressed: onButtonTap,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: _blue, width: 1.2),
+                side: const BorderSide(color: AppTheme.primary, width: 1.2),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(999),
                 ),
@@ -313,7 +260,7 @@ class _BapendaPageState extends State<BapendaPage> {
               child: Text(
                 buttonLabel,
                 style: const TextStyle(
-                  color: _blue,
+                  color: AppTheme.primary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -399,14 +346,14 @@ class _BapendaPageState extends State<BapendaPage> {
                       color: Color.fromRGBO(235, 243, 255, 1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(icon, color: _blue, size: 18),
+                    child: Icon(icon, color: AppTheme.primary, size: 18),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       title,
                       style: const TextStyle(
-                        color: _textPrimary,
+                        color: AppTheme.textPrimary,
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -459,12 +406,12 @@ class _BapendaPageState extends State<BapendaPage> {
             child: const Text(
               'https://bapenda.jatimprov.go.id/',
               style: TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline,
-                decorationColor: _blue,
+                decorationColor: AppTheme.primary,
               ),
             ),
           ),
@@ -475,7 +422,7 @@ class _BapendaPageState extends State<BapendaPage> {
           child: const Text(
             'Jl. Manyar Kertoarjo No.1, Manyar Sabrangan, Kec. Mulyorejo, Surabaya, Jawa Timur 60116',
             style: TextStyle(
-              color: _textPrimary,
+              color: AppTheme.textPrimary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -508,12 +455,12 @@ class _BapendaPageState extends State<BapendaPage> {
             child: const Text(
               '(031) 593-251',
               style: TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline,
-                decorationColor: _blue,
+                decorationColor: AppTheme.primary,
               ),
             ),
           ),
@@ -529,12 +476,12 @@ class _BapendaPageState extends State<BapendaPage> {
             child: const Text(
               'bapenda@jatimprov.go.id',
               style: TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline,
-                decorationColor: _blue,
+                decorationColor: AppTheme.primary,
               ),
             ),
           ),
@@ -553,7 +500,7 @@ class _BapendaPageState extends State<BapendaPage> {
             child: Text(
               hari,
               style: const TextStyle(
-                color: _textPrimary,
+                color: AppTheme.textPrimary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
@@ -564,7 +511,7 @@ class _BapendaPageState extends State<BapendaPage> {
           Text(
             '($jam)',
             style: const TextStyle(
-              color: _textSecondary,
+              color: AppTheme.textSecondary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -587,7 +534,7 @@ class _BapendaPageState extends State<BapendaPage> {
           child: const Text(
             'Sebagai institusi yang berperan penting dalam pengelolaan Pendapatan Asli Daerah, BAPENDA berupaya meningkatkan transparansi, akuntabilitas, dan kualitas pelayanan keuangan di tingkat Provinsi dan Kabupaten/Kota di Jawa Timur.',
             style: TextStyle(
-              color: _textPrimary,
+              color: AppTheme.textPrimary,
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -604,7 +551,7 @@ class _BapendaPageState extends State<BapendaPage> {
               const Text(
                 'Cara cek informasi pajak dan nilai jual kendaraan:',
                 style: TextStyle(
-                  color: _textPrimary,
+                  color: AppTheme.textPrimary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -621,7 +568,7 @@ class _BapendaPageState extends State<BapendaPage> {
                       Text(
                         '${i + 1}. ',
                         style: const TextStyle(
-                          color: _textPrimary,
+                          color: AppTheme.textPrimary,
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
@@ -632,7 +579,7 @@ class _BapendaPageState extends State<BapendaPage> {
                         child: Text(
                           _pendaftaranSteps[i],
                           style: const TextStyle(
-                            color: _textPrimary,
+                            color: AppTheme.textPrimary,
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
@@ -647,7 +594,7 @@ class _BapendaPageState extends State<BapendaPage> {
               const Text(
                 'Pembayaran Pajak Kendaraan Bermotor (PKB) tahunan bisa dilakukan di Kantor Bersama Samsat atau melalui E-Samsat. Aplikasi E-Samsat merupakan sistem pembayaran PKB, Sumbangan Wajib Dana Kecelakaan Lalu Lintas Jalan (SWDKLLJ), dan biaya administrasi.',
                 style: TextStyle(
-                  color: _textPrimary,
+                  color: AppTheme.textPrimary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -658,7 +605,7 @@ class _BapendaPageState extends State<BapendaPage> {
               const Text(
                 'Tersedia juga melalui marketplace, e-wallet, Payment Point Online Bank (PPOB) seperti Indomaret, Alfamart, Alfamidi, Kantor Pos, Agen Badan Usaha Mitra Desa, Samsat Kampus, dan sebagainya.',
                 style: TextStyle(
-                  color: _textPrimary,
+                  color: AppTheme.textPrimary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -681,7 +628,7 @@ class _BapendaPageState extends State<BapendaPage> {
         Text(
           label,
           style: const TextStyle(
-            color: _textSecondary,
+            color: AppTheme.textSecondary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 11,
             fontWeight: FontWeight.w600,

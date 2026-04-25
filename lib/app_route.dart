@@ -11,7 +11,9 @@ import 'location_manual_page.dart';
 import 'personalization_services_page.dart';
 import 'personalization_success_page.dart';
 import 'beranda/beranda_page.dart';
+import 'beranda/notifikasi_page.dart';
 import 'beranda/tambah_layanan_page.dart';
+import 'beranda/maja_ai_chat_page.dart';
 import 'bapenda/bapenda_page.dart';
 import 'bapenda/info_pajak_page.dart';
 import 'bapenda/hasil_pajak_page.dart';
@@ -33,6 +35,9 @@ import 'open_data_ayopasok.dart';
 import 'klinikhoaks_permohonan.dart';
 import 'klinikhoaks_landing_page.dart';
 import 'admin/admin_page.dart';
+import 'admin/admin_notifikasi_page.dart';
+import 'profil/ubah_profil_page.dart';
+import 'profil/keamanan_akun_page.dart';
 import 'nomordarurat_landing_page.dart';
 import 'nomordarurat_carinomor.dart';
 import 'nomordarurat_informasi.dart';
@@ -73,7 +78,12 @@ class AppRoutes {
   static const String nomorDaruratCariNomorPage = '/nomorDaruratCariNomorPage';
   static const String nomorDaruratInformasiPage = '/nomorDaruratInformasiPage';
   static const String tambahLayananPage = '/tambahLayananPage';
+  static const String majaAiChatPage = '/majaAiChatPage';
+  static const String notifikasiPage = '/notifikasiPage';
   static const String adminPage = '/adminPage';
+  static const String adminNotifikasiPage = '/adminNotifikasiPage';
+  static const String ubahProfilPage = '/ubahProfilPage';
+  static const String keamananAkunPage = '/keamananAkunPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -194,8 +204,23 @@ class AppRoutes {
       case tambahLayananPage:
         return MaterialPageRoute(builder: (_) => const TambahLayananPage());
 
+      case majaAiChatPage:
+        return MaterialPageRoute(builder: (_) => const MajaAiChatPage());
+
+      case notifikasiPage:
+        return MaterialPageRoute(builder: (_) => const NotifikasiPage());
+
       case adminPage:
         return MaterialPageRoute(builder: (_) => const AdminPage());
+
+      case adminNotifikasiPage:
+        return MaterialPageRoute(builder: (_) => const AdminNotifikasiPage());
+
+      case ubahProfilPage:
+        return MaterialPageRoute(builder: (_) => const UbahProfilPage());
+
+      case keamananAkunPage:
+        return MaterialPageRoute(builder: (_) => const KeamananAkunPage());
 
       default:
         return MaterialPageRoute(builder: (_) => const SplashScreen());

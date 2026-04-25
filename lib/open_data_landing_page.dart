@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'common/favorite_mixin.dart';
 import 'open_data_list_page.dart';
+import 'theme/app_theme.dart';
 
 class OpenDataLandingPage extends StatefulWidget {
   const OpenDataLandingPage({super.key});
@@ -10,65 +11,17 @@ class OpenDataLandingPage extends StatefulWidget {
   State<OpenDataLandingPage> createState() => _OpenDataLandingPageState();
 }
 
-class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
-  static const _blue = Color(0xFF007AFF);
-
+class _OpenDataLandingPageState extends State<OpenDataLandingPage>
+    with FavoriteMixin {
   int _selectedTab = 0;
   bool _isOperasionalExpanded = true;
   bool _isKetentuanExpanded = true;
-  bool _isFavorite = false;
-
-  static const String _favKey = 'fav_opendata';
 
   @override
-  void initState() {
-    super.initState();
-    _loadFavorite();
-  }
+  String get favoriteKey => 'fav_opendata';
 
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              next
-                  ? 'Open Data ditambahkan ke favorit'
-                  : 'Open Data dihapus dari favorit',
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  @override
+  String get favoriteLabel => 'Open Data';
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +75,13 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
                             child: IconButton(
                               padding: EdgeInsets.zero,
                               icon: Icon(
-                                _isFavorite
+                                isFavorite
                                     ? Icons.bookmark_rounded
                                     : Icons.bookmark_border_rounded,
-                                color: _blue,
+                                color: AppTheme.primary,
                                 size: 22,
                               ),
-                              onPressed: _toggleFavorite,
+                              onPressed: toggleFavorite,
                             ),
                           ),
                         ),
@@ -195,7 +148,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 13),
           decoration: BoxDecoration(
-            color: selected ? _blue : Colors.transparent,
+            color: selected ? AppTheme.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
           child: Center(
@@ -234,7 +187,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: const BoxDecoration(color: Color(0xFFEBF5FF), shape: BoxShape.circle),
-              child: const Icon(Icons.search, color: _blue, size: 28),
+              child: const Icon(Icons.search, color: AppTheme.primary, size: 28),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -262,7 +215,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
               height: 52,
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: _blue, width: 1.5),
+                  side: const BorderSide(color: AppTheme.primary, width: 1.5),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
                 ),
                 onPressed: () => Navigator.push(
@@ -275,7 +228,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
                     fontSize: 16,
                     fontFamily: 'PlusJakartaSans',
                     fontWeight: FontWeight.w600,
-                    color: _blue,
+                    color: AppTheme.primary,
                   ),
                 ),
               ),
@@ -340,7 +293,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
             leading: Container(
               padding: const EdgeInsets.all(10),
               decoration: const BoxDecoration(color: Color(0xFFEBF5FF), shape: BoxShape.circle),
-              child: Icon(icon, color: _blue, size: 22),
+              child: Icon(icon, color: AppTheme.primary, size: 22),
             ),
             title: Text(
               title,
@@ -364,7 +317,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
               decoration: const BoxDecoration(color: Color(0xFFEBF5FF), shape: BoxShape.circle),
               child: Icon(
                 isExpanded ? Icons.expand_less : Icons.expand_more,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 18,
               ),
             ),
@@ -390,7 +343,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
             child: const Text(
               'opendata.jatimprov.go.id',
               style: TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 decoration: TextDecoration.underline,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
@@ -425,7 +378,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage> {
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.cloud_outlined, color: _blue, size: 15),
+                    Icon(Icons.cloud_outlined, color: AppTheme.primary, size: 15),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(

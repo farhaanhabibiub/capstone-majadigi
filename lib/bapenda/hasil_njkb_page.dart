@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 // ── Model data hasil ───────────────────────────────────────────────────────────
 
@@ -56,17 +57,12 @@ class HasilNjkbPage extends StatelessWidget {
 
   const HasilNjkbPage({super.key, required this.data});
 
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _whiteBg,
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
-        backgroundColor: _blue,
+        backgroundColor: AppTheme.primary,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -102,7 +98,7 @@ class HasilNjkbPage extends StatelessWidget {
             const Text(
               'HASIL PENCARIAN',
               style: TextStyle(
-                color: _textSecondary,
+                color: AppTheme.textSecondary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -137,7 +133,7 @@ class HasilNjkbPage extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () => Navigator.pop(context),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: _blue, width: 1.4),
+                  side: const BorderSide(color: AppTheme.primary, width: 1.4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),
                   ),
@@ -145,7 +141,7 @@ class HasilNjkbPage extends StatelessWidget {
                 child: const Text(
                   'Cek Kendaraan Lain',
                   style: TextStyle(
-                    color: _blue,
+                    color: AppTheme.primary,
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -252,7 +248,7 @@ class HasilNjkbPage extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: const Icon(
-                Icons.account_balance_wallet_rounded, color: _blue, size: 22),
+                Icons.account_balance_wallet_rounded, color: AppTheme.primary, size: 22),
           ),
           const SizedBox(width: 12),
           const Column(
@@ -261,7 +257,7 @@ class HasilNjkbPage extends StatelessWidget {
               Text(
                 'Cek Estimasi Jual Kendaraan',
                 style: TextStyle(
-                  color: _textPrimary,
+                  color: AppTheme.textPrimary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -271,7 +267,7 @@ class HasilNjkbPage extends StatelessWidget {
               Text(
                 'BAPENDA Provinsi Jawa Timur',
                 style: TextStyle(
-                  color: _textSecondary,
+                  color: AppTheme.textSecondary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -316,14 +312,14 @@ class HasilNjkbPage extends StatelessWidget {
                     color: Color.fromRGBO(235, 243, 255, 1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, color: _blue, size: 16),
+                  child: Icon(icon, color: AppTheme.primary, size: 16),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     title,
                     style: const TextStyle(
-                      color: _textPrimary,
+                      color: AppTheme.textPrimary,
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
@@ -374,7 +370,7 @@ class HasilNjkbPage extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            color: _textSecondary,
+            color: AppTheme.textSecondary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 10,
             fontWeight: FontWeight.w600,
@@ -385,7 +381,7 @@ class HasilNjkbPage extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            color: _textPrimary,
+            color: AppTheme.textPrimary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 14,
             fontWeight: FontWeight.w700,
@@ -448,7 +444,7 @@ class HasilNjkbPage extends StatelessWidget {
     return Text(
       label,
       style: const TextStyle(
-        color: _blue,
+        color: AppTheme.primary,
         fontFamily: 'PlusJakartaSans',
         fontSize: 12,
         fontWeight: FontWeight.w700,
@@ -467,8 +463,8 @@ class HasilNjkbPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w700)),
-          Text(value, style: const TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w700)),
+          Text(label, style: const TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w700)),
+          Text(value, style: const TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w700)),
         ],
       ),
     );
@@ -497,7 +493,7 @@ class HasilNjkbPage extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            color: _textPrimary,
+            color: AppTheme.textPrimary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w400,
@@ -506,7 +502,7 @@ class HasilNjkbPage extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            color: _textPrimary,
+            color: AppTheme.textPrimary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w600,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../common/favorite_mixin.dart';
+import '../theme/app_theme.dart';
 import 'widgets/penerima_tab.dart';
 import 'widgets/program_tab.dart';
 import 'widgets/tentang_tab.dart';
@@ -11,65 +12,14 @@ class SapaBansosPage extends StatefulWidget {
   State<SapaBansosPage> createState() => _SapaBansosPageState();
 }
 
-class _SapaBansosPageState extends State<SapaBansosPage> {
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-
+class _SapaBansosPageState extends State<SapaBansosPage> with FavoriteMixin {
   int _selectedTabIndex = 0;
-  bool _isFavorite = false;
-
-  static const String _favKey = 'fav_sapabansos';
 
   @override
-  void initState() {
-    super.initState();
-    _loadFavorite();
-  }
+  String get favoriteKey => 'fav_sapabansos';
 
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              next
-                  ? 'SAPA BANSOS ditambahkan ke favorit'
-                  : 'SAPA BANSOS dihapus dari favorit',
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  @override
+  String get favoriteLabel => 'SAPA BANSOS';
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +27,7 @@ class _SapaBansosPageState extends State<SapaBansosPage> {
     final double headerHeight = kToolbarHeight + statusBarHeight + 36;
 
     return Scaffold(
-      backgroundColor: _blue,
+      backgroundColor: AppTheme.primary,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
@@ -107,13 +57,13 @@ class _SapaBansosPageState extends State<SapaBansosPage> {
             ),
             child: IconButton(
               icon: Icon(
-                _isFavorite
+                isFavorite
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_border_rounded,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 20,
               ),
-              onPressed: _toggleFavorite,
+              onPressed: toggleFavorite,
               constraints: const BoxConstraints(),
               padding: EdgeInsets.zero,
             ),
@@ -129,7 +79,7 @@ class _SapaBansosPageState extends State<SapaBansosPage> {
             height: headerHeight + 50,
             child: Container(
               decoration: const BoxDecoration(
-                color: _blue,
+                color: AppTheme.primary,
                 image: DecorationImage(
                   image: AssetImage('assets/images/tekstur.png'),
                   fit: BoxFit.cover,
@@ -145,7 +95,7 @@ class _SapaBansosPageState extends State<SapaBansosPage> {
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: _whiteBg,
+                    color: AppTheme.background,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: Column(
@@ -196,14 +146,14 @@ class _SapaBansosPageState extends State<SapaBansosPage> {
         onTap: () => setState(() => _selectedTabIndex = index),
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? _blue : Colors.transparent,
+            color: isSelected ? AppTheme.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
           ),
           alignment: Alignment.center,
           child: Text(
             title,
             style: TextStyle(
-              color: isSelected ? Colors.white : _textPrimary,
+              color: isSelected ? Colors.white : AppTheme.textPrimary,
               fontFamily: 'PlusJakartaSans',
               fontWeight: FontWeight.w600,
               fontSize: 13,

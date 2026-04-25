@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../auth_service.dart';
+import '../common/favorite_mixin.dart';
+import '../theme/app_theme.dart';
+import '../widgets/empty_state.dart';
 import 'models/sembako_model.dart';
 import 'data/sembako_dummy_data.dart';
 import 'widgets/sembako_card.dart';
@@ -15,12 +17,7 @@ class SiskaperbapoPage extends StatefulWidget {
   State<SiskaperbapoPage> createState() => _SiskaperbapoPageState();
 }
 
-class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
-
+class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin {
   int _selectedTabIndex = 0;
   String _searchQuery = '';
   SembakoItem? _selectedItem;
@@ -28,9 +25,12 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
   int _selectedKabupatenIndex = 0;
   String? _userRegency;
   String? _selectedKabupatenFilter;
-  bool _isFavorite = false;
 
-  static const String _favKey = 'fav_siskaperbapo';
+  @override
+  String get favoriteKey => 'fav_siskaperbapo';
+
+  @override
+  String get favoriteLabel => 'SISKAPERBAPO';
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -38,51 +38,6 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
   void initState() {
     super.initState();
     _loadUserRegency();
-    _loadFavorite();
-  }
-
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              next
-                  ? 'SISKAPERBAPO ditambahkan ke favorit'
-                  : 'SISKAPERBAPO dihapus dari favorit',
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -177,7 +132,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
     final double headerHeight = kToolbarHeight + statusBarHeight + 36;
 
     return Scaffold(
-      backgroundColor: _blue,
+      backgroundColor: AppTheme.primary,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
@@ -216,13 +171,13 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
             ),
             child: IconButton(
               icon: Icon(
-                _isFavorite
+                isFavorite
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_border_rounded,
-                color: _blue,
+                color: AppTheme.primary,
                 size: 20,
               ),
-              onPressed: _toggleFavorite,
+              onPressed: toggleFavorite,
               constraints: const BoxConstraints(),
               padding: EdgeInsets.zero,
             ),
@@ -238,7 +193,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
             height: headerHeight + 50,
             child: Container(
               decoration: const BoxDecoration(
-                color: _blue,
+                color: AppTheme.primary,
                 image: DecorationImage(
                   image: AssetImage('assets/images/tekstur.png'),
                   fit: BoxFit.cover,
@@ -254,7 +209,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: _whiteBg,
+                    color: AppTheme.background,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: _selectedItem != null
@@ -300,14 +255,14 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                 onTap: () => setState(() => _selectedTabIndex = 0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _selectedTabIndex == 0 ? _blue : Colors.transparent,
+                    color: _selectedTabIndex == 0 ? AppTheme.primary : Colors.transparent,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     'Harga Bahan Pokok',
                     style: TextStyle(
-                      color: _selectedTabIndex == 0 ? Colors.white : _textPrimary,
+                      color: _selectedTabIndex == 0 ? Colors.white : AppTheme.textPrimary,
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -321,14 +276,14 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                 onTap: () => setState(() => _selectedTabIndex = 1),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _selectedTabIndex == 1 ? _blue : Colors.transparent,
+                    color: _selectedTabIndex == 1 ? AppTheme.primary : Colors.transparent,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     'Informasi',
                     style: TextStyle(
-                      color: _selectedTabIndex == 1 ? Colors.white : _textPrimary,
+                      color: _selectedTabIndex == 1 ? Colors.white : AppTheme.textPrimary,
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -377,14 +332,14 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                   duration: const Duration(milliseconds: 150),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: isSelected ? _blue : Colors.white,
+                    color: isSelected ? AppTheme.primary : Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: isSelected ? _blue : const Color(0xFFE0E0E0)),
+                    border: Border.all(color: isSelected ? AppTheme.primary : const Color(0xFFE0E0E0)),
                   ),
                   child: Text(
                     label,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : _textSecondary,
+                      color: isSelected ? Colors.white : AppTheme.textSecondary,
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
@@ -401,7 +356,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
             padding: const EdgeInsets.only(left: 16, bottom: 8),
             child: Text(
               'Harga di $_selectedKabupatenFilter',
-              style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12),
+              style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12),
             ),
           ),
         if (_selectedKabupatenFilter == null)
@@ -409,7 +364,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
             padding: EdgeInsets.only(left: 16, bottom: 8),
             child: Text(
               'Harga Rata - Rata',
-              style: TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 16, fontWeight: FontWeight.w700),
+              style: TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
         Expanded(
@@ -417,7 +372,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
               ? _buildEmptyState()
               : RefreshIndicator(
                   onRefresh: _onRefresh,
-                  color: _blue,
+                  color: AppTheme.primary,
                   child: CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     slivers: [
@@ -458,13 +413,13 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                             child: OutlinedButton(
                               onPressed: () => setState(() => _isExpanded = true),
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: _blue),
+                                side: const BorderSide(color: AppTheme.primary),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
                               child: const Text(
                                 'Lihat Lebih Banyak',
-                                style: TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w600),
+                                style: TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w600),
                               ),
                             ),
                           ),
@@ -482,7 +437,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
       height: 48,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: _blue),
+        border: Border.all(color: AppTheme.primary),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Row(
@@ -496,7 +451,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                 });
               },
               style: const TextStyle(
-                color: _blue,
+                color: AppTheme.primary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 14,
               ),
@@ -517,7 +472,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
               margin: const EdgeInsets.all(4),
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: _blue,
+                color: AppTheme.primary,
                 borderRadius: BorderRadius.circular(24),
               ),
               alignment: Alignment.center,
@@ -544,32 +499,22 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.description_outlined, size: 60, color: Colors.grey.shade400),
-          const SizedBox(height: 16),
-          const Text(
-            'Hasil tidak ditemukan',
-            style: TextStyle(
-              color: _textPrimary,
-              fontFamily: 'PlusJakartaSans',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Mohon coba kata kunci yang lain',
-            style: TextStyle(
-              color: _textSecondary,
-              fontFamily: 'PlusJakartaSans',
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
+    final hasQuery = _searchQuery.isNotEmpty;
+    return EmptyState(
+      icon: Icons.search_off_rounded,
+      title: hasQuery ? 'Hasil tidak ditemukan' : 'Belum ada data',
+      subtitle: hasQuery
+          ? 'Tidak ada bahan pokok cocok dengan\n"$_searchQuery". Coba kata kunci lain.'
+          : 'Data harga belum tersedia saat ini.',
+      actionLabel: hasQuery ? 'Hapus Pencarian' : null,
+      onAction: hasQuery
+          ? () {
+              setState(() {
+                _searchQuery = '';
+                _searchController.clear();
+              });
+            }
+          : null,
     );
   }
 
@@ -615,7 +560,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                     Text(
                       item.name,
                       style: const TextStyle(
-                        color: _textPrimary,
+                        color: AppTheme.textPrimary,
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
@@ -627,7 +572,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                         Text(
                           '${_formatRupiah(item.price)} / kg',
                           style: const TextStyle(
-                            color: _textPrimary,
+                            color: AppTheme.textPrimary,
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -652,7 +597,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                   fit: BoxFit.cover,
                   errorBuilder: (ctx, err, stack) => const CircleAvatar(
                     backgroundColor: Color.fromRGBO(0, 101, 255, 0.1),
-                    child: Icon(Icons.food_bank_outlined, color: _blue, size: 30),
+                    child: Icon(Icons.food_bank_outlined, color: AppTheme.primary, size: 30),
                   ),
                 ),
               ),
@@ -672,14 +617,14 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(Icons.location_on_rounded,
-                        color: _blue, size: 13),
+                        color: AppTheme.primary, size: 13),
                     const SizedBox(width: 4),
                     Text(
                       _userRegency != null
                           ? item.kabupatenPrices[_selectedKabupatenIndex].kabupaten
                           : 'Memuat lokasi...',
                       style: const TextStyle(
-                        color: _blue,
+                        color: AppTheme.primary,
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -693,7 +638,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                 Text(
                   'Data per ${item.historyDates.last}',
                   style: const TextStyle(
-                    color: _textSecondary,
+                    color: AppTheme.textSecondary,
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -708,7 +653,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
               const Text(
                 'Grafik Harga',
                 style: TextStyle(
-                  color: _textPrimary,
+                  color: AppTheme.textPrimary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -717,7 +662,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
               Text(
                 item.kabupatenPrices[_selectedKabupatenIndex].kabupaten,
                 style: const TextStyle(
-                  color: _textSecondary,
+                  color: AppTheme.textSecondary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -762,13 +707,13 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                     CircleAvatar(
                       radius: 18,
                       backgroundColor: Color.fromRGBO(0, 101, 255, 0.1),
-                      child: Icon(Icons.payments, color: _blue, size: 18),
+                      child: Icon(Icons.payments, color: AppTheme.primary, size: 18),
                     ),
                     SizedBox(width: 12),
                     Text(
                       'Harga per Kecamatan',
                       style: TextStyle(
-                        color: _textPrimary,
+                        color: AppTheme.textPrimary,
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -781,16 +726,16 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: _blue),
+                    border: Border.all(color: AppTheme.primary),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<int>(
                       isExpanded: true,
                       value: _selectedKabupatenIndex,
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: _blue),
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.primary),
                       style: const TextStyle(
-                        color: _textPrimary,
+                        color: AppTheme.textPrimary,
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -826,7 +771,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                           const Text(
                             'Rincian per Kecamatan',
                             style: TextStyle(
-                              color: _textSecondary,
+                              color: AppTheme.textSecondary,
                               fontFamily: 'PlusJakartaSans',
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
@@ -836,7 +781,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                           Text(
                             '${item.kabupatenPrices[_selectedKabupatenIndex].kecamatanPrices.length} kecamatan',
                             style: const TextStyle(
-                              color: _textSecondary,
+                              color: AppTheme.textSecondary,
                               fontFamily: 'PlusJakartaSans',
                               fontSize: 11,
                               fontWeight: FontWeight.w400,
@@ -855,7 +800,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                                 child: Text(
                                   kp.kecamatan,
                                   style: const TextStyle(
-                                    color: _textPrimary,
+                                    color: AppTheme.textPrimary,
                                     fontFamily: 'PlusJakartaSans',
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
@@ -866,7 +811,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> {
                               Text(
                                 _formatRupiah(kp.price),
                                 style: const TextStyle(
-                                  color: _textPrimary,
+                                  color: AppTheme.textPrimary,
                                   fontFamily: 'PlusJakartaSans',
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'common/favorite_mixin.dart';
+import 'theme/app_theme.dart';
 
 class OpenDataInformasiPage extends StatefulWidget {
   const OpenDataInformasiPage({super.key});
@@ -9,63 +10,16 @@ class OpenDataInformasiPage extends StatefulWidget {
   State<OpenDataInformasiPage> createState() => _OpenDataInformasiPageState();
 }
 
-class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
+class _OpenDataInformasiPageState extends State<OpenDataInformasiPage>
+    with FavoriteMixin {
   bool _isOperasionalExpanded = false;
   bool _isKetentuanExpanded = false;
-  bool _isFavorite = false;
-
-  static const Color _blue = Color(0xFF007AFF);
-  static const String _favKey = 'fav_opendata';
 
   @override
-  void initState() {
-    super.initState();
-    _loadFavorite();
-  }
+  String get favoriteKey => 'fav_opendata';
 
-  Future<void> _loadFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) setState(() => _isFavorite = prefs.getBool(_favKey) ?? false);
-  }
-
-  Future<void> _toggleFavorite() async {
-    final prefs = await SharedPreferences.getInstance();
-    final next = !_isFavorite;
-    await prefs.setBool(_favKey, next);
-    if (!mounted) return;
-    setState(() => _isFavorite = next);
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: next ? _blue : const Color.fromRGBO(100, 100, 100, 1),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-        content: Row(
-          children: [
-            Icon(
-              next ? Icons.bookmark_rounded : Icons.bookmark_remove_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              next
-                  ? 'Open Data ditambahkan ke favorit'
-                  : 'Open Data dihapus dari favorit',
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  @override
+  String get favoriteLabel => 'Open Data';
 
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
@@ -135,11 +89,11 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage> {
                             child: IconButton(
                               padding: EdgeInsets.zero,
                               icon: Icon(
-                                _isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                                color: _blue,
+                                isFavorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                                color: AppTheme.primary,
                                 size: 26,
                               ),
-                              onPressed: _toggleFavorite,
+                              onPressed: toggleFavorite,
                             ),
                           ),
                         ),

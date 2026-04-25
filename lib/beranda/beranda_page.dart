@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../app_route.dart';
 import '../auth_service.dart';
+import '../theme/app_theme.dart';
 import '../rsud/hospital_config.dart';
+import 'favorit_tab.dart';
+import 'notifikasi_service.dart';
 import 'service_registry.dart';
+import '../profil/profil_tab.dart';
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({super.key});
@@ -14,6 +18,7 @@ class BerandaPage extends StatefulWidget {
 
 class _BerandaPageState extends State<BerandaPage> {
   int _selectedIndex = 0;
+  int _unreadCount = 0;
   String _locationText = 'Memuat lokasi...';
   String _locationCity = '';
   String _locationRegency = '';
@@ -88,6 +93,12 @@ class _BerandaPageState extends State<BerandaPage> {
   void initState() {
     super.initState();
     _loadUserProfile();
+    _loadUnreadCount();
+  }
+
+  Future<void> _loadUnreadCount() async {
+    final count = await NotifikasiService.getUnreadCount();
+    if (mounted) setState(() => _unreadCount = count);
   }
 
   Future<void> _loadUserProfile() async {
@@ -136,25 +147,38 @@ class _BerandaPageState extends State<BerandaPage> {
       backgroundColor: _whiteBg,
       body: SafeArea(
         bottom: false,
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    _buildWelcomeBanner(),
-                    const SizedBox(height: 24),
-                    _buildLayananUnggulan(),
-                    const SizedBox(height: 24),
-                    _buildBeritaArtikel(),
-                  ],
-                ),
-              ),
+            // ── Konten utama ─────────────────────────────────────────
+            Positioned.fill(
+              child: _selectedIndex == 1
+                  ? const FavoritTab()
+                  : _selectedIndex == 2
+                      ? const ProfilTab()
+                      : Column(
+                          children: [
+                            _buildHeader(),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                padding: const EdgeInsets.only(bottom: 28),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 16),
+                                    _buildWelcomeBanner(),
+                                    const SizedBox(height: 24),
+                                    _buildLayananUnggulan(),
+                                    const SizedBox(height: 24),
+                                    _buildBeritaArtikel(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
             ),
+            // ── Maja AI — selalu 4 px di atas navbar ─────────────────
+            _buildMajaAI(),
           ],
         ),
       ),
@@ -223,24 +247,55 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
           ),
           const SizedBox(width: 8),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.07),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, AppRoutes.notifikasiPage)
+                .then((_) => _loadUnreadCount()),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.07),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.notifications_outlined,
+                    color: _textPrimary,
+                    size: 20,
+                  ),
                 ),
+                if (_unreadCount > 0)
+                  Positioned(
+                    top: -2,
+                    right: -2,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(99),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: Text(
+                        _unreadCount > 99 ? '99+' : '$_unreadCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'PlusJakartaSans',
+                        ),
+                      ),
+                    ),
+                  ),
               ],
-            ),
-            child: const Icon(
-              Icons.notifications_outlined,
-              color: _textPrimary,
-              size: 20,
             ),
           ),
         ],
@@ -678,6 +733,81 @@ class _BerandaPageState extends State<BerandaPage> {
     );
   }
 
+  // ── Maja AI ───────────────────────────────────────────────────────────────
+
+  Widget _buildMajaAI() {
+    return Positioned(
+      right: 0,
+      bottom: 16,
+      child: GestureDetector(
+        onTap: () => Navigator.pushNamed(context, AppRoutes.majaAiChatPage),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // ── Speech bubble ──────────────────────────────────────────
+            Container(
+              margin: const EdgeInsets.only(right: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              constraints: const BoxConstraints(maxWidth: 136),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Halo! Butuh bantuan?',
+                    style: TextStyle(
+                      fontFamily: AppTheme.fontFamily,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'Tanya Maja AI →',
+                    style: TextStyle(
+                      fontFamily: AppTheme.fontFamily,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // ── Segitiga ekor bubble ───────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.only(right: 28),
+              child: CustomPaint(
+                painter: _BubbleTailPainter(),
+                child: const SizedBox(width: 14, height: 7),
+              ),
+            ),
+            // ── Karakter Maja AI ───────────────────────────────────────
+            Image.asset(
+              'assets/images/maja_ai.png',
+              width: 90,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // ── Bottom Navigation Bar ─────────────────────────────────────────────────
 
   Widget _buildBottomNav() {
@@ -706,8 +836,9 @@ class _BerandaPageState extends State<BerandaPage> {
                 onTap: () => setState(() => _selectedIndex = 0),
               ),
               _BottomNavItem(
-                icon: Icons.grid_view_rounded,
-                label: 'Layanan',
+                icon: Icons.bookmark_outline_rounded,
+                activeIcon: Icons.bookmark_rounded,
+                label: 'Favorit',
                 isActive: _selectedIndex == 1,
                 onTap: () => setState(() => _selectedIndex = 1),
               ),
@@ -763,6 +894,7 @@ class _ArtikelItem {
 
 class _BottomNavItem extends StatelessWidget {
   final IconData icon;
+  final IconData? activeIcon;
   final String label;
   final bool isActive;
   final VoidCallback onTap;
@@ -775,10 +907,12 @@ class _BottomNavItem extends StatelessWidget {
     required this.label,
     required this.isActive,
     required this.onTap,
+    this.activeIcon,
   });
 
   @override
   Widget build(BuildContext context) {
+    final displayIcon = isActive ? (activeIcon ?? icon) : icon;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -787,7 +921,7 @@ class _BottomNavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: isActive ? _blue : _textSecondary, size: 24),
+            Icon(displayIcon, color: isActive ? _blue : _textSecondary, size: 24),
             const SizedBox(height: 3),
             Text(
               label,
@@ -804,3 +938,22 @@ class _BottomNavItem extends StatelessWidget {
     );
   }
 }
+
+// ── Segitiga ekor speech bubble ──────────────────────────────────────────────
+
+class _BubbleTailPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.white;
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter _) => false;
+}
+

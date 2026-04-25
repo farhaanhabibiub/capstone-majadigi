@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../theme/app_theme.dart';
 
 class KendaraanData {
   final String platNomor;
@@ -128,11 +129,6 @@ class HasilPajakPage extends StatelessWidget {
 
   const HasilPajakPage({super.key, required this.data});
 
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
-
   _StatusPajak get _statusPajak {
     final tgl = data.parsedTanggalMasaPajak;
     if (tgl == null) return _StatusPajak.unknown;
@@ -152,9 +148,9 @@ class HasilPajakPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _whiteBg,
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
-        backgroundColor: _blue,
+        backgroundColor: AppTheme.primary,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -186,7 +182,7 @@ class HasilPajakPage extends StatelessWidget {
             const Text(
               'HASIL PENCARIAN',
               style: TextStyle(
-                color: _textSecondary,
+                color: AppTheme.textSecondary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -233,7 +229,7 @@ class HasilPajakPage extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _blue,
+                  backgroundColor: AppTheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),
                   ),
@@ -249,7 +245,7 @@ class HasilPajakPage extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () => Navigator.pop(context),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: _blue, width: 1.4),
+                  side: const BorderSide(color: AppTheme.primary, width: 1.4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),
                   ),
@@ -257,7 +253,7 @@ class HasilPajakPage extends StatelessWidget {
                 child: const Text(
                   'Cek Kendaraan Lain',
                   style: TextStyle(
-                    color: _blue,
+                    color: AppTheme.primary,
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -303,7 +299,7 @@ class HasilPajakPage extends StatelessWidget {
         break;
       case _StatusPajak.unknown:
         bgColor = const Color(0xFFF5F5F5);
-        textColor = _textSecondary;
+        textColor = AppTheme.textSecondary;
         icon = Icons.info_outline_rounded;
         label = 'Masa pajak: ${data.tanggalMasaPajak}';
     }
@@ -360,7 +356,7 @@ class HasilPajakPage extends StatelessWidget {
               color: Color.fromRGBO(235, 243, 255, 1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.directions_car_rounded, color: _blue, size: 22),
+            child: const Icon(Icons.directions_car_rounded, color: AppTheme.primary, size: 22),
           ),
           const SizedBox(width: 12),
           const Column(
@@ -369,7 +365,7 @@ class HasilPajakPage extends StatelessWidget {
               Text(
                 'Cek Pajak Kendaraan',
                 style: TextStyle(
-                  color: _textPrimary,
+                  color: AppTheme.textPrimary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -379,7 +375,7 @@ class HasilPajakPage extends StatelessWidget {
               Text(
                 'BAPENDA Provinsi Jawa Timur',
                 style: TextStyle(
-                  color: _textSecondary,
+                  color: AppTheme.textSecondary,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -420,13 +416,13 @@ class HasilPajakPage extends StatelessWidget {
                     color: Color.fromRGBO(235, 243, 255, 1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, color: _blue, size: 16),
+                  child: Icon(icon, color: AppTheme.primary, size: 16),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   title,
                   style: const TextStyle(
-                    color: _textPrimary,
+                    color: AppTheme.textPrimary,
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -476,9 +472,9 @@ class HasilPajakPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.3)),
+        Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.3)),
         const SizedBox(height: 3),
-        Text(value, style: TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: bold ? FontWeight.w700 : FontWeight.w500)),
+        Text(value, style: TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: bold ? FontWeight.w700 : FontWeight.w500)),
       ],
     );
   }
@@ -522,7 +518,7 @@ class HasilPajakPage extends StatelessWidget {
         Text(
           '* Total 5 tahunan sudah termasuk semua biaya tahunan + biaya cetak STNK dan TNKB',
           style: TextStyle(
-            color: _textSecondary,
+            color: AppTheme.textSecondary,
             fontFamily: 'PlusJakartaSans',
             fontSize: 11,
             fontWeight: FontWeight.w400,
@@ -537,8 +533,8 @@ class HasilPajakPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w400)),
-        Text(value, style: const TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(label, style: const TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w400)),
+        Text(value, style: const TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w600)),
       ],
     );
   }
@@ -553,8 +549,8 @@ class HasilPajakPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.3)),
-          Text(value, style: const TextStyle(color: _blue, fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700)),
+          Text(label, style: const TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.3)),
+          Text(value, style: const TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700)),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../app_route.dart';
+import '../theme/app_theme.dart';
 import 'hasil_pajak_page.dart';
 
 class InfoPajakPage extends StatefulWidget {
@@ -16,10 +17,6 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
   final TextEditingController _platController = TextEditingController();
   final TextEditingController _rangkaController = TextEditingController();
 
-  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
   static const Color _textHint = Color.fromRGBO(180, 180, 180, 1);
 
   // CSV data dimuat sekali
@@ -170,9 +167,9 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _whiteBg,
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
-        backgroundColor: _blue,
+        backgroundColor: AppTheme.primary,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -238,7 +235,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
                     ),
                     child: const Icon(
                       Icons.directions_car_rounded,
-                      color: _blue,
+                      color: AppTheme.primary,
                       size: 22,
                     ),
                   ),
@@ -249,7 +246,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
                       Text(
                         'Cek Pajak Kendaraan',
                         style: TextStyle(
-                          color: _textPrimary,
+                          color: AppTheme.textPrimary,
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -259,7 +256,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
                       Text(
                         'BAPENDA Provinsi Jawa Timur',
                         style: TextStyle(
-                          color: _textSecondary,
+                          color: AppTheme.textSecondary,
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -277,7 +274,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
             const Text(
               'Plat Nomor Kendaraan',
               style: TextStyle(
-                color: _textPrimary,
+                color: AppTheme.textPrimary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -316,7 +313,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
             const Text(
               '5 Digit Terakhir Nomor Rangka',
               style: TextStyle(
-                color: _textPrimary,
+                color: AppTheme.textPrimary,
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -344,7 +341,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
               child: ElevatedButton(
                 onPressed: (_isFormFilled && !_isSearching) ? _handleCari : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _blue,
+                  backgroundColor: AppTheme.primary,
                   disabledBackgroundColor: const Color.fromRGBO(210, 210, 210, 1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),
@@ -389,7 +386,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
     final Color borderColor = hasError
         ? const Color.fromRGBO(220, 38, 38, 1)
         : isFilled
-            ? _blue
+            ? AppTheme.primary
             : const Color.fromRGBO(225, 225, 225, 1);
 
     return TextField(
@@ -399,7 +396,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
       inputFormatters: inputFormatters,
       onChanged: hasError ? (_) => setState(() => _platError = null) : null,
       style: TextStyle(
-        color: hasError ? const Color.fromRGBO(220, 38, 38, 1) : isFilled ? _blue : _textPrimary,
+        color: hasError ? const Color.fromRGBO(220, 38, 38, 1) : isFilled ? AppTheme.primary : AppTheme.textPrimary,
         fontFamily: 'PlusJakartaSans',
         fontSize: 14,
         fontWeight: FontWeight.w500,
@@ -424,7 +421,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(999),
-          borderSide: BorderSide(color: hasError ? const Color.fromRGBO(220, 38, 38, 1) : _blue, width: 1.4),
+          borderSide: BorderSide(color: hasError ? const Color.fromRGBO(220, 38, 38, 1) : AppTheme.primary, width: 1.4),
         ),
       ),
     );

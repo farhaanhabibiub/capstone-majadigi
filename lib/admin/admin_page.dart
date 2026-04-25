@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../app_route.dart';
 import '../klinikhoaks_model.dart';
 
 class AdminPage extends StatefulWidget {
@@ -131,6 +132,20 @@ class _AdminPageState extends State<AdminPage> {
                             fontSize: 18,
                             fontFamily: 'PlusJakartaSans',
                             fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            tooltip: 'Kelola Notifikasi',
+                            icon: const Icon(
+                              Icons.notifications_rounded,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => Navigator.pushNamed(
+                              context,
+                              AppRoutes.adminNotifikasiPage,
+                            ),
                           ),
                         ),
                       ],
