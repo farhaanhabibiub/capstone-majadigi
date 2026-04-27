@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../app_route.dart';
+import '../app_transitions.dart';
 import '../auth_service.dart';
+import '../common/profile_cache.dart';
+import '../common/streak_service.dart';
 import '../theme/app_theme.dart';
 import '../rsud/hospital_config.dart';
 import 'favorit_tab.dart';
+import 'feature_usage_service.dart';
 import 'notifikasi_service.dart';
 import 'service_registry.dart';
 import '../profil/profil_tab.dart';
@@ -19,11 +24,11 @@ class BerandaPage extends StatefulWidget {
 class _BerandaPageState extends State<BerandaPage> {
   int _selectedIndex = 0;
   int _unreadCount = 0;
-  String _locationText = 'Memuat lokasi...';
+  String _locationText = '...';
   String _locationCity = '';
   String _locationRegency = '';
-  bool _isLoadingProfile = true;
   List<AddableService> _addedServices = [];
+  List<_ShortcutItem> _shortcuts = const [];
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
@@ -32,29 +37,34 @@ class _BerandaPageState extends State<BerandaPage> {
 
   static const List<_ServiceItem> _services = [
     _ServiceItem(
+      id: 'bapenda',
       label: 'BAPENDA',
       assetPath: 'assets/images/layanan_bapenda.png',
       fallback: Icons.account_balance_rounded,
       route: AppRoutes.bapendaPage,
     ),
     _ServiceItem(
+      id: 'rsud',
       label: 'RSUD',
       assetPath: 'assets/images/layanan_rsud.png',
       fallback: Icons.local_hospital_rounded,
     ),
     _ServiceItem(
+      id: 'transjatim',
       label: 'Transjatim',
       assetPath: 'assets/images/layanan_transportasi.png',
       fallback: Icons.directions_bus_rounded,
       route: AppRoutes.transjatimPage,
     ),
     _ServiceItem(
+      id: 'siskaperbapo',
       label: 'SISKAPERBAPO',
       assetPath: 'assets/images/layanan_siskaperbapo.png',
       fallback: Icons.storefront_rounded,
       route: AppRoutes.siskaperbapoPage,
     ),
     _ServiceItem(
+      id: 'nomor_darurat',
       label: 'Nomor Darurat',
       assetPath: 'assets/images/layanan_nomor_darurat.png',
       fallback: Icons.emergency_rounded,
@@ -92,8 +102,21 @@ class _BerandaPageState extends State<BerandaPage> {
   @override
   void initState() {
     super.initState();
+    _hydrateFromCache();
     _loadUserProfile();
     _loadUnreadCount();
+    _loadShortcuts();
+    StreakService.recordVisit();
+  }
+
+  Future<void> _loadShortcuts() async {
+    final prefs = await SharedPreferences.getInstance();
+    final items = _kShortcutCatalog
+        .where((e) => prefs.getBool(e.bookmarkKey) == true)
+        .take(4)
+        .toList();
+    if (!mounted) return;
+    setState(() => _shortcuts = items);
   }
 
   Future<void> _loadUnreadCount() async {
@@ -101,42 +124,64 @@ class _BerandaPageState extends State<BerandaPage> {
     if (mounted) setState(() => _unreadCount = count);
   }
 
-  Future<void> _loadUserProfile() async {
-    final profile = await AuthService.instance.getUserProfile();
+  // Tampilkan data terakhir dari cache lokal lebih dulu agar UI tidak kosong
+  // saat offline / fetch Firestore lambat.
+  Future<void> _hydrateFromCache() async {
+    final loc = await ProfileCache.getLocation();
+    final cachedIds = await ProfileCache.getAddedServices();
     if (!mounted) return;
     setState(() {
-      _isLoadingProfile = false;
-      final location = profile?['location'] as Map<String, dynamic>?;
-      if (location != null) {
-        final city = location['city'] as String? ?? '';
-        final regency = location['regency'] as String? ?? '';
-        _locationCity = city;
-        _locationRegency = regency;
-        if (city.isNotEmpty && regency.isNotEmpty) {
-          _locationText = '$city, $regency';
-        } else if (regency.isNotEmpty) {
-          _locationText = regency;
-        } else if (city.isNotEmpty) {
-          _locationText = city;
-        } else {
-          _locationText = 'Lokasi belum diatur';
-        }
-      } else {
-        _locationText = 'Lokasi belum diatur';
-      }
-
-      final savedIds = (profile?['addedServices'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [];
-      _addedServices = savedIds
+      _locationCity = loc.city;
+      _locationRegency = loc.regency;
+      _locationText = _formatLocation(loc.city, loc.regency);
+      _addedServices = cachedIds
           .map((id) => ServiceRegistry.findById(id))
           .whereType<AddableService>()
           .toList();
     });
   }
 
+  Future<void> _loadUserProfile() async {
+    final profile = await AuthService.instance.getUserProfile();
+    if (!mounted) return;
+
+    // Profile null = sesi habis atau gagal dari Firestore.
+    // Biarkan state dari cache yang sudah di-hydrate.
+    if (profile == null) return;
+
+    final location = profile['location'] as Map<String, dynamic>?;
+    final city = (location?['city'] as String?) ?? '';
+    final regency = (location?['regency'] as String?) ?? '';
+
+    final savedIds = (profile['addedServices'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const <String>[];
+
+    setState(() {
+      _locationCity = city;
+      _locationRegency = regency;
+      _locationText = _formatLocation(city, regency);
+      _addedServices = savedIds
+          .map((id) => ServiceRegistry.findById(id))
+          .whereType<AddableService>()
+          .toList();
+    });
+
+    // Persist ke cache untuk akses offline berikutnya.
+    await ProfileCache.saveLocation(city: city, regency: regency);
+    await ProfileCache.saveAddedServices(savedIds);
+  }
+
+  String _formatLocation(String city, String regency) {
+    if (city.isNotEmpty && regency.isNotEmpty) return '$city, $regency';
+    if (regency.isNotEmpty) return regency;
+    if (city.isNotEmpty) return city;
+    return 'Lokasi belum diatur';
+  }
+
   void _navigateToRsud() {
+    FeatureUsageService.recordOpen('rsud');
     final hospital = HospitalConfig.forLocation(_locationCity, _locationRegency);
     Navigator.pushNamed(context, AppRoutes.rsudPage, arguments: hospital);
   }
@@ -164,8 +209,14 @@ class _BerandaPageState extends State<BerandaPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    const SizedBox(height: 12),
+                                    _buildSearchBar(),
                                     const SizedBox(height: 16),
                                     _buildWelcomeBanner(),
+                                    if (_shortcuts.isNotEmpty) ...[
+                                      const SizedBox(height: 20),
+                                      _buildShortcuts(),
+                                    ],
                                     const SizedBox(height: 24),
                                     _buildLayananUnggulan(),
                                     const SizedBox(height: 24),
@@ -193,17 +244,20 @@ class _BerandaPageState extends State<BerandaPage> {
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
-            child: Image.asset(
-              'assets/images/avatar_placeholder.png',
-              width: 44,
-              height: 44,
-              errorBuilder: (context, error, stackTrace) => const Icon(
-                Icons.person_rounded,
-                color: _blue,
-                size: 24,
+          Hero(
+            tag: HeroTags.profileAvatar,
+            child: CircleAvatar(
+              radius: 22,
+              backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
+              child: Image.asset(
+                'assets/images/avatar_placeholder.png',
+                width: 44,
+                height: 44,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.person_rounded,
+                  color: _blue,
+                  size: 24,
+                ),
               ),
             ),
           ),
@@ -226,7 +280,7 @@ class _BerandaPageState extends State<BerandaPage> {
                   children: [
                     Flexible(
                       child: Text(
-                        _isLoadingProfile ? '...' : _locationText,
+                        _locationText,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: _textPrimary,
@@ -247,32 +301,37 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
           ),
           const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () => Navigator.pushNamed(context, AppRoutes.notifikasiPage)
-                .then((_) => _loadUnreadCount()),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.07),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+          Semantics(
+            button: true,
+            label: _unreadCount > 0
+                ? 'Notifikasi, $_unreadCount belum dibaca'
+                : 'Notifikasi',
+            child: GestureDetector(
+              onTap: () => Navigator.pushNamed(context, AppRoutes.notifikasiPage)
+                  .then((_) => _loadUnreadCount()),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.07),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.notifications_outlined,
+                      color: _textPrimary,
+                      size: 20,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.notifications_outlined,
-                    color: _textPrimary,
-                    size: 20,
-                  ),
-                ),
                 if (_unreadCount > 0)
                   Positioned(
                     top: -2,
@@ -295,10 +354,61 @@ class _BerandaPageState extends State<BerandaPage> {
                       ),
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ── Search Bar (Global Search) ────────────────────────────────────────────
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Semantics(
+        button: true,
+        label: 'Cari layanan',
+        hint: 'Buka pencarian layanan, rumah sakit, hoaks, atau data',
+        child: GestureDetector(
+        onTap: () =>
+            Navigator.pushNamed(context, AppRoutes.globalSearchPage),
+        child: Container(
+          height: 46,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(23),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: const [
+              Icon(Icons.search_rounded, color: _textSecondary, size: 20),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Cari layanan, RSUD, hoaks, data…',
+                  style: TextStyle(
+                    color: _textSecondary,
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Icon(Icons.tune_rounded, color: _textSecondary, size: 18),
+            ],
+          ),
+        ),
+      ),
       ),
     );
   }
@@ -339,6 +449,114 @@ class _BerandaPageState extends State<BerandaPage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ── Akses Cepat (Shortcut Layanan Favorit) ────────────────────────────────
+
+  Widget _buildShortcuts() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Akses Cepat',
+                  style: TextStyle(
+                    color: _textPrimary,
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => setState(() => _selectedIndex = 1),
+                child: const Text(
+                  'Kelola',
+                  style: TextStyle(
+                    color: _blue,
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 64,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: _shortcuts.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 10),
+            itemBuilder: (_, i) => _buildShortcutChip(_shortcuts[i]),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShortcutChip(_ShortcutItem item) {
+    return Semantics(
+      button: true,
+      label: 'Akses cepat ke ${item.label}',
+      child: GestureDetector(
+        onTap: () {
+          FeatureUsageService.recordOpen(item.trackId);
+          Navigator.pushNamed(context, item.route)
+              .then((_) => _loadShortcuts());
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 32, height: 32,
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(235, 243, 255, 1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.all(6),
+                child: Image.asset(
+                  item.assetPath,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) =>
+                      Icon(item.fallback, color: _blue, size: 18),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                item.label,
+                style: const TextStyle(
+                  color: _textPrimary,
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -400,73 +618,91 @@ class _BerandaPageState extends State<BerandaPage> {
     final VoidCallback? onTap = isRsud
         ? _navigateToRsud
         : item.route != null
-            ? () => Navigator.pushNamed(context, item.route!)
+            ? () {
+                FeatureUsageService.recordOpen(item.id);
+                Navigator.pushNamed(context, item.route!);
+              }
             : null;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(235, 243, 255, 1),
-                borderRadius: BorderRadius.circular(12),
+    return Semantics(
+      button: true,
+      label: 'Layanan $displayLabel',
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
               ),
-              padding: const EdgeInsets.all(10),
-              child: Image.asset(
-                item.assetPath,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) => Icon(
-                  item.fallback,
-                  color: _blue,
-                  size: 26,
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Hero(
+                tag: HeroTags.serviceCard(item.id),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(235, 243, 255, 1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: Image.asset(
+                    item.assetPath,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                      item.fallback,
+                      color: _blue,
+                      size: 26,
+                    ),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(
-                displayLabel,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: _textPrimary,
-                  fontFamily: 'PlusJakartaSans',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  height: 1.3,
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  displayLabel,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: _textPrimary,
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    height: 1.3,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildAddedServiceCard(AddableService item) {
+    // Catat dengan id 'rsud' untuk RSUD apa pun agar suggestion AI menyatu.
+    final String trackId = item.hospital != null ? 'rsud' : item.id;
     final VoidCallback? onTap = item.hospital != null
-        ? () => Navigator.pushNamed(context, AppRoutes.rsudPage,
-            arguments: item.hospital)
+        ? () {
+            FeatureUsageService.recordOpen(trackId);
+            Navigator.pushNamed(context, AppRoutes.rsudPage,
+                arguments: item.hospital);
+          }
         : item.route != null
-            ? () => Navigator.pushNamed(context, item.route!)
+            ? () {
+                FeatureUsageService.recordOpen(trackId);
+                Navigator.pushNamed(context, item.route!);
+              }
             : null;
 
     return GestureDetector(
@@ -486,19 +722,22 @@ class _BerandaPageState extends State<BerandaPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(235, 243, 255, 1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: Image.asset(
-                item.assetPath,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(item.fallback, color: _blue, size: 26),
+            Hero(
+              tag: HeroTags.serviceCard(item.id),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(235, 243, 255, 1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Image.asset(
+                  item.assetPath,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Icon(item.fallback, color: _blue, size: 26),
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -525,7 +764,11 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Widget _buildTambahLayananCard() {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      label: 'Tambah Layanan',
+      hint: 'Buka daftar layanan tambahan',
+      child: GestureDetector(
       onTap: () => Navigator.pushNamed(context, AppRoutes.tambahLayananPage)
           .then((_) { if (mounted) _loadUserProfile(); }),
       child: Container(
@@ -543,21 +786,24 @@ class _BerandaPageState extends State<BerandaPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(235, 243, 255, 1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: Image.asset(
-                'assets/images/icon_tambah_layanan.png',
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) => const Icon(
-                  Icons.add_rounded,
-                  color: _blue,
-                  size: 26,
+            Hero(
+              tag: HeroTags.serviceCard('tambah_layanan'),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(235, 243, 255, 1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Image.asset(
+                  'assets/images/icon_tambah_layanan.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.add_rounded,
+                    color: _blue,
+                    size: 26,
+                  ),
                 ),
               ),
             ),
@@ -580,6 +826,7 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -634,7 +881,11 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Widget _buildArtikelCard(_ArtikelItem item) {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      label: 'Artikel ${item.tag}: ${item.title}, ${item.date}',
+      hint: 'Buka artikel di browser',
+      child: GestureDetector(
       onTap: () async {
         final uri = Uri.parse(item.url);
         if (await canLaunchUrl(uri)) {
@@ -730,6 +981,7 @@ class _BerandaPageState extends State<BerandaPage> {
         ],
       ),
     ),
+    ),
     );
   }
 
@@ -739,7 +991,11 @@ class _BerandaPageState extends State<BerandaPage> {
     return Positioned(
       right: 0,
       bottom: 16,
-      child: GestureDetector(
+      child: Semantics(
+        button: true,
+        label: 'Maja AI',
+        hint: 'Buka asisten Maja AI untuk bertanya seputar layanan',
+        child: GestureDetector(
         onTap: () => Navigator.pushNamed(context, AppRoutes.majaAiChatPage),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -796,14 +1052,17 @@ class _BerandaPageState extends State<BerandaPage> {
               ),
             ),
             // ── Karakter Maja AI ───────────────────────────────────────
-            Image.asset(
-              'assets/images/maja_ai.png',
-              width: 90,
-              fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+            ExcludeSemantics(
+              child: Image.asset(
+                'assets/images/maja_ai.png',
+                width: 90,
+                fit: BoxFit.contain,
+                errorBuilder: (_, _, _) => const SizedBox.shrink(),
+              ),
             ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -859,12 +1118,14 @@ class _BerandaPageState extends State<BerandaPage> {
 // ── Data Models ───────────────────────────────────────────────────────────────
 
 class _ServiceItem {
+  final String id;
   final String label;
   final String assetPath;
   final IconData fallback;
   final String? route;
 
   const _ServiceItem({
+    required this.id,
     required this.label,
     required this.assetPath,
     required this.fallback,
@@ -890,6 +1151,93 @@ class _ArtikelItem {
   });
 }
 
+// ── Shortcut catalog (sinkron dengan favorit_tab) ─────────────────────────────
+
+class _ShortcutItem {
+  final String bookmarkKey;
+  final String trackId;
+  final String label;
+  final String assetPath;
+  final IconData fallback;
+  final String route;
+
+  const _ShortcutItem({
+    required this.bookmarkKey,
+    required this.trackId,
+    required this.label,
+    required this.assetPath,
+    required this.fallback,
+    required this.route,
+  });
+}
+
+const List<_ShortcutItem> _kShortcutCatalog = [
+  _ShortcutItem(
+    bookmarkKey: 'fav_bapenda',
+    trackId: 'bapenda',
+    label: 'BAPENDA',
+    assetPath: 'assets/images/layanan_bapenda.png',
+    fallback: Icons.account_balance_rounded,
+    route: AppRoutes.bapendaPage,
+  ),
+  _ShortcutItem(
+    bookmarkKey: 'fav_transjatim',
+    trackId: 'transjatim',
+    label: 'Transjatim',
+    assetPath: 'assets/images/layanan_transjatim.png',
+    fallback: Icons.directions_bus_rounded,
+    route: AppRoutes.transjatimPage,
+  ),
+  _ShortcutItem(
+    bookmarkKey: 'fav_siskaperbapo',
+    trackId: 'siskaperbapo',
+    label: 'SISKAPERBAPO',
+    assetPath: 'assets/images/layanan_siskaperbapo.png',
+    fallback: Icons.storefront_rounded,
+    route: AppRoutes.siskaperbapoPage,
+  ),
+  _ShortcutItem(
+    bookmarkKey: 'fav_etibi',
+    trackId: 'etibi',
+    label: 'E-TIBI',
+    assetPath: 'assets/images/layanan_etibi.png',
+    fallback: Icons.medical_services_rounded,
+    route: AppRoutes.etibiPage,
+  ),
+  _ShortcutItem(
+    bookmarkKey: 'fav_sapabansos',
+    trackId: 'sapa_bansos',
+    label: 'SAPA BANSOS',
+    assetPath: 'assets/images/layanan_sapa_bansos.png',
+    fallback: Icons.volunteer_activism_rounded,
+    route: AppRoutes.sapaBansosPage,
+  ),
+  _ShortcutItem(
+    bookmarkKey: 'fav_klinikhoaks',
+    trackId: 'klinik_hoaks',
+    label: 'Klinik Hoaks',
+    assetPath: 'assets/images/layanan_klinik_hoaks.png',
+    fallback: Icons.fact_check_rounded,
+    route: AppRoutes.klinikHoaksLandingPage,
+  ),
+  _ShortcutItem(
+    bookmarkKey: 'fav_opendata',
+    trackId: 'open_data',
+    label: 'Open Data',
+    assetPath: 'assets/images/layanan_open_data.png',
+    fallback: Icons.dataset_rounded,
+    route: AppRoutes.openDataLandingPage,
+  ),
+  _ShortcutItem(
+    bookmarkKey: 'fav_nomordarurat',
+    trackId: 'nomor_darurat',
+    label: 'Nomor Darurat',
+    assetPath: 'assets/images/layanan_nomor_darurat.png',
+    fallback: Icons.emergency_rounded,
+    route: AppRoutes.nomorDaruratLandingPage,
+  ),
+];
+
 // ── Bottom Nav Item ───────────────────────────────────────────────────────────
 
 class _BottomNavItem extends StatelessWidget {
@@ -913,26 +1261,32 @@ class _BottomNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayIcon = isActive ? (activeIcon ?? icon) : icon;
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(displayIcon, color: isActive ? _blue : _textSecondary, size: 24),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: TextStyle(
-                color: isActive ? _blue : _textSecondary,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 10,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+    return Semantics(
+      button: true,
+      selected: isActive,
+      label: 'Tab $label',
+      hint: isActive ? 'Saat ini aktif' : 'Ketuk untuk berpindah',
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(displayIcon, color: isActive ? _blue : _textSecondary, size: 24),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isActive ? _blue : _textSecondary,
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 10,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

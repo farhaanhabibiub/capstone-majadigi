@@ -1,6 +1,8 @@
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../widgets/error_retry.dart';
+import '../widgets/skeleton_loader.dart';
 import 'hospital_config.dart';
 
 // ── Model ─────────────────────────────────────────────────────────────────────
@@ -45,6 +47,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
   List<JadwalData> _allData = [];
   String _updateTerakhir = '-';
   bool _isLoading = true;
+  Object? _loadError;
 
   // ── filter state ───────────────────────────────────────────────────────────
   final _searchCtrl = TextEditingController();
@@ -148,13 +151,27 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
         setState(() {
           _allData = list;
           _updateTerakhir = timestamp.isEmpty ? '-' : timestamp;
+          _loadError = null;
           _isLoading = false;
         });
       }
     } catch (e) {
       debugPrint('JadwalOperasi: gagal load CSV – $e');
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _loadError = e;
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  Future<void> _retryLoad() async {
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
+    });
+    await _loadData();
   }
 
   // ── computed ───────────────────────────────────────────────────────────────
@@ -341,12 +358,14 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
       backgroundColor: _whiteBg,
       appBar: _buildAppBar(),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: _blue,
-              ),
-            )
-          : _buildBody(),
+          ? const SkeletonLoader.dashboard()
+          : _loadError != null
+              ? ErrorRetry(
+                  title: 'Gagal memuat jadwal operasi',
+                  subtitle: ErrorRetry.fromException(_loadError!),
+                  onRetry: _retryLoad,
+                )
+              : _buildBody(),
     );
   }
 

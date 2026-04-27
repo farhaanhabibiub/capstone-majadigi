@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../common/favorite_mixin.dart';
 import '../notification_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/empty_state.dart';
+import '../widgets/skeleton_loader.dart';
 import 'widgets/skrining_tab.dart';
 import 'widgets/riwayat_tab.dart';
 import 'widgets/tentang_tab.dart';
@@ -319,7 +321,7 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
   Widget _buildTabContent() {
     if (_selectedTabIndex == 1) {
       if (_isLoadingRiwayat) {
-        return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
+        return SkeletonLoader.list();
       }
       return Column(
         children: [
@@ -420,47 +422,13 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
   }
 
   Widget _buildEmptyRiwayat() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.assignment_outlined, size: 64, color: Colors.grey.shade300),
-          const SizedBox(height: 16),
-          const Text(
-            'Belum ada riwayat skrining',
-            style: TextStyle(
-              color: Color.fromRGBO(120, 120, 120, 1),
-              fontFamily: 'PlusJakartaSans',
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Lakukan skrining pertama Anda\ndi tab Skrining',
-            style: TextStyle(
-              color: Color.fromRGBO(160, 160, 160, 1),
-              fontFamily: 'PlusJakartaSans',
-              fontSize: 12,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          TextButton(
-            onPressed: () => setState(() => _selectedTabIndex = 0),
-            child: const Text(
-              'Mulai Skrining',
-              style: TextStyle(
-                color: AppTheme.primary,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
+    return EmptyState(
+      icon: Icons.assignment_outlined,
+      title: 'Belum ada riwayat skrining',
+      subtitle:
+          'Hasil skrining yang Anda lakukan akan muncul di sini\nbeserta tren kesehatan dari waktu ke waktu.',
+      actionLabel: 'Mulai Skrining',
+      onAction: () => setState(() => _selectedTabIndex = 0),
     );
   }
 

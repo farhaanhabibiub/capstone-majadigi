@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../app_route.dart';
 import '../klinikhoaks_model.dart';
+import '../widgets/empty_state.dart';
+import '../widgets/skeleton_loader.dart';
+import 'audit_log_service.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -58,11 +61,23 @@ class _AdminPageState extends State<AdminPage> {
 
   Future<void> _updateStatus(LaporanHoaks laporan, String newStatus) async {
     if (laporan.docId == null) return;
+    final previousStatus = laporan.status;
     try {
       await FirebaseFirestore.instance
           .collection('laporan_hoaks')
           .doc(laporan.docId)
           .update({'status': newStatus});
+      await AuditLogService.record(
+        action: AuditLogService.actionUpdateLaporanStatus,
+        targetType: 'laporan_hoaks',
+        targetId: laporan.docId!,
+        details: {
+          'from': previousStatus,
+          'to': newStatus,
+          'tiketId': laporan.tiketId,
+          'topik': laporan.topik,
+        },
+      );
       final idx = _list.indexWhere((l) => l.docId == laporan.docId);
       if (idx != -1 && mounted) {
         setState(() => _list[idx] = laporan.copyWith(status: newStatus));
@@ -136,16 +151,32 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                         Align(
                           alignment: Alignment.centerRight,
-                          child: IconButton(
-                            tooltip: 'Kelola Notifikasi',
-                            icon: const Icon(
-                              Icons.notifications_rounded,
-                              color: Colors.white,
-                            ),
-                            onPressed: () => Navigator.pushNamed(
-                              context,
-                              AppRoutes.adminNotifikasiPage,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                tooltip: 'Audit Log',
+                                icon: const Icon(
+                                  Icons.history_rounded,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () => Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.auditLogPage,
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: 'Kelola Notifikasi',
+                                icon: const Icon(
+                                  Icons.notifications_rounded,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () => Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.adminNotifikasiPage,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -184,7 +215,7 @@ class _AdminPageState extends State<AdminPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
         itemCount: _statuses.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (_, i) {
           final s = _statuses[i];
           final selected = _filterStatus == s;
@@ -216,26 +247,17 @@ class _AdminPageState extends State<AdminPage> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator(color: _blue));
+      return SkeletonLoader.list(itemCount: 6);
     }
     final items = _filtered;
     if (items.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.inbox_outlined, size: 64, color: Colors.grey.shade300),
-            const SizedBox(height: 12),
-            Text(
-              'Tidak ada laporan',
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
+      return EmptyState(
+        icon: Icons.inbox_outlined,
+        title: 'Belum ada laporan',
+        subtitle:
+            'Laporan hoaks dari pengguna akan muncul di sini\nsetelah mereka mengajukan permohonan.',
+        actionLabel: 'Muat Ulang',
+        onAction: _refresh,
       );
     }
     return RefreshIndicator(
@@ -244,7 +266,7 @@ class _AdminPageState extends State<AdminPage> {
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (_, i) => _AdminCard(
           laporan: items[i],
           onTap: () => _showDetailSheet(items[i]),

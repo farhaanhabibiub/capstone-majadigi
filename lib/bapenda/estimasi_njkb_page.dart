@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 
 import '../app_route.dart';
 import '../theme/app_theme.dart';
+import '../widgets/error_retry.dart';
+import '../widgets/skeleton_loader.dart';
 import 'hasil_njkb_page.dart';
 
 // ── Model record database ──────────────────────────────────────────────────────
@@ -49,6 +51,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
   // ── Database ────────────────────────────────────────────────────────────────
   List<_NjkbRecord> _db = [];
   bool _dbLoaded = false;
+  Object? _loadError;
 
   // ── Pilihan user ────────────────────────────────────────────────────────────
   String? _selJenis;
@@ -125,10 +128,30 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
       for (int i = 1; i < rows.length; i++) {
         if (rows[i].length >= 6) items.add(_NjkbRecord.fromRow(rows[i]));
       }
-      if (mounted) setState(() { _db = items; _dbLoaded = true; });
-    } catch (_) {
-      if (mounted) setState(() => _dbLoaded = true);
+      if (mounted) {
+        setState(() {
+          _db = items;
+          _loadError = null;
+          _dbLoaded = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('EstimasiNjkb: gagal load CSV – $e');
+      if (mounted) {
+        setState(() {
+          _loadError = e;
+          _dbLoaded = true;
+        });
+      }
     }
+  }
+
+  Future<void> _retryLoad() async {
+    setState(() {
+      _dbLoaded = false;
+      _loadError = null;
+    });
+    await _loadDb();
   }
 
   // ── Select helpers ───────────────────────────────────────────────────────────
@@ -214,8 +237,14 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
           ),
         ),
         body: !_dbLoaded
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
+            ? SkeletonLoader.form(fieldCount: 5)
+            : _loadError != null
+                ? ErrorRetry(
+                    title: 'Gagal memuat database NJKB',
+                    subtitle: ErrorRetry.fromException(_loadError!),
+                    onRetry: _retryLoad,
+                  )
+                : SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

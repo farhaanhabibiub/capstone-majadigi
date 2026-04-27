@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/error_retry.dart';
+import '../widgets/skeleton_loader.dart';
 import 'notifikasi_service.dart';
 
 class NotifikasiPage extends StatefulWidget {
@@ -67,9 +68,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
         stream: NotifikasiService.stream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppTheme.primary),
-            );
+            return SkeletonLoader.list();
           }
 
           if (snapshot.hasError) {
@@ -95,7 +94,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: docs.length,
-            separatorBuilder: (_, __) => const Divider(
+            separatorBuilder: (_, _) => const Divider(
               height: 1,
               thickness: 1,
               color: Color.fromRGBO(240, 240, 240, 1),

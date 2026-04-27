@@ -1,6 +1,9 @@
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../widgets/empty_state.dart';
+import '../widgets/error_retry.dart';
+import '../widgets/skeleton_loader.dart';
 import 'hospital_config.dart';
 
 // ── Model ─────────────────────────────────────────────────────────────────────
@@ -36,6 +39,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
   String _updateTerakhir = '-';
   bool _isLoading = true;
   bool _showAll = false;
+  Object? _loadError;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
@@ -93,13 +97,27 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
         setState(() {
           _kamarList = list;
           _updateTerakhir = timestamp.isEmpty ? '-' : timestamp;
+          _loadError = null;
           _isLoading = false;
         });
       }
     } catch (e) {
       debugPrint('KetersediaanKamar: gagal load CSV – $e');
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _loadError = e;
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  Future<void> _retryLoad() async {
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
+    });
+    await _loadData();
   }
 
   // ── Computed totals ───────────────────────────────────────────────────────
@@ -120,50 +138,27 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
       backgroundColor: _whiteBg,
       appBar: _buildAppBar(),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: Color.fromRGBO(0, 101, 255, 1),
-              ),
-            )
-          : _kamarList.isEmpty
-              ? _buildEmptyState()
-              : _buildBody(),
+          ? const SkeletonLoader.dashboard()
+          : _loadError != null
+              ? ErrorRetry(
+                  title: 'Gagal memuat data kamar',
+                  subtitle: ErrorRetry.fromException(_loadError!),
+                  onRetry: _retryLoad,
+                )
+              : _kamarList.isEmpty
+                  ? _buildEmptyState()
+                  : _buildBody(),
     );
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.king_bed_outlined,
-                size: 56, color: Color.fromRGBO(180, 180, 180, 1)),
-            const SizedBox(height: 16),
-            const Text(
-              'Data kamar tidak tersedia',
-              style: TextStyle(
-                color: Color.fromRGBO(120, 120, 120, 1),
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Data kamar ${widget.hospital.name} belum tersedia.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color.fromRGBO(160, 160, 160, 1),
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 12,
-                height: 1.5,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return EmptyState(
+      icon: Icons.king_bed_outlined,
+      title: 'Data kamar belum tersedia',
+      subtitle:
+          'Informasi ketersediaan kamar ${widget.hospital.name}\nbelum dipublikasikan. Coba muat ulang.',
+      actionLabel: 'Muat Ulang',
+      onAction: _refresh,
     );
   }
 

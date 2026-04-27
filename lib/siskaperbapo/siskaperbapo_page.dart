@@ -317,7 +317,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
             itemCount: kabupaten.length + 1,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (_, i) {
               final isAll = i == 0;
               final label = isAll ? 'Semua' : kabupaten[i - 1];

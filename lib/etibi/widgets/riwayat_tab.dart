@@ -109,7 +109,7 @@ class RiwayatTab extends StatelessWidget {
           ),
         SliverList.separated(
           itemCount: riwayatList.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (ctx, i) {
             final prev = (i + 1 < riwayatList.length) ? riwayatList[i + 1] : null;
             final card = RiwayatCard(

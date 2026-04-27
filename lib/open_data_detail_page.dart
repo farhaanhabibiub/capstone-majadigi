@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'widgets/empty_state.dart';
 
 class OpenDataDetailPage extends StatelessWidget {
   final String dataRoute;
@@ -10,7 +11,26 @@ class OpenDataDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = _content[dataRoute];
-    if (c == null) return const Scaffold(body: Center(child: Text('Data tidak ditemukan')));
+    if (c == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: _blue,
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+          ),
+        ),
+        body: EmptyState(
+          icon: Icons.dataset_outlined,
+          title: 'Data tidak ditemukan',
+          subtitle:
+              'Halaman detail untuk dataset ini belum tersedia.\nKembali ke daftar dan pilih dataset lain.',
+          actionLabel: 'Kembali',
+          onAction: () => Navigator.pop(context),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),

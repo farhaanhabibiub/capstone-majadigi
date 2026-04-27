@@ -2,8 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../app_route.dart';
+import '../app_transitions.dart';
 import '../auth_service.dart';
+import '../beranda/feature_usage_service.dart';
 import '../beranda/notifikasi_service.dart';
+import '../beranda/service_registry.dart';
+import '../common/streak_service.dart';
 import '../theme/app_theme.dart';
 
 
@@ -21,12 +25,23 @@ class _ProfilTabState extends State<ProfilTab> {
   int _notifCount = 0;
   bool _isAdmin = false;
 
+  List<RecentOpen> _recentOpens = const [];
+  List<MonthlyStat> _topMonthly = const [];
+  StreakSnapshot? _streak;
+
   @override
   void initState() {
     super.initState();
     _loadProfile();
     _loadNotifCount();
     _checkAdmin();
+    _loadActivity();
+    _loadStreak();
+  }
+
+  Future<void> _loadStreak() async {
+    final s = await StreakService.read();
+    if (mounted) setState(() => _streak = s);
   }
 
   Future<void> _checkAdmin() async {
@@ -48,6 +63,57 @@ class _ProfilTabState extends State<ProfilTab> {
   Future<void> _loadNotifCount() async {
     final count = await NotifikasiService.getUnreadCount();
     if (mounted) setState(() => _notifCount = count);
+  }
+
+  Future<void> _loadActivity() async {
+    final results = await Future.wait([
+      FeatureUsageService.recentOpens(limit: 5),
+      FeatureUsageService.topThisMonth(limit: 3),
+    ]);
+    if (!mounted) return;
+    setState(() {
+      _recentOpens = results[0] as List<RecentOpen>;
+      _topMonthly = results[1] as List<MonthlyStat>;
+    });
+  }
+
+  void _openFeature(FeatureMeta meta) {
+    FeatureUsageService.recordOpen(meta.id);
+    if (meta.hospital != null) {
+      Navigator.pushNamed(context, AppRoutes.rsudPage, arguments: meta.hospital);
+    } else if (meta.route != null) {
+      Navigator.pushNamed(context, meta.route!);
+    }
+    // Refresh aktivitas saat kembali
+    _loadActivity();
+  }
+
+  String _formatRelative(DateTime t) {
+    final diff = DateTime.now().difference(t);
+    if (diff.inMinutes < 1) return 'Baru saja';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} menit lalu';
+    if (diff.inHours < 24) return '${diff.inHours} jam lalu';
+    if (diff.inDays < 7) return '${diff.inDays} hari lalu';
+    if (diff.inDays < 30) return '${(diff.inDays / 7).floor()} minggu lalu';
+    return '${(diff.inDays / 30).floor()} bulan lalu';
+  }
+
+  String _statSentence(MonthlyStat stat) {
+    final meta = ServiceRegistry.metaFor(stat.id);
+    final label = meta?.label ?? stat.id;
+    final verb = switch (stat.id) {
+      'bapenda' => 'cek pajak',
+      'rsud' || 'rsud_daha_husada' || 'rsud_karsa_husada' || 'rsud_saiful_anwar' || 'rsud_prov_jatim' => 'buka layanan RSUD',
+      'transjatim' => 'cek tiket Transjatim',
+      'siskaperbapo' => 'cek harga sembako',
+      'nomor_darurat' => 'akses nomor darurat',
+      'sapa_bansos' => 'cek bansos',
+      'etibi' => 'akses E-TIBI',
+      'klinik_hoaks' => 'lapor hoaks',
+      'open_data' => 'buka Open Data',
+      _ => 'buka $label',
+    };
+    return 'Anda sudah $verb ${stat.count}× bulan ini';
   }
 
   // ── Ubah Profil ────────────────────────────────────────────────────────────
@@ -203,35 +269,69 @@ class _ProfilTabState extends State<ProfilTab> {
 
   @override
   Widget build(BuildContext context) {
+    final textPrimary = AppTheme.textPrimaryOf(context);
+    final textSecondary = AppTheme.textSecondaryOf(context);
     return Container(
-      color: AppTheme.background,
+      color: AppTheme.backgroundOf(context),
       child: Column(
         children: [
           const SizedBox(height: 20),
-          const Text('Profil', style: TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 18, fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
+          Semantics(
+            header: true,
+            child: Text('Profil', style: TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 18, fontWeight: FontWeight.w700, color: textPrimary)),
+          ),
           const SizedBox(height: 20),
           // Avatar
-          CircleAvatar(
-            radius: 40,
-            backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
-            backgroundImage: _photoUrl.isNotEmpty ? NetworkImage(_photoUrl) : null,
-            child: _photoUrl.isEmpty
-                ? Image.asset(
-                    'assets/images/avatar_placeholder.png',
-                    width: 80, height: 80,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.person_rounded, color: AppTheme.primary, size: 40),
-                  )
-                : null,
+          Semantics(
+            label: 'Foto profil ${_name.isEmpty ? "pengguna" : _name}',
+            image: true,
+            child: Hero(
+              tag: HeroTags.profileAvatar,
+              child: CircleAvatar(
+                radius: 40,
+                backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
+                backgroundImage: _photoUrl.isNotEmpty ? NetworkImage(_photoUrl) : null,
+                child: _photoUrl.isEmpty
+                    ? Image.asset(
+                        'assets/images/avatar_placeholder.png',
+                        width: 80, height: 80,
+                        errorBuilder: (_, _, _) => const Icon(Icons.person_rounded, color: AppTheme.primary, size: 40),
+                      )
+                    : null,
+              ),
+            ),
           ),
           const SizedBox(height: 12),
-          Text(_name.isEmpty ? '...' : _name, style: const TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 16, fontWeight: FontWeight.w700, color: AppTheme.textPrimary)),
+          Text(_name.isEmpty ? '...' : _name, style: TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 16, fontWeight: FontWeight.w700, color: textPrimary)),
           const SizedBox(height: 4),
-          Text(_email, style: const TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 13, color: AppTheme.textSecondary)),
-          const SizedBox(height: 24),
+          Text(_email, style: TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 13, color: textSecondary)),
+          const SizedBox(height: 16),
+          if (_streak != null && _streak!.current > 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _streakBanner(),
+            ),
+          const SizedBox(height: 16),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
               children: [
+                // ── Statistik Bulan Ini ───────────────────────────────────
+                if (_topMonthly.isNotEmpty) ...[
+                  _sectionLabel('Statistik Bulan Ini'),
+                  const SizedBox(height: 8),
+                  _statisticCard(),
+                  const SizedBox(height: 20),
+                ],
+
+                // ── Aktivitas Terakhir ────────────────────────────────────
+                if (_recentOpens.isNotEmpty) ...[
+                  _sectionLabel('Aktivitas Terakhir'),
+                  const SizedBox(height: 8),
+                  _recentActivityCard(),
+                  const SizedBox(height: 20),
+                ],
+
                 // ── Akun ──────────────────────────────────────────────────
                 _sectionLabel('Akun'),
                 const SizedBox(height: 8),
@@ -244,6 +344,16 @@ class _ProfilTabState extends State<ProfilTab> {
                     badge: _notifCount > 0 ? _notifCount : null,
                     onTap: () => Navigator.pushNamed(context, AppRoutes.notifikasiPage)
                         .then((_) => _loadNotifCount()),
+                  ),
+                  _menuItem(
+                    icon: Icons.accessibility_new_rounded,
+                    label: 'Aksesibilitas',
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.aksesibilitasPage),
+                  ),
+                  _menuItem(
+                    icon: Icons.emoji_events_outlined,
+                    label: 'Lencana Pencapaian',
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.lencanaPage),
                   ),
                 ]),
 
@@ -397,14 +507,17 @@ class _ProfilTabState extends State<ProfilTab> {
   // ── Komponen UI ────────────────────────────────────────────────────────────
 
   Widget _sectionLabel(String label) {
-    return Text(
-      label,
-      style: const TextStyle(
-        fontFamily: AppTheme.fontFamily,
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: AppTheme.textSecondary,
-        letterSpacing: 0.3,
+    return Semantics(
+      header: true,
+      child: Text(
+        label,
+        style: TextStyle(
+          fontFamily: AppTheme.fontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppTheme.textSecondaryOf(context),
+          letterSpacing: 0.3,
+        ),
       ),
     );
   }
@@ -412,7 +525,7 @@ class _ProfilTabState extends State<ProfilTab> {
   Widget _menuGroup(List<Widget> items) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
       ),
@@ -420,7 +533,7 @@ class _ProfilTabState extends State<ProfilTab> {
         children: [
           for (int i = 0; i < items.length; i++) ...[
             if (i > 0)
-              const Divider(height: 1, thickness: 1, indent: 56, color: Color.fromRGBO(240, 240, 240, 1)),
+              Divider(height: 1, thickness: 1, indent: 56, color: AppTheme.borderOf(context)),
             items[i],
           ],
         ],
@@ -434,56 +547,66 @@ class _ProfilTabState extends State<ProfilTab> {
     required VoidCallback onTap,
     int? badge,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-        child: Row(
-          children: [
-            _iconBox(icon),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(label, style: const TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.textPrimary)),
-            ),
-            if (badge != null) ...[
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(color: AppTheme.danger, borderRadius: BorderRadius.circular(99)),
-                child: Text('$badge', style: const TextStyle(color: Colors.white, fontFamily: AppTheme.fontFamily, fontSize: 11, fontWeight: FontWeight.w700)),
+    final hasBadge = badge != null && badge > 0;
+    return Semantics(
+      button: true,
+      label: hasBadge ? '$label, $badge notifikasi belum dibaca' : label,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          child: Row(
+            children: [
+              ExcludeSemantics(child: _iconBox(icon)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(label, style: TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.textPrimaryOf(context))),
               ),
-              const SizedBox(width: 6),
+              if (hasBadge) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(color: AppTheme.danger, borderRadius: BorderRadius.circular(99)),
+                  child: Text('$badge', style: const TextStyle(color: Colors.white, fontFamily: AppTheme.fontFamily, fontSize: 11, fontWeight: FontWeight.w700)),
+                ),
+                const SizedBox(width: 6),
+              ],
+              Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.textSecondaryOf(context)),
             ],
-            const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.textSecondary),
-          ],
+          ),
         ),
       ),
     );
   }
 
   Widget _dangerCard() {
-    return GestureDetector(
-      onTap: _hapusAkun,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 36, height: 36,
-              decoration: BoxDecoration(color: const Color.fromRGBO(254, 242, 242, 1), borderRadius: BorderRadius.circular(10)),
-              child: const Icon(Icons.delete_outline_rounded, color: AppTheme.danger, size: 18),
-            ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Text('Hapus Akun', style: TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 14, fontWeight: FontWeight.w600, color: AppTheme.danger)),
-            ),
-            const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.danger),
-          ],
+    return Semantics(
+      button: true,
+      label: 'Hapus Akun',
+      hint: 'Akun dan data Anda akan dihapus permanen',
+      child: GestureDetector(
+        onTap: _hapusAkun,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            color: AppTheme.surfaceOf(context),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36, height: 36,
+                decoration: BoxDecoration(color: AppTheme.danger.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+                child: const Icon(Icons.delete_outline_rounded, color: AppTheme.danger, size: 18),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text('Hapus Akun', style: TextStyle(fontFamily: AppTheme.fontFamily, fontSize: 14, fontWeight: FontWeight.w600, color: AppTheme.danger)),
+              ),
+              const Icon(Icons.chevron_right_rounded, size: 20, color: AppTheme.danger),
+            ],
+          ),
         ),
       ),
     );
@@ -493,10 +616,221 @@ class _ProfilTabState extends State<ProfilTab> {
     return Container(
       width: 36, height: 36,
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(235, 243, 255, 1),
+        color: AppTheme.primary.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Icon(icon, color: AppTheme.primary, size: 18),
+    );
+  }
+
+  // ── Streak Banner ───────────────────────────────────────────────────────
+  Widget _streakBanner() {
+    final s = _streak!;
+    return Semantics(
+      button: true,
+      label: 'Streak ${s.current} hari berturut-turut',
+      hint: 'Buka halaman lencana pencapaian',
+      child: InkWell(
+        onTap: () => Navigator.pushNamed(context, AppRoutes.lencanaPage)
+            .then((_) => _loadStreak()),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFB923C), Color(0xFFEF4444)],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 38, height: 38,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.local_fire_department_rounded,
+                    color: Colors.white, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${s.current} hari berturut-turut!',
+                      style: const TextStyle(
+                        fontFamily: AppTheme.fontFamily,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Streak terpanjang: ${s.longest} hari',
+                      style: const TextStyle(
+                        fontFamily: AppTheme.fontFamily,
+                        fontSize: 11,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded,
+                  color: Colors.white, size: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Statistik Bulan Ini ─────────────────────────────────────────────────
+  Widget _statisticCard() {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceOf(context),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+      ),
+      child: Column(
+        children: [
+          for (int i = 0; i < _topMonthly.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            _statisticRow(_topMonthly[i]),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _statisticRow(MonthlyStat stat) {
+    final meta = ServiceRegistry.metaFor(stat.id);
+    final icon = meta?.icon ?? Icons.bar_chart_rounded;
+    return Row(
+      children: [
+        Container(
+          width: 36, height: 36,
+          decoration: BoxDecoration(
+            color: AppTheme.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: AppTheme.primary, size: 18),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontFamily: AppTheme.fontFamily,
+                fontSize: 13,
+                color: AppTheme.textPrimaryOf(context),
+                height: 1.4,
+              ),
+              children: _statSpans(stat),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<TextSpan> _statSpans(MonthlyStat stat) {
+    final sentence = _statSentence(stat);
+    final marker = '${stat.count}×';
+    final idx = sentence.indexOf(marker);
+    if (idx < 0) {
+      return [TextSpan(text: sentence)];
+    }
+    return [
+      TextSpan(text: sentence.substring(0, idx)),
+      TextSpan(
+        text: marker,
+        style: const TextStyle(
+          fontWeight: FontWeight.w700,
+          color: AppTheme.primary,
+        ),
+      ),
+      TextSpan(text: sentence.substring(idx + marker.length)),
+    ];
+  }
+
+  // ── Aktivitas Terakhir ──────────────────────────────────────────────────
+  Widget _recentActivityCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceOf(context),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+      ),
+      child: Column(
+        children: [
+          for (int i = 0; i < _recentOpens.length; i++) ...[
+            if (i > 0)
+              Divider(height: 1, thickness: 1, indent: 56, color: AppTheme.borderOf(context)),
+            _recentActivityRow(_recentOpens[i]),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _recentActivityRow(RecentOpen item) {
+    final meta = ServiceRegistry.metaFor(item.id);
+    final label = meta?.label ?? item.id;
+    final icon = meta?.icon ?? Icons.history_rounded;
+    final canOpen = meta != null && (meta.route != null || meta.hospital != null);
+
+    return Semantics(
+      button: canOpen,
+      label: '$label, dibuka ${_formatRelative(item.timestamp)}',
+      child: InkWell(
+        onTap: canOpen ? () => _openFeature(meta) : null,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              ExcludeSemantics(child: _iconBox(icon)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontFamily: AppTheme.fontFamily,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.textPrimaryOf(context),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _formatRelative(item.timestamp),
+                      style: TextStyle(
+                        fontFamily: AppTheme.fontFamily,
+                        fontSize: 11,
+                        color: AppTheme.textSecondaryOf(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (canOpen)
+                Icon(Icons.chevron_right_rounded,
+                    size: 20, color: AppTheme.textSecondaryOf(context)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 import '../theme/app_theme.dart';
+import 'feature_usage_service.dart';
 import 'gemini_service.dart';
 import 'maja_ai_history_service.dart';
 
@@ -29,12 +32,40 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
   bool _isLoadingHistory = true;
   bool _isResponding = false;
 
+  // ── Suggestion dinamis ────────────────────────────────────────────────────
+  // Diisi dari FeatureUsageService; fallback ke _kDefaultSuggestions.
+  List<String> _suggestions = const _DefaultSuggestionsList();
+
+  // ── Rate limiter sliding window ───────────────────────────────────────────
+  // Maks _kMaxPerWindow pesan per _kRateWindow detik.
+  static const int _kMaxPerWindow = 8;
+  static const Duration _kRateWindow = Duration(seconds: 60);
+  final Queue<DateTime> _sendTimestamps = Queue<DateTime>();
+
   @override
   void initState() {
     super.initState();
     _chat = GeminiService.startChat();
     _loadUser();
     _loadHistory();
+    _loadSuggestions();
+  }
+
+  Future<void> _loadSuggestions() async {
+    final top = await FeatureUsageService.topFeatures(limit: 6);
+    if (!mounted) return;
+    final dynamic_ = <String>[];
+    for (final id in top) {
+      final list = _kSuggestionsByFeature[id];
+      if (list == null) continue;
+      for (final s in list) {
+        if (!dynamic_.contains(s)) dynamic_.add(s);
+        if (dynamic_.length >= 6) break;
+      }
+      if (dynamic_.length >= 6) break;
+    }
+    if (dynamic_.isEmpty) return;
+    setState(() => _suggestions = dynamic_);
   }
 
   Future<void> _loadHistory() async {
@@ -156,11 +187,36 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
 
   // ── Kirim pesan ────────────────────────────────────────────────────────────
 
+  /// Mengembalikan sisa detik sampai user boleh mengirim lagi.
+  /// 0 berarti tidak diblokir.
+  int _rateLimitWaitSeconds() {
+    final now = DateTime.now();
+    while (_sendTimestamps.isNotEmpty &&
+        now.difference(_sendTimestamps.first) > _kRateWindow) {
+      _sendTimestamps.removeFirst();
+    }
+    if (_sendTimestamps.length < _kMaxPerWindow) return 0;
+    final oldest = _sendTimestamps.first;
+    final wait = _kRateWindow - now.difference(oldest);
+    return wait.inSeconds.clamp(1, _kRateWindow.inSeconds);
+  }
+
   void _send() {
     final text = _textCtrl.text.trim();
     if (text.isEmpty || _isResponding) return;
     final chat = _chat;
     if (chat == null) return;
+
+    final wait = _rateLimitWaitSeconds();
+    if (wait > 0) {
+      _showSnack(
+        'Terlalu cepat. Tunggu $wait detik sebelum mengirim lagi.',
+        isError: true,
+      );
+      return;
+    }
+    _sendTimestamps.add(DateTime.now());
+
     _textCtrl.clear();
     FocusScope.of(context).unfocus();
 
@@ -298,6 +354,37 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     }
   }
 
+  // ── Salin pesan & snackbar helper ──────────────────────────────────────────
+
+  Future<void> _copyMessage(String text) async {
+    if (text.trim().isEmpty) return;
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) return;
+    _showSnack('Pesan disalin ke clipboard');
+  }
+
+  void _showSnack(String message, {bool isError = false}) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.clearSnackBars();
+    messenger.showSnackBar(
+      SnackBar(
+        backgroundColor: isError ? AppTheme.danger : AppTheme.primary,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontFamily: AppTheme.fontFamily,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollCtrl.hasClients) {
@@ -422,7 +509,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                 width: 44,
                 height: 44,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (_, _, _) =>
                     const Icon(Icons.auto_awesome_rounded, color: AppTheme.primary),
               ),
             ),
@@ -482,7 +569,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
             Image.asset(
               'assets/images/maja_ai.png',
               width: 90,
-              errorBuilder: (_, __, ___) =>
+              errorBuilder: (_, _, _) =>
                   const Icon(Icons.auto_awesome_rounded, color: AppTheme.primary, size: 48),
             ),
             const SizedBox(height: 16),
@@ -511,14 +598,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
               spacing: 8,
               runSpacing: 8,
               alignment: WrapAlignment.center,
-              children: [
-                'Cek pajak kendaraan',
-                'Info rumah sakit',
-                'Harga bahan pokok',
-                'Bantuan sosial',
-                'Nomor darurat',
-                'Cara pakai aplikasi',
-              ].map(_quickChip).toList(),
+              children: _suggestions.map(_quickChip).toList(),
             ),
           ],
         ),
@@ -579,24 +659,28 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: const BoxDecoration(
-                color: AppTheme.primary,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(4),
+            child: GestureDetector(
+              onLongPress: () => _copyMessage(text),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: const BoxDecoration(
+                  color: AppTheme.primary,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(4),
+                  ),
                 ),
-              ),
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontFamily: AppTheme.fontFamily,
-                  fontSize: 14,
-                  color: Colors.white,
-                  height: 1.4,
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 14,
+                    color: Colors.white,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),
@@ -624,31 +708,35 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
           _aiAvatar(),
           const SizedBox(width: 8),
           Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
+            child: GestureDetector(
+              onLongPress: () => _copyMessage(text),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    topRight: Radius.circular(16),
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
                   ),
-                ],
-              ),
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontFamily: AppTheme.fontFamily,
-                  fontSize: 14,
-                  color: AppTheme.textPrimary,
-                  height: 1.5,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 14,
+                    color: AppTheme.textPrimary,
+                    height: 1.5,
+                  ),
                 ),
               ),
             ),
@@ -793,7 +881,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
           width: 32,
           height: 32,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) =>
+          errorBuilder: (_, _, _) =>
               const Icon(Icons.auto_awesome_rounded, color: AppTheme.primary, size: 16),
         ),
       ),
@@ -894,4 +982,48 @@ class _ChatMessage {
       docId: docId ?? this.docId,
     );
   }
+}
+
+// ── Suggestion chip data ─────────────────────────────────────────────────────
+
+const Map<String, List<String>> _kSuggestionsByFeature = {
+  'bapenda': ['Cek pajak kendaraan', 'Estimasi NJKB'],
+  'rsud': ['Cek antrean rumah sakit', 'Cari kamar tersedia'],
+  'transjatim': ['Jadwal & rute Transjatim'],
+  'siskaperbapo': ['Harga bahan pokok'],
+  'nomor_darurat': ['Nomor darurat penting'],
+  'sapa_bansos': ['Cek bantuan sosial'],
+  'klinik_hoaks': ['Cek klaim hoaks'],
+  'open_data': ['Lihat open data'],
+  'etibi': ['Bayar tilang elektronik'],
+};
+
+/// List default ketika user belum punya riwayat pembukaan fitur.
+/// Dibuat const-evaluable lewat class wrapper agar bisa dipakai sebagai
+/// initial value dari `_suggestions`.
+class _DefaultSuggestionsList extends ListBase<String> {
+  const _DefaultSuggestionsList();
+
+  static const List<String> _items = [
+    'Cek pajak kendaraan',
+    'Info rumah sakit',
+    'Harga bahan pokok',
+    'Bantuan sosial',
+    'Nomor darurat',
+    'Cara pakai aplikasi',
+  ];
+
+  @override
+  int get length => _items.length;
+
+  @override
+  String operator [](int index) => _items[index];
+
+  @override
+  void operator []=(int index, String value) =>
+      throw UnsupportedError('Default suggestions are immutable');
+
+  @override
+  set length(int newLength) =>
+      throw UnsupportedError('Default suggestions are immutable');
 }

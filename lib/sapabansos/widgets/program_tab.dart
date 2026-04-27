@@ -47,7 +47,7 @@ class _ProgramTabState extends State<ProgramTab> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: SapaBansosData.kategoriList.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (_, i) {
           final k = SapaBansosData.kategoriList[i];
           final selected = k == _selectedKategori;

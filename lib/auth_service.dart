@@ -1,6 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'beranda/feature_usage_service.dart';
+import 'common/biometric_service.dart';
+import 'common/profile_cache.dart';
+import 'common/streak_service.dart';
+
 class AuthResult {
   final bool success;
   final String message;
@@ -302,6 +307,8 @@ class AuthService {
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
+      await ProfileCache.saveLocation(city: city, regency: regency);
+
       return const AuthResult(
         success: true,
         message: 'Lokasi berhasil disimpan.',
@@ -372,6 +379,10 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    await ProfileCache.clear();
+    await FeatureUsageService.clear();
+    await BiometricService.disable();
+    await StreakService.clear();
     await _auth.signOut();
   }
 
@@ -443,12 +454,23 @@ class AuthService {
       'addedServices': serviceIds,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+    await ProfileCache.saveAddedServices(serviceIds);
   }
 
   Future<List<String>> getAddedServices() async {
     final profile = await getUserProfile();
     final list = profile?['addedServices'] as List<dynamic>?;
     return list?.map((e) => e.toString()).toList() ?? [];
+  }
+
+  /// Versi yang melempar error jika fetch Firestore gagal — dipakai page yang
+  /// perlu membedakan "kosong" vs "network error" agar bisa menampilkan retry.
+  Future<List<String>> fetchAddedServices() async {
+    final user = _auth.currentUser;
+    if (user == null) return const [];
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    final list = doc.data()?['addedServices'] as List<dynamic>?;
+    return list?.map((e) => e.toString()).toList() ?? const [];
   }
 
   Future<bool> isAdmin() async {

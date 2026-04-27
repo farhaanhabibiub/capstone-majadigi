@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_transitions.dart';
 import 'splash_screen.dart';
 import 'onboarding.dart';
 import 'login_page.dart';
@@ -14,6 +15,7 @@ import 'beranda/beranda_page.dart';
 import 'beranda/notifikasi_page.dart';
 import 'beranda/tambah_layanan_page.dart';
 import 'beranda/maja_ai_chat_page.dart';
+import 'beranda/global_search_page.dart';
 import 'bapenda/bapenda_page.dart';
 import 'bapenda/info_pajak_page.dart';
 import 'bapenda/hasil_pajak_page.dart';
@@ -36,8 +38,12 @@ import 'klinikhoaks_permohonan.dart';
 import 'klinikhoaks_landing_page.dart';
 import 'admin/admin_page.dart';
 import 'admin/admin_notifikasi_page.dart';
+import 'admin/admin_session_guard.dart';
+import 'admin/audit_log_page.dart';
 import 'profil/ubah_profil_page.dart';
 import 'profil/keamanan_akun_page.dart';
+import 'profil/aksesibilitas_page.dart';
+import 'profil/lencana_page.dart';
 import 'nomordarurat_landing_page.dart';
 import 'nomordarurat_carinomor.dart';
 import 'nomordarurat_informasi.dart';
@@ -79,151 +85,187 @@ class AppRoutes {
   static const String nomorDaruratInformasiPage = '/nomorDaruratInformasiPage';
   static const String tambahLayananPage = '/tambahLayananPage';
   static const String majaAiChatPage = '/majaAiChatPage';
+  static const String globalSearchPage = '/globalSearchPage';
   static const String notifikasiPage = '/notifikasiPage';
   static const String adminPage = '/adminPage';
   static const String adminNotifikasiPage = '/adminNotifikasiPage';
+  static const String auditLogPage = '/auditLogPage';
   static const String ubahProfilPage = '/ubahProfilPage';
   static const String keamananAkunPage = '/keamananAkunPage';
+  static const String aksesibilitasPage = '/aksesibilitasPage';
+  static const String lencanaPage = '/lencanaPage';
+
+  /// Routes yang muncul "menumpuk" tanpa arah spasial → pakai fade.
+  /// Sisanya pakai slide forward.
+  static const Set<String> _fadeRoutes = {
+    splashScreen,
+    onboarding,
+    emailSentPage,
+    personalizationSuccessPage,
+    hasilPajakPage,
+    hasilNjkbPage,
+    majaAiChatPage,
+    globalSearchPage,
+    notifikasiPage,
+    adminNotifikasiPage,
+  };
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    final builder = _builderFor(settings);
+    final isFade = _fadeRoutes.contains(settings.name);
+    if (isFade) {
+      return FadePageRoute(builder: builder, settings: settings);
+    }
+    return SlidePageRoute(builder: builder, settings: settings);
+  }
+
+  static WidgetBuilder _builderFor(RouteSettings settings) {
     switch (settings.name) {
       case splashScreen:
-        return MaterialPageRoute(builder: (_) => const SplashScreen());
+        return (_) => const SplashScreen();
 
       case onboarding:
-        return MaterialPageRoute(builder: (_) => const OnboardingPage());
+        return (_) => const OnboardingPage();
 
       case loginPage:
-        return MaterialPageRoute(builder: (_) => const LoginPage());
+        return (_) => const LoginPage();
 
       case registerPage:
-        return MaterialPageRoute(builder: (_) => const RegisterPage());
+        return (_) => const RegisterPage();
 
       case verifyEmailPage:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
-        return MaterialPageRoute(
-          builder: (_) => VerifyEmailPage(email: args['email'] as String? ?? ''),
-        );
+        return (_) => VerifyEmailPage(email: args['email'] as String? ?? '');
 
       case forgetPasswordPage:
-        return MaterialPageRoute(builder: (_) => const ForgetPasswordPage());
+        return (_) => const ForgetPasswordPage();
 
       case emailSentPage:
         final args = settings.arguments as Map<String, dynamic>? ?? {};
-        return MaterialPageRoute(
-          builder: (_) => EmailSentPage(email: args['email'] as String? ?? ''),
-        );
+        return (_) => EmailSentPage(email: args['email'] as String? ?? '');
 
       case personalizationLocationPage:
-        return MaterialPageRoute(builder: (_) => const PersonalizationLocationPage());
+        return (_) => const PersonalizationLocationPage();
 
       case locationManualPage:
-        return MaterialPageRoute(builder: (_) => const LocationManualPage());
+        return (_) => const LocationManualPage();
 
       case personalizationServicesPage:
-        return MaterialPageRoute(builder: (_) => const PersonalizationServicesPage());
+        return (_) => const PersonalizationServicesPage();
 
       case personalizationSuccessPage:
-        return MaterialPageRoute(builder: (_) => const PersonalizationSuccessPage());
+        return (_) => const PersonalizationSuccessPage();
 
       case berandaPage:
-        return MaterialPageRoute(builder: (_) => const BerandaPage());
+        return (_) => const BerandaPage();
 
       case bapendaPage:
-        return MaterialPageRoute(builder: (_) => const BapendaPage());
+        return (_) => const BapendaPage();
 
       case infoPajakPage:
-        return MaterialPageRoute(builder: (_) => const InfoPajakPage());
+        return (_) => const InfoPajakPage();
 
       case hasilPajakPage:
         final data = settings.arguments as KendaraanData;
-        return MaterialPageRoute(builder: (_) => HasilPajakPage(data: data));
+        return (_) => HasilPajakPage(data: data);
 
       case estimasiNjkbPage:
-        return MaterialPageRoute(builder: (_) => const EstimasiNjkbPage());
+        return (_) => const EstimasiNjkbPage();
 
       case hasilNjkbPage:
         final data = settings.arguments as HasilNjkbData;
-        return MaterialPageRoute(builder: (_) => HasilNjkbPage(data: data));
+        return (_) => HasilNjkbPage(data: data);
 
       case rsudPage:
         final hospital = settings.arguments as HospitalConfig;
-        return MaterialPageRoute(builder: (_) => RsudPage(hospital: hospital));
+        return (_) => RsudPage(hospital: hospital);
 
       case ketersediaanKamarPage:
         final hospital = settings.arguments as HospitalConfig;
-        return MaterialPageRoute(builder: (_) => KetersediaanKamarPage(hospital: hospital));
+        return (_) => KetersediaanKamarPage(hospital: hospital);
 
       case jadwalOperasiPage:
         final hospital = settings.arguments as HospitalConfig;
-        return MaterialPageRoute(builder: (_) => JadwalOperasiPage(hospital: hospital));
+        return (_) => JadwalOperasiPage(hospital: hospital);
 
       case infoAntreanPage:
         final hospital = settings.arguments as HospitalConfig;
-        return MaterialPageRoute(builder: (_) => InfoAntreanPage(hospital: hospital));
+        return (_) => InfoAntreanPage(hospital: hospital);
 
       case transjatimPage:
-        return MaterialPageRoute(builder: (_) => const TransjatimPage());
+        return (_) => const TransjatimPage();
 
       case siskaperbapoPage:
-        return MaterialPageRoute(builder: (_) => const SiskaperbapoPage());
+        return (_) => const SiskaperbapoPage();
 
       case etibiPage:
-        return MaterialPageRoute(builder: (_) => const EtibiPage());
+        return (_) => const EtibiPage();
 
       case sapaBansosPage:
-        return MaterialPageRoute(builder: (_) => const SapaBansosPage());
+        return (_) => const SapaBansosPage();
 
       case openDataLandingPage:
-        return MaterialPageRoute(builder: (_) => const OpenDataLandingPage());
+        return (_) => const OpenDataLandingPage();
 
       case openDataListPage:
-        return MaterialPageRoute(builder: (_) => const OpenDataListPage());
+        return (_) => const OpenDataListPage();
 
       case openDataDapurMBGPage:
-        return MaterialPageRoute(builder: (_) => const OpenDataDapurMBGPage());
+        return (_) => const OpenDataDapurMBGPage();
 
       case openDataAyoPasokPage:
-        return MaterialPageRoute(builder: (_) => const OpenDataAyoPasokPage());
+        return (_) => const OpenDataAyoPasokPage();
 
       case klinikHoaksPermohonanPage:
-        return MaterialPageRoute(builder: (_) => const KlinikHoaksPermohonanPage());
+        return (_) => const KlinikHoaksPermohonanPage();
 
       case klinikHoaksLandingPage:
-        return MaterialPageRoute(builder: (_) => const KlinikHoaksLandingPage());
+        return (_) => const KlinikHoaksLandingPage();
 
       case nomorDaruratLandingPage:
-        return MaterialPageRoute(builder: (_) => const NomorDaruratLandingPage());
+        return (_) => const NomorDaruratLandingPage();
 
       case nomorDaruratCariNomorPage:
-        return MaterialPageRoute(builder: (_) => const NomorDaruratCariNomorPage());
+        return (_) => const NomorDaruratCariNomorPage();
 
       case nomorDaruratInformasiPage:
-        return MaterialPageRoute(builder: (_) => const NomorDaruratInformasiPage());
+        return (_) => const NomorDaruratInformasiPage();
 
       case tambahLayananPage:
-        return MaterialPageRoute(builder: (_) => const TambahLayananPage());
+        return (_) => const TambahLayananPage();
 
       case majaAiChatPage:
-        return MaterialPageRoute(builder: (_) => const MajaAiChatPage());
+        return (_) => const MajaAiChatPage();
+
+      case globalSearchPage:
+        return (_) => const GlobalSearchPage();
 
       case notifikasiPage:
-        return MaterialPageRoute(builder: (_) => const NotifikasiPage());
+        return (_) => const NotifikasiPage();
 
       case adminPage:
-        return MaterialPageRoute(builder: (_) => const AdminPage());
+        return (_) => const AdminSessionGuard(child: AdminPage());
 
       case adminNotifikasiPage:
-        return MaterialPageRoute(builder: (_) => const AdminNotifikasiPage());
+        return (_) => const AdminSessionGuard(child: AdminNotifikasiPage());
+
+      case auditLogPage:
+        return (_) => const AdminSessionGuard(child: AuditLogPage());
 
       case ubahProfilPage:
-        return MaterialPageRoute(builder: (_) => const UbahProfilPage());
+        return (_) => const UbahProfilPage();
 
       case keamananAkunPage:
-        return MaterialPageRoute(builder: (_) => const KeamananAkunPage());
+        return (_) => const KeamananAkunPage();
+
+      case aksesibilitasPage:
+        return (_) => const AksesibilitasPage();
+
+      case lencanaPage:
+        return (_) => const LencanaPage();
 
       default:
-        return MaterialPageRoute(builder: (_) => const SplashScreen());
+        return (_) => const SplashScreen();
     }
   }
 }

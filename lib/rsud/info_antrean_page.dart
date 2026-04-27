@@ -1,6 +1,8 @@
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../widgets/error_retry.dart';
+import '../widgets/skeleton_loader.dart';
 import 'hospital_config.dart';
 
 // ── Model ─────────────────────────────────────────────────────────────────────
@@ -83,6 +85,8 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
 
   // ── data loading ───────────────────────────────────────────────────────────
 
+  Object? _loadError;
+
   Future<void> _loadData() async {
     try {
       final raw = await rootBundle.loadString(widget.hospital.antreanCsv);
@@ -123,13 +127,27 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
       if (mounted) {
         setState(() {
           _allData = list;
+          _loadError = null;
           _isLoading = false;
         });
       }
     } catch (e) {
       debugPrint('InfoAntrean: gagal load CSV – $e');
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _loadError = e;
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  Future<void> _retryLoad() async {
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
+    });
+    await _loadData();
   }
 
   // ── computed ───────────────────────────────────────────────────────────────
@@ -307,10 +325,14 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
       backgroundColor: _whiteBg,
       appBar: _buildAppBar(),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: _blue),
-            )
-          : SingleChildScrollView(
+          ? SkeletonLoader.form(fieldCount: 2)
+          : _loadError != null
+              ? ErrorRetry(
+                  title: 'Gagal memuat data antrean',
+                  subtitle: ErrorRetry.fromException(_loadError!),
+                  onRetry: _retryLoad,
+                )
+              : SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

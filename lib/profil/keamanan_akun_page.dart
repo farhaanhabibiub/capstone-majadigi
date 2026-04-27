@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../common/biometric_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/password_strength_meter.dart';
 
 class KeamananAkunPage extends StatefulWidget {
   const KeamananAkunPage({super.key});
@@ -20,10 +22,63 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
   bool _showConfirm = false;
   bool _isSaving = false;
 
+  bool _biometricAvailable = false;
+  bool _biometricEnabled = false;
+
   static const Color _textHint = Color.fromRGBO(180, 180, 180, 1);
 
   @override
+  void initState() {
+    super.initState();
+    _newPassCtrl.addListener(_refresh);
+    _confirmPassCtrl.addListener(_refresh);
+    _loadBiometricState();
+  }
+
+  Future<void> _loadBiometricState() async {
+    final available = await BiometricService.isAvailable();
+    final enabled = await BiometricService.isEnabled();
+    if (!mounted) return;
+    setState(() {
+      _biometricAvailable = available;
+      _biometricEnabled = enabled;
+    });
+  }
+
+  Future<void> _toggleBiometric(bool value) async {
+    if (value) {
+      final ok = await BiometricService.authenticate(
+        reason: 'Konfirmasi sidik jari/wajah untuk mengaktifkan login biometrik',
+      );
+      if (!ok) return;
+      final email = FirebaseAuth.instance.currentUser?.email;
+      if (email == null) return;
+      await BiometricService.enable(email);
+      if (mounted) {
+        setState(() => _biometricEnabled = true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login biometrik diaktifkan')),
+        );
+      }
+    } else {
+      await BiometricService.disable();
+      if (mounted) {
+        setState(() => _biometricEnabled = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login biometrik dinonaktifkan')),
+        );
+      }
+    }
+  }
+
+  void _refresh() {
+    if (mounted) setState(() {});
+  }
+
+  @override
   void dispose() {
+    _newPassCtrl.removeListener(_refresh);
+    _confirmPassCtrl.removeListener(_refresh);
     _oldPassCtrl.dispose();
     _newPassCtrl.dispose();
     _confirmPassCtrl.dispose();
@@ -154,6 +209,7 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
       ),
       body: Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           children: [
             Expanded(
@@ -162,6 +218,10 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (_biometricAvailable) ...[
+                      _biometricCard(),
+                      const SizedBox(height: 24),
+                    ],
                     const Text(
                       'Ubah Password',
                       style: TextStyle(
@@ -206,6 +266,7 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
                         return null;
                       },
                     ),
+                    PasswordStrengthMeter(password: _newPassCtrl.text),
 
                     const SizedBox(height: 18),
 
@@ -286,6 +347,67 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
         fontFamily: AppTheme.fontFamily,
         fontSize: 13,
         fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Widget _biometricCard() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36, height: 36,
+            decoration: BoxDecoration(
+              color: AppTheme.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.fingerprint_rounded,
+                color: AppTheme.primary, size: 20),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Login Biometrik',
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'Masuk dengan sidik jari atau pengenalan wajah',
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 11,
+                    color: AppTheme.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch.adaptive(
+            value: _biometricEnabled,
+            activeThumbColor: AppTheme.primary,
+            onChanged: _toggleBiometric,
+          ),
+        ],
       ),
     );
   }

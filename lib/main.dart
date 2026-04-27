@@ -7,6 +7,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'app_route.dart';
 import 'firebase_options.dart';
 import 'notification_service.dart';
+import 'theme/app_theme.dart';
+import 'theme/font_scale_controller.dart';
 import 'theme/theme_controller.dart';
 
 @pragma('vm:entry-point')
@@ -20,6 +22,7 @@ Future<void> main() async {
   await initializeDateFormatting('id_ID', null);
   await NotificationService.initialize();
   await ThemeController.init();
+  await FontScaleController.init();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.onMessage.listen((message) {
@@ -66,24 +69,29 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: ThemeController.notifier,
-      builder: (_, themeMode, __) => MaterialApp(
-        title: 'Majadigi',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: const Color(0xFF0065FF),
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0065FF)),
-        ),
-        darkTheme: ThemeData.dark().copyWith(
-          primaryColor: const Color(0xFF0065FF),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF0065FF),
-            brightness: Brightness.dark,
+      builder: (_, themeMode, _) {
+        return ValueListenableBuilder<FontScaleOption>(
+          valueListenable: FontScaleController.notifier,
+          builder: (_, fontOption, _) => MaterialApp(
+            title: 'Majadigi',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme(),
+            darkTheme: AppTheme.darkTheme(),
+            themeMode: themeMode,
+            initialRoute: AppRoutes.splashScreen,
+            onGenerateRoute: AppRoutes.generateRoute,
+            builder: (context, child) {
+              final mq = MediaQuery.of(context);
+              return MediaQuery(
+                data: mq.copyWith(
+                  textScaler: TextScaler.linear(fontOption.scale),
+                ),
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
           ),
-        ),
-        themeMode: themeMode,
-        initialRoute: AppRoutes.splashScreen,
-        onGenerateRoute: AppRoutes.generateRoute,
-      ),
+        );
+      },
     );
   }
 }

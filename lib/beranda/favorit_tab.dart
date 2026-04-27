@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../app_route.dart';
+import '../common/share_service.dart';
 import '../rsud/hospital_config.dart';
 import '../theme/app_theme.dart';
 import '../widgets/empty_state.dart';
+import '../widgets/skeleton_loader.dart';
 
 // ── Registry semua layanan yang bisa di-bookmark ───────────────────────────
 
@@ -188,9 +190,7 @@ class _FavoritTabState extends State<FavoritTab> {
 
   Widget _buildBody() {
     if (_loading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppTheme.primary),
-      );
+      return SkeletonLoader.list(itemCount: 5);
     }
 
     if (_saved.isEmpty) {
@@ -208,7 +208,7 @@ class _FavoritTabState extends State<FavoritTab> {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
       itemCount: _saved.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, index) => _buildCard(context, _saved[index]),
     );
   }
@@ -247,7 +247,7 @@ class _FavoritTabState extends State<FavoritTab> {
               child: Image.asset(
                 entry.assetPath,
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (_, _, _) =>
                     Icon(entry.fallback, color: AppTheme.primary, size: 22),
               ),
             ),
@@ -279,12 +279,28 @@ class _FavoritTabState extends State<FavoritTab> {
                 ],
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 6),
+            Builder(
+              builder: (ctx) => IconButton(
+                icon: const Icon(
+                  Icons.ios_share_rounded,
+                  color: AppTheme.textSecondary,
+                  size: 20,
+                ),
+                tooltip: 'Bagikan layanan',
+                onPressed: () => ShareService.shareLayanan(
+                  label: entry.label,
+                  description: entry.description,
+                  context: ctx,
+                ),
+              ),
+            ),
             const Icon(
               Icons.bookmark_rounded,
               color: AppTheme.primary,
               size: 22,
             ),
+            const SizedBox(width: 4),
           ],
         ),
       ),

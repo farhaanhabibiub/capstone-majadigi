@@ -3,6 +3,7 @@ import '../common/favorite_mixin.dart';
 import '../theme/app_theme.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/error_retry.dart';
+import '../widgets/skeleton_loader.dart';
 import 'data/transjatim_dummy_data.dart';
 import 'models/transjatim_model.dart';
 import 'ticket_history_service.dart';
@@ -274,7 +275,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
       future: TicketHistoryService.getAll(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
+          return SkeletonLoader.list();
         }
         if (snapshot.hasError) {
           return ErrorRetry(
@@ -318,7 +319,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
               child: ListView.separated(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                 itemCount: tickets.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (_, i) => _buildRiwayatCard(tickets[i]),
               ),
             ),

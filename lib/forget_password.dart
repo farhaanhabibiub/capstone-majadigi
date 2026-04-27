@@ -14,7 +14,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   late final TextEditingController _emailController;
 
   bool _isSubmitting = false;
-  bool _showValidationErrors = false;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
@@ -53,10 +52,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
 
   Future<void> _handleSendResetEmail() async {
     FocusScope.of(context).unfocus();
-
-    setState(() {
-      _showValidationErrors = true;
-    });
 
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
@@ -104,9 +99,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           child: Form(
             key: _formKey,
-            autovalidateMode: _showValidationErrors
-                ? AutovalidateMode.onUserInteraction
-                : AutovalidateMode.disabled,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

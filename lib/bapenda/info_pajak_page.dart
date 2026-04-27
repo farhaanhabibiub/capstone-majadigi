@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 
 import '../app_route.dart';
 import '../theme/app_theme.dart';
+import '../widgets/error_retry.dart';
+import '../widgets/skeleton_loader.dart';
 import 'hasil_pajak_page.dart';
 
 class InfoPajakPage extends StatefulWidget {
@@ -24,6 +26,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
   bool _dbLoaded = false;
   bool _isSearching = false;
   String? _platError;
+  Object? _loadError;
 
   static final _platRegex = RegExp(r'^[A-Z]{1,2}\s?\d{1,4}\s?[A-Z]{0,3}$');
 
@@ -69,12 +72,27 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
       if (mounted) {
         setState(() {
           _database = items;
+          _loadError = null;
           _dbLoaded = true;
         });
       }
-    } catch (_) {
-      if (mounted) setState(() => _dbLoaded = true);
+    } catch (e) {
+      debugPrint('InfoPajak: gagal load CSV – $e');
+      if (mounted) {
+        setState(() {
+          _loadError = e;
+          _dbLoaded = true;
+        });
+      }
     }
+  }
+
+  Future<void> _retryLoad() async {
+    setState(() {
+      _dbLoaded = false;
+      _loadError = null;
+    });
+    await _loadDatabase();
   }
 
   Future<void> _handleCari() async {
@@ -187,24 +205,14 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
         ),
       ),
       body: !_dbLoaded
-          ? const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text(
-                    'Memuat database kendaraan...',
-                    style: TextStyle(
-                      color: Color.fromRGBO(120, 120, 120, 1),
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : SingleChildScrollView(
+          ? SkeletonLoader.form(fieldCount: 2)
+          : _loadError != null
+              ? ErrorRetry(
+                  title: 'Gagal memuat database kendaraan',
+                  subtitle: ErrorRetry.fromException(_loadError!),
+                  onRetry: _retryLoad,
+                )
+              : SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

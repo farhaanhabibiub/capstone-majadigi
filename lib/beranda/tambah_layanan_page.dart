@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../auth_service.dart';
+import '../widgets/empty_state.dart';
+import '../widgets/error_retry.dart';
+import '../widgets/skeleton_loader.dart';
 import 'service_registry.dart';
 
 class TambahLayananPage extends StatefulWidget {
@@ -19,6 +22,7 @@ class _TambahLayananPageState extends State<TambahLayananPage> {
   final Set<int> _selected = {};
   bool _isLoading = true;
   bool _isSaving = false;
+  Object? _loadError;
 
   @override
   void initState() {
@@ -27,12 +31,29 @@ class _TambahLayananPageState extends State<TambahLayananPage> {
   }
 
   Future<void> _loadAlreadyAdded() async {
-    final ids = await AuthService.instance.getAddedServices();
-    if (!mounted) return;
+    try {
+      final ids = await AuthService.instance.fetchAddedServices();
+      if (!mounted) return;
+      setState(() {
+        _alreadyAdded = ids;
+        _loadError = null;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loadError = e;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _retryLoad() async {
     setState(() {
-      _alreadyAdded = ids;
-      _isLoading = false;
+      _isLoading = true;
+      _loadError = null;
     });
+    await _loadAlreadyAdded();
   }
 
   List<AddableService> get _availableItems => ServiceRegistry.all
@@ -55,8 +76,8 @@ class _TambahLayananPageState extends State<TambahLayananPage> {
       PageRouteBuilder(
         opaque: false,
         barrierColor: Colors.black.withValues(alpha: 0.45),
-        pageBuilder: (_, __, ___) => const _TambahSuccessOverlay(),
-        transitionsBuilder: (_, anim, __, child) =>
+        pageBuilder: (_, _, _) => const _TambahSuccessOverlay(),
+        transitionsBuilder: (_, anim, _, child) =>
             FadeTransition(opacity: anim, child: child),
       ),
     );
@@ -87,20 +108,24 @@ class _TambahLayananPageState extends State<TambahLayananPage> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
+          ? SkeletonLoader.grid(itemCount: 9)
+          : _loadError != null
+              ? ErrorRetry(
+                  title: 'Gagal memuat daftar layanan',
+                  subtitle: ErrorRetry.fromException(_loadError!),
+                  onRetry: _retryLoad,
+                )
+              : Column(
               children: [
                 Expanded(
                   child: _availableItems.isEmpty
-                      ? const Center(
-                          child: Text(
-                            'Semua layanan sudah ditambahkan.',
-                            style: TextStyle(
-                              color: Color.fromRGBO(120, 120, 120, 1),
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 14,
-                            ),
-                          ),
+                      ? EmptyState(
+                          icon: Icons.check_circle_outline_rounded,
+                          title: 'Semua layanan sudah ditambahkan',
+                          subtitle:
+                              'Anda telah menambahkan semua layanan yang tersedia.\nKelola lewat tab Favorit di Beranda.',
+                          actionLabel: 'Kembali',
+                          onAction: () => Navigator.pop(context),
                         )
                       : GridView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),

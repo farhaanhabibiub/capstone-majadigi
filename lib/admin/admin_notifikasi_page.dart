@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../beranda/notifikasi_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/empty_state.dart';
+import '../widgets/skeleton_loader.dart';
+import 'audit_log_service.dart';
 
 class AdminNotifikasiPage extends StatefulWidget {
   const AdminNotifikasiPage({super.key});
@@ -78,9 +81,17 @@ class _AdminNotifikasiPageState extends State<AdminNotifikasiPage> {
                       if (!formKey.currentState!.validate()) return;
                       setLocal(() => isSaving = true);
                       try {
+                        final title = titleCtrl.text.trim();
+                        final body = bodyCtrl.text.trim();
                         await NotifikasiService.create(
-                          title: titleCtrl.text.trim(),
-                          body: bodyCtrl.text.trim(),
+                          title: title,
+                          body: body,
+                        );
+                        await AuditLogService.record(
+                          action: AuditLogService.actionCreateNotifikasi,
+                          targetType: 'notifikasi',
+                          targetId: '-',
+                          details: {'title': title, 'body': body},
                         );
                         if (ctx.mounted) Navigator.pop(ctx);
                       } catch (_) {
@@ -182,6 +193,12 @@ class _AdminNotifikasiPageState extends State<AdminNotifikasiPage> {
     if (confirmed == true) {
       try {
         await NotifikasiService.delete(docId);
+        await AuditLogService.record(
+          action: AuditLogService.actionDeleteNotifikasi,
+          targetType: 'notifikasi',
+          targetId: docId,
+          details: {'title': title},
+        );
       } catch (_) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -264,50 +281,24 @@ class _AdminNotifikasiPageState extends State<AdminNotifikasiPage> {
                       stream: NotifikasiService.stream(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(color: AppTheme.primary),
-                          );
+                          return SkeletonLoader.list();
                         }
 
                         final docs = snapshot.data?.docs ?? [];
 
                         if (docs.isEmpty) {
-                          return Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.notifications_none_rounded,
-                                  size: 64,
-                                  color: Colors.grey.shade300,
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  'Belum ada notifikasi',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade500,
-                                    fontFamily: AppTheme.fontFamily,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Tekan + untuk membuat notifikasi baru',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade400,
-                                    fontFamily: AppTheme.fontFamily,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          return const EmptyState(
+                            icon: Icons.notifications_none_rounded,
+                            title: 'Belum ada notifikasi',
+                            subtitle:
+                                'Notifikasi yang Anda buat akan muncul di sini.\nTekan tombol + untuk mulai mengirim.',
                           );
                         }
 
                         return ListView.separated(
                           padding: const EdgeInsets.all(16),
                           itemCount: docs.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 12),
+                          separatorBuilder: (_, _) => const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final doc = docs[index];
                             final data = doc.data();

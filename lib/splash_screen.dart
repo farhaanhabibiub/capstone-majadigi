@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_route.dart';
 import 'auth_service.dart';
+import 'common/biometric_service.dart';
 import 'onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -34,6 +35,31 @@ class _SplashScreenState extends State<SplashScreen> {
         seen ? AppRoutes.loginPage : AppRoutes.onboarding,
       );
       return;
+    }
+
+    // ── Biometric gate ────────────────────────────────────────────────────
+    // Jika user sudah enroll biometric & sesi Firebase masih aktif,
+    // wajib lulus prompt biometric sebelum lanjut. Akun yang ter-enroll
+    // harus cocok dengan user saat ini.
+    final biometricEnabled = await BiometricService.isEnabled();
+    if (biometricEnabled) {
+      final enrolledEmail = await BiometricService.enrolledEmail();
+      final currentEmail = user.email?.toLowerCase();
+      if (enrolledEmail != null && enrolledEmail == currentEmail) {
+        final ok = await BiometricService.authenticate(
+          reason: 'Verifikasi sidik jari/wajah untuk masuk ke Majadigi',
+        );
+        if (!ok) {
+          // Gagal/cancel → keluar dari sesi & balik ke login
+          await AuthService.instance.signOut();
+          if (!mounted) return;
+          Navigator.pushReplacementNamed(context, AppRoutes.loginPage);
+          return;
+        }
+      } else {
+        // Email tidak match (ganti akun) → reset biometric
+        await BiometricService.disable();
+      }
     }
 
     // Cek apakah user sudah selesai onboarding (lokasi sudah diisi)

@@ -5,9 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../app_transitions.dart';
 import '../theme/app_theme.dart';
+import '../widgets/skeleton_loader.dart';
 
 class UbahProfilPage extends StatefulWidget {
   const UbahProfilPage({super.key});
@@ -69,15 +72,110 @@ class _UbahProfilPageState extends State<UbahProfilPage> {
   }
 
   Future<void> _pickPhoto() async {
+    final source = await _showSourceSheet();
+    if (source == null) return;
+
     final picker = ImagePicker();
     final XFile? file = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-      maxWidth: 512,
+      source: source,
+      imageQuality: 90,
+      maxWidth: 1024,
     );
-    if (file != null && mounted) {
-      setState(() => _pickedFile = File(file.path));
+    if (file == null) return;
+
+    final cropped = await ImageCropper().cropImage(
+      sourcePath: file.path,
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 85,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Sesuaikan Foto',
+          toolbarColor: AppTheme.primary,
+          toolbarWidgetColor: Colors.white,
+          activeControlsWidgetColor: AppTheme.primary,
+          initAspectRatio: CropAspectRatioPreset.square,
+          lockAspectRatio: true,
+          hideBottomControls: false,
+          cropStyle: CropStyle.circle,
+        ),
+        IOSUiSettings(
+          title: 'Sesuaikan Foto',
+          aspectRatioLockEnabled: true,
+          resetAspectRatioEnabled: false,
+          cropStyle: CropStyle.circle,
+        ),
+      ],
+    );
+
+    if (cropped != null && mounted) {
+      setState(() => _pickedFile = File(cropped.path));
     }
+  }
+
+  Future<ImageSource?> _showSourceSheet() {
+    return showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 6),
+              child: Text(
+                'Ubah Foto Profil',
+                style: TextStyle(
+                  fontFamily: AppTheme.fontFamily,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textPrimary,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_rounded, color: AppTheme.primary),
+              title: const Text(
+                'Ambil dari Kamera',
+                style: TextStyle(
+                  fontFamily: AppTheme.fontFamily,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.textPrimary,
+                ),
+              ),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_rounded, color: AppTheme.primary),
+              title: const Text(
+                'Pilih dari Galeri',
+                style: TextStyle(
+                  fontFamily: AppTheme.fontFamily,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.textPrimary,
+                ),
+              ),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<String?> _uploadPhoto(User user) async {
@@ -117,7 +215,7 @@ class _UbahProfilPageState extends State<UbahProfilPage> {
           .set({
         'name': _nameCtrl.text.trim(),
         'phone': fullPhone,
-        if (newPhotoUrl != null) 'photoUrl': newPhotoUrl,
+        'photoUrl': ?newPhotoUrl,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
@@ -173,7 +271,7 @@ class _UbahProfilPageState extends State<UbahProfilPage> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
+          ? SkeletonLoader.form(fieldCount: 3)
           : SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 28, 16, 32),
               child: Form(
@@ -186,26 +284,29 @@ class _UbahProfilPageState extends State<UbahProfilPage> {
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          CircleAvatar(
-                            radius: 52,
-                            backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
-                            backgroundImage: _pickedFile != null
-                                ? FileImage(_pickedFile!)
-                                : (_photoUrl.isNotEmpty
-                                    ? NetworkImage(_photoUrl) as ImageProvider
-                                    : null),
-                            child: (_pickedFile == null && _photoUrl.isEmpty)
-                                ? Image.asset(
-                                    'assets/images/avatar_placeholder.png',
-                                    width: 104,
-                                    height: 104,
-                                    errorBuilder: (_, __, ___) => const Icon(
-                                      Icons.person_rounded,
-                                      color: AppTheme.primary,
-                                      size: 52,
-                                    ),
-                                  )
-                                : null,
+                          Hero(
+                            tag: HeroTags.profileAvatar,
+                            child: CircleAvatar(
+                              radius: 52,
+                              backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
+                              backgroundImage: _pickedFile != null
+                                  ? FileImage(_pickedFile!)
+                                  : (_photoUrl.isNotEmpty
+                                      ? NetworkImage(_photoUrl) as ImageProvider
+                                      : null),
+                              child: (_pickedFile == null && _photoUrl.isEmpty)
+                                  ? Image.asset(
+                                      'assets/images/avatar_placeholder.png',
+                                      width: 104,
+                                      height: 104,
+                                      errorBuilder: (_, _, _) => const Icon(
+                                        Icons.person_rounded,
+                                        color: AppTheme.primary,
+                                        size: 52,
+                                      ),
+                                    )
+                                  : null,
+                            ),
                           ),
                           Positioned(
                             right: 0,
@@ -231,7 +332,7 @@ class _UbahProfilPageState extends State<UbahProfilPage> {
 
                     const SizedBox(height: 8),
                     const Text(
-                      'Ketuk foto untuk mengubah',
+                      'Ketuk foto untuk mengubah & memotong',
                       style: TextStyle(
                         color: AppTheme.textSecondary,
                         fontFamily: AppTheme.fontFamily,

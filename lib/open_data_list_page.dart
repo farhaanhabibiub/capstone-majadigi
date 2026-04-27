@@ -3,6 +3,7 @@ import 'open_data_datasebaran.dart';
 import 'open_data_dapurmbg.dart';
 import 'open_data_ayopasok.dart';
 import 'open_data_detail_page.dart';
+import 'widgets/empty_state.dart';
 
 class OpenDataListPage extends StatefulWidget {
   const OpenDataListPage({super.key});
@@ -304,7 +305,7 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
                                 const EdgeInsets.symmetric(horizontal: 20),
                             scrollDirection: Axis.horizontal,
                             itemCount: _categories.length,
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(width: 8),
                             itemBuilder: (_, i) {
                               final cat = _categories[i];
@@ -351,7 +352,7 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
                                   padding: const EdgeInsets.fromLTRB(
                                       16, 8, 16, 24),
                                   itemCount: items.length,
-                                  separatorBuilder: (_, __) =>
+                                  separatorBuilder: (_, _) =>
                                       const SizedBox(height: 12),
                                   itemBuilder: (_, i) =>
                                       _buildCard(items[i]),
@@ -370,32 +371,11 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.search_off_outlined, size: 64, color: Colors.grey.shade300),
-          const SizedBox(height: 12),
-          const Text(
-            'Tidak ada data yang cocok',
-            style: TextStyle(
-              fontFamily: 'PlusJakartaSans',
-              fontSize: 14,
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Coba kata kunci atau kategori lain',
-            style: TextStyle(
-              fontFamily: 'PlusJakartaSans',
-              fontSize: 12,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
+    return const EmptyState(
+      icon: Icons.search_off_rounded,
+      title: 'Hasil pencarian tidak ditemukan',
+      subtitle:
+          'Tidak ada open data yang cocok dengan filter saat ini.\nCoba ubah kata kunci atau pilih kategori lain.',
     );
   }
 

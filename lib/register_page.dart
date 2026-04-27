@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_route.dart';
 import 'auth_service.dart';
+import 'widgets/password_strength_meter.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -22,7 +23,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isSubmitting = false;
-  bool _showValidationErrors = false;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
@@ -121,10 +121,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> _handleRegister() async {
     FocusScope.of(context).unfocus();
-
-    setState(() {
-      _showValidationErrors = true;
-    });
 
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
@@ -242,9 +238,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   padding: const EdgeInsets.fromLTRB(16, 28, 16, 40),
                   child: Form(
                     key: _formKey,
-                    autovalidateMode: _showValidationErrors
-                        ? AutovalidateMode.onUserInteraction
-                        : AutovalidateMode.disabled,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -340,6 +334,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               size: 20,
                             ),
                           ),
+                        ),
+                        PasswordStrengthMeter(
+                          password: _passwordController.text,
                         ),
                         const SizedBox(height: 14),
                         _RegisterTextField(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_route.dart';
 import 'auth_service.dart';
+import 'common/biometric_service.dart';
+import 'theme/app_theme.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,7 +19,6 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _obscurePassword = true;
   bool _isSubmitting = false;
-  bool _showValidationErrors = false;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
 
@@ -64,12 +65,81 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text.isNotEmpty;
   }
 
+  Future<void> _maybeOfferBiometric(String email) async {
+    if (await BiometricService.isEnabled()) return;
+    if (!await BiometricService.isAvailable()) return;
+    if (!mounted) return;
+
+    final accept = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        icon: const Icon(Icons.fingerprint_rounded,
+            color: AppTheme.primary, size: 40),
+        title: const Text(
+          'Aktifkan Login Biometrik?',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTheme.fontFamily,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
+        ),
+        content: const Text(
+          'Masuk lebih cepat dengan sidik jari atau pengenalan wajah pada login berikutnya.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: AppTheme.fontFamily,
+            fontSize: 13,
+            color: AppTheme.textSecondary,
+            height: 1.5,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text(
+              'Nanti Saja',
+              style: TextStyle(
+                fontFamily: AppTheme.fontFamily,
+                color: AppTheme.textSecondary,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              elevation: 0,
+            ),
+            child: const Text(
+              'Aktifkan',
+              style: TextStyle(
+                fontFamily: AppTheme.fontFamily,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (accept != true) return;
+
+    final ok = await BiometricService.authenticate(
+      reason: 'Konfirmasi sidik jari/wajah untuk mengaktifkan login biometrik',
+    );
+    if (ok) {
+      await BiometricService.enable(email);
+    }
+  }
+
   Future<void> _handleLogin() async {
     FocusScope.of(context).unfocus();
-
-    setState(() {
-      _showValidationErrors = true;
-    });
 
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
@@ -93,6 +163,10 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
 
+      // ── Tawarkan biometric jika belum di-enroll & device support ─────
+      await _maybeOfferBiometric(_emailController.text.trim());
+
+      if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(
         context,
         AppRoutes.berandaPage,
@@ -122,9 +196,11 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.pop(context),
+                    tooltip: 'Kembali',
                     icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.white,
+                      semanticLabel: 'Kembali',
                     ),
                   ),
                   OutlinedButton(
@@ -183,9 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: const EdgeInsets.fromLTRB(16, 28, 16, 24),
                   child: Form(
                     key: _formKey,
-                    autovalidateMode: _showValidationErrors
-                        ? AutovalidateMode.onUserInteraction
-                        : AutovalidateMode.disabled,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -252,12 +326,18 @@ class _LoginPageState extends State<LoginPage> {
                                 _obscurePassword = !_obscurePassword;
                               });
                             },
+                            tooltip: _obscurePassword
+                                ? 'Tampilkan kata sandi'
+                                : 'Sembunyikan kata sandi',
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.remove_red_eye_outlined
                                   : Icons.visibility_off_outlined,
                               color: _blue,
                               size: 20,
+                              semanticLabel: _obscurePassword
+                                  ? 'Tampilkan kata sandi'
+                                  : 'Sembunyikan kata sandi',
                             ),
                           ),
                         ),

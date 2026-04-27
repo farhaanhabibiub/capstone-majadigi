@@ -54,7 +54,9 @@ class SapaBansosDataService {
   static Future<List<String>> getKabupatenList() async {
     final list = await loadPenerima();
     final set = <String>{};
-    for (final p in list) set.add(p.kabupaten);
+    for (final p in list) {
+      set.add(p.kabupaten);
+    }
     return ['Semua', ...set.toList()..sort()];
   }
 

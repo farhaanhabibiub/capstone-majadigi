@@ -86,4 +86,70 @@ class ServiceRegistry {
     }
     return null;
   }
+
+  /// Metadata untuk semua featureId yang dicatat oleh FeatureUsageService —
+  /// termasuk layanan unggulan di beranda yang tidak ada di [all].
+  ///
+  /// Dipakai oleh halaman Profil untuk merender Aktivitas Terakhir & Statistik.
+  static FeatureMeta? metaFor(String id) {
+    final addable = findById(id);
+    if (addable != null) {
+      return FeatureMeta(
+        id: addable.id,
+        label: addable.label,
+        icon: addable.fallback,
+        route: addable.route,
+        hospital: addable.hospital,
+      );
+    }
+    return _coreMeta[id];
+  }
+
+  static const Map<String, FeatureMeta> _coreMeta = {
+    'bapenda': FeatureMeta(
+      id: 'bapenda',
+      label: 'BAPENDA',
+      icon: Icons.account_balance_rounded,
+      route: AppRoutes.bapendaPage,
+    ),
+    'rsud': FeatureMeta(
+      id: 'rsud',
+      label: 'RSUD',
+      icon: Icons.local_hospital_rounded,
+    ),
+    'transjatim': FeatureMeta(
+      id: 'transjatim',
+      label: 'Transjatim',
+      icon: Icons.directions_bus_rounded,
+      route: AppRoutes.transjatimPage,
+    ),
+    'siskaperbapo': FeatureMeta(
+      id: 'siskaperbapo',
+      label: 'SISKAPERBAPO',
+      icon: Icons.storefront_rounded,
+      route: AppRoutes.siskaperbapoPage,
+    ),
+    'nomor_darurat': FeatureMeta(
+      id: 'nomor_darurat',
+      label: 'Nomor Darurat',
+      icon: Icons.emergency_rounded,
+      route: AppRoutes.nomorDaruratLandingPage,
+    ),
+  };
+}
+
+class FeatureMeta {
+  final String id;
+  final String label;
+  final IconData icon;
+  final String? route;
+  final HospitalConfig? hospital;
+
+  const FeatureMeta({
+    required this.id,
+    required this.label,
+    required this.icon,
+    this.route,
+    this.hospital,
+  });
 }

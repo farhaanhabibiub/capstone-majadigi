@@ -8,6 +8,8 @@ import 'auth_service.dart';
 import 'common/favorite_mixin.dart';
 import 'klinikhoaks_landing_page.dart';
 import 'klinikhoaks_lihatdetail.dart';
+import 'widgets/empty_state.dart';
+import 'widgets/skeleton_loader.dart';
 import 'klinikhoaks_model.dart';
 import 'notification_service.dart';
 import 'theme/app_theme.dart';
@@ -382,7 +384,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
   // ── Tab 1: Tiket Saya ─────────────────────────────────────────────────────────
   Widget _buildTiketSayaTab() {
     if (_isLoadingLaporan) {
-      return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
+      return SkeletonLoader.list();
     }
     if (_laporanList.isEmpty) {
       return _buildEmptyTiket();
@@ -393,57 +395,20 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
       child: ListView.separated(
         padding: const EdgeInsets.all(20),
         itemCount: _laporanList.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        separatorBuilder: (_, _) => const SizedBox(height: 16),
         itemBuilder: (_, i) => _buildTicketCard(_laporanList[i]),
       ),
     );
   }
 
   Widget _buildEmptyTiket() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.search, size: 80, color: Colors.grey.shade300),
-            const SizedBox(height: 20),
-            const Text(
-              'Belum Ada Tiket',
-              style: TextStyle(
-                fontSize: 18,
-                fontFamily: 'PlusJakartaSans',
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Anda belum pernah mengajukan laporan.\nTap "Layanan" untuk mulai.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                fontFamily: 'PlusJakartaSans',
-                color: Colors.grey,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 24),
-            TextButton(
-              onPressed: () => setState(() => _selectedTab = 0),
-              child: const Text(
-                'Ajukan Laporan',
-                style: TextStyle(
-                  color: AppTheme.primary,
-                  fontFamily: 'PlusJakartaSans',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return EmptyState(
+      icon: Icons.fact_check_outlined,
+      title: 'Belum ada tiket laporan',
+      subtitle:
+          'Laporan hoaks yang Anda ajukan akan muncul di sini\nbeserta status verifikasinya.',
+      actionLabel: 'Ajukan Laporan',
+      onAction: () => setState(() => _selectedTab = 0),
     );
   }
 

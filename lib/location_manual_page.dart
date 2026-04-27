@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import 'widgets/empty_state.dart';
+import 'widgets/skeleton_loader.dart';
+
 import 'auth_service.dart';
 
 class LocationManualPage extends StatefulWidget {
@@ -441,35 +444,21 @@ class _LocationManualPageState extends State<LocationManualPage> {
               const SizedBox(height: 16),
               Expanded(
                 child: _isLoading
-                    ? const Center(
-                  child: CircularProgressIndicator(),
-                )
+                    ? SkeletonLoader.list(itemCount: 5, hasLeading: false)
                     : searchText.isEmpty
-                    ? const Center(
-                  child: Text(
-                    'Ketik kecamatan, kabupaten/kota, atau provinsi\nuntuk melihat rekomendasi lokasi.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: _textSecondary,
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      height: 1.5,
-                    ),
-                  ),
-                )
+                    ? const EmptyState(
+                        icon: Icons.search_rounded,
+                        title: 'Cari lokasi Anda',
+                        subtitle:
+                            'Ketik nama kecamatan, kabupaten/kota,\natau provinsi untuk melihat rekomendasi.',
+                      )
                     : _filteredLocations.isEmpty
-                    ? const Center(
-                  child: Text(
-                    'Tidak ada lokasi yang cocok.',
-                    style: TextStyle(
-                      color: _textSecondary,
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                )
+                    ? const EmptyState(
+                        icon: Icons.location_off_outlined,
+                        title: 'Lokasi tidak ditemukan',
+                        subtitle:
+                            'Tidak ada lokasi yang cocok dengan kata kunci.\nCoba periksa ejaan atau gunakan kata kunci lain.',
+                      )
                     : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
