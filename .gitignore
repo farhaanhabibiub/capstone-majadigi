@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Local dev secrets — JANGAN di-commit. Berisi API key lokal developer.
+run_dev.bat
+run_dev.sh
+run_dev.ps1
+.env
+.env.local
+*.env

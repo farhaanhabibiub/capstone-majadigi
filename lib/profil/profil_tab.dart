@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +109,7 @@ class _ProfilTabState extends State<ProfilTab> {
       'siskaperbapo' => 'cek harga sembako',
       'nomor_darurat' => 'akses nomor darurat',
       'sapa_bansos' => 'cek bansos',
-      'etibi' => 'akses E-TIBI',
+      'etibi' => 'akses Skrining TBC',
       'klinik_hoaks' => 'lapor hoaks',
       'open_data' => 'buka Open Data',
       _ => 'buka $label',
@@ -290,7 +291,7 @@ class _ProfilTabState extends State<ProfilTab> {
               child: CircleAvatar(
                 radius: 40,
                 backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
-                backgroundImage: _photoUrl.isNotEmpty ? NetworkImage(_photoUrl) : null,
+                backgroundImage: _photoUrl.isNotEmpty ? CachedNetworkImageProvider(_photoUrl) : null,
                 child: _photoUrl.isEmpty
                     ? Image.asset(
                         'assets/images/avatar_placeholder.png',
@@ -389,7 +390,7 @@ class _ProfilTabState extends State<ProfilTab> {
                       'Dengan mengunduh, mendaftar, atau menggunakan aplikasi Majadigi, Anda menyatakan telah membaca, memahami, dan menyetujui seluruh Syarat & Ketentuan ini. Jika Anda tidak menyetujui ketentuan ini, harap hentikan penggunaan aplikasi.\n\n'
 
                       '2. TENTANG MAJADIGI\n'
-                      'Majadigi adalah aplikasi layanan publik digital Provinsi Jawa Timur yang mengintegrasikan berbagai layanan pemerintahan, meliputi: informasi Pajak Kendaraan Bermotor (BAPENDA), layanan rumah sakit daerah (RSUD), transportasi umum (Transjatim), pemantauan harga bahan pokok (SISKAPERBAPO), layanan tuberkulosis (E-TIBI), pengecekan bantuan sosial (SAPA BANSOS), pelaporan berita hoaks (Klinik Hoaks), dan data publik Jawa Timur.\n\n'
+                      'Majadigi adalah aplikasi layanan publik digital Provinsi Jawa Timur yang mengintegrasikan berbagai layanan pemerintahan, meliputi: Pajak Kendaraan, layanan rumah sakit daerah (RSUD), transportasi umum (Transjatim), pemantauan Harga Bahan pokok, Skrining TBC, pengecekan Bantuan Sosial, pelaporan berita hoaks (Klinik Hoaks), dan data publik Jawa Timur.\n\n'
 
                       '3. PERSYARATAN PENGGUNA\n'
                       'Pengguna wajib berusia minimal 17 tahun atau mendapat persetujuan orang tua/wali. Pengguna wajib memberikan informasi yang akurat, lengkap, dan terkini saat pendaftaran. Setiap akun hanya boleh digunakan oleh satu individu dan tidak dapat dipindahtangankan.\n\n'
@@ -401,7 +402,7 @@ class _ProfilTabState extends State<ProfilTab> {
                       'Pengguna dilarang: (a) menggunakan aplikasi untuk tujuan ilegal atau melanggar hukum yang berlaku di Indonesia; (b) menyebarkan informasi palsu, menyesatkan, atau konten yang bersifat SARA; (c) mencoba meretas, merusak, atau mengganggu sistem aplikasi; (d) menggunakan aplikasi untuk kepentingan komersial tanpa izin tertulis; (e) melakukan scraping atau pengambilan data secara masif.\n\n'
 
                       '6. INFORMASI LAYANAN\n'
-                      'Data yang tersedia pada fitur BAPENDA, RSUD, SISKAPERBAPO, dan layanan lainnya bersifat informatif. Majadigi tidak bertanggung jawab atas keputusan yang diambil berdasarkan informasi dalam aplikasi. Untuk kepastian hukum, pengguna disarankan menghubungi instansi terkait secara langsung.\n\n'
+                      'Data yang tersedia pada fitur Pajak Kendaraan, RSUD, Harga Bahan, dan layanan lainnya bersifat informatif. Majadigi tidak bertanggung jawab atas keputusan yang diambil berdasarkan informasi dalam aplikasi. Untuk kepastian hukum, pengguna disarankan menghubungi instansi terkait secara langsung.\n\n'
 
                       '7. KEKAYAAN INTELEKTUAL\n'
                       'Seluruh konten dalam aplikasi Majadigi, termasuk logo, desain, teks, dan antarmuka, merupakan milik Pemerintah Provinsi Jawa Timur dan dilindungi oleh hukum kekayaan intelektual yang berlaku. Pengguna tidak diperkenankan menyalin, mendistribusikan, atau memodifikasi konten tanpa izin.\n\n'

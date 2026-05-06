@@ -27,7 +27,7 @@ class TentangTab extends StatelessWidget {
   Widget _buildTentangCard() {
     return _card(
       icon: Icons.info_outline_rounded,
-      title: 'Tentang SAPA BANSOS',
+      title: 'Tentang Bantuan Sosial',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -58,7 +58,7 @@ class TentangTab extends StatelessWidget {
     final steps = [
       (
         'Buka Tab Data Penerima',
-        'Pilih tab "Data Penerima" pada halaman utama SAPA BANSOS.',
+        'Pilih tab "Data Penerima" pada halaman utama Bantuan Sosial.',
       ),
       (
         'Masukkan NIK',

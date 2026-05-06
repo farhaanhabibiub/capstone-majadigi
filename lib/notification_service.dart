@@ -42,12 +42,12 @@ class NotificationService {
     await _plugin.zonedSchedule(
       1001,
       'Pengingat Skrining TBC 🩺',
-      'Waktunya melakukan skrining E-TIBI kembali. Jaga kesehatanmu!',
+      'Waktunya melakukan Skrining TBC kembali. Jaga kesehatanmu!',
       scheduledDate,
       const NotificationDetails(
         android: AndroidNotificationDetails(
           _etibiChannelId,
-          'E-TIBI Reminder',
+          'Skrining TBC Reminder',
           channelDescription: 'Pengingat skrining TBC berkala',
           importance: Importance.high,
           priority: Priority.high,

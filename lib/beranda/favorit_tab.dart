@@ -32,7 +32,7 @@ class _BookmarkEntry {
 const List<_BookmarkEntry> _kAllEntries = [
   _BookmarkEntry(
     key: 'fav_bapenda',
-    label: 'BAPENDA',
+    label: 'Pajak Kendaraan',
     description: 'Informasi pajak kendaraan bermotor',
     assetPath: 'assets/images/layanan_bapenda.png',
     fallback: Icons.account_balance_rounded,
@@ -48,7 +48,7 @@ const List<_BookmarkEntry> _kAllEntries = [
   ),
   _BookmarkEntry(
     key: 'fav_siskaperbapo',
-    label: 'SISKAPERBAPO',
+    label: 'Harga Bahan',
     description: 'Harga bahan pokok Jawa Timur',
     assetPath: 'assets/images/layanan_siskaperbapo.png',
     fallback: Icons.storefront_rounded,
@@ -56,7 +56,7 @@ const List<_BookmarkEntry> _kAllEntries = [
   ),
   _BookmarkEntry(
     key: 'fav_etibi',
-    label: 'E-TIBI',
+    label: 'Skrining TBC',
     description: 'Layanan tuberkulosis terintegrasi',
     assetPath: 'assets/images/layanan_etibi.png',
     fallback: Icons.medical_services_rounded,
@@ -64,7 +64,7 @@ const List<_BookmarkEntry> _kAllEntries = [
   ),
   _BookmarkEntry(
     key: 'fav_sapabansos',
-    label: 'SAPA BANSOS',
+    label: 'Bantuan Sosial',
     description: 'Cek penerima bantuan sosial',
     assetPath: 'assets/images/layanan_sapa_bansos.png',
     fallback: Icons.volunteer_activism_rounded,

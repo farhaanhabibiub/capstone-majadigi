@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'beranda/feature_asset_service.dart';
 import 'beranda/feature_usage_service.dart';
 import 'common/biometric_service.dart';
 import 'common/profile_cache.dart';
@@ -350,6 +351,8 @@ class AuthService {
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
+      await ProfileCache.saveServicePreferences(serviceIds);
+
       return const AuthResult(
         success: true,
         message: 'Preferensi layanan berhasil disimpan.',
@@ -381,6 +384,7 @@ class AuthService {
   Future<void> signOut() async {
     await ProfileCache.clear();
     await FeatureUsageService.clear();
+    await FeatureAssetService.instance.clear();
     await BiometricService.disable();
     await StreakService.clear();
     await _auth.signOut();

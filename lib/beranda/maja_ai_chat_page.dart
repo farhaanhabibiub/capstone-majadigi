@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -294,7 +295,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
         final errMsg = e.toString();
         String display;
         if (errMsg.contains('API_KEY_INVALID') || errMsg.contains('invalid') || errMsg.contains('API key')) {
-          display = 'API key tidak valid. Pastikan key benar (format AIza...) di gemini_config.dart.';
+          display = 'API key tidak valid. Jalankan app dengan --dart-define=GEMINI_API_KEY=AIza... yang benar.';
         } else if (errMsg.contains('PERMISSION_DENIED')) {
           display = 'Akses ditolak. Pastikan Generative Language API sudah diaktifkan di Google Cloud Console.';
         } else if (errMsg.contains('quota') || errMsg.contains('RESOURCE_EXHAUSTED')) {
@@ -689,7 +690,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
           CircleAvatar(
             radius: 16,
             backgroundColor: const Color.fromRGBO(220, 232, 255, 1),
-            backgroundImage: _photoUrl.isNotEmpty ? NetworkImage(_photoUrl) : null,
+            backgroundImage: _photoUrl.isNotEmpty ? CachedNetworkImageProvider(_photoUrl) : null,
             child: _photoUrl.isEmpty
                 ? const Icon(Icons.person_rounded, color: AppTheme.primary, size: 16)
                 : null,

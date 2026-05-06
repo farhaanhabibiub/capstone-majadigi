@@ -20,7 +20,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
   String get favoriteKey => 'fav_bapenda';
 
   @override
-  String get favoriteLabel => 'BAPENDA';
+  String get favoriteLabel => 'Pajak Kendaraan';
 
   static const List<String> _pendaftaranSteps = [
     'Kunjungi laman resmi Bapenda Jatim.',
@@ -60,7 +60,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
         icon: const Icon(Icons.arrow_back, color: Colors.white),
       ),
       title: const Text(
-        'BAPENDA Jawa Timur',
+        'Pajak Kendaraan',
         style: TextStyle(
           color: Colors.white,
           fontFamily: 'PlusJakartaSans',

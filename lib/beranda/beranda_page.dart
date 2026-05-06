@@ -6,6 +6,7 @@ import '../app_transitions.dart';
 import '../auth_service.dart';
 import '../common/profile_cache.dart';
 import '../common/streak_service.dart';
+import '../personalization_rule_base.dart';
 import '../theme/app_theme.dart';
 import '../rsud/hospital_config.dart';
 import 'favorit_tab.dart';
@@ -29,48 +30,114 @@ class _BerandaPageState extends State<BerandaPage> {
   String _locationRegency = '';
   List<AddableService> _addedServices = [];
   List<_ShortcutItem> _shortcuts = const [];
+  List<String> _servicePreferenceIds = const [];
+  List<_ServiceItem> _services = _kDefaultServices;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
   static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
 
-  static const List<_ServiceItem> _services = [
-    _ServiceItem(
+  // Katalog metadata semua kemungkinan fitur unggulan. Dipakai untuk merender
+  // 5 kartu di beranda berdasarkan hasil [PersonalizationRuleBase].
+  static const Map<String, _ServiceItem> _kFeatureCatalog = {
+    'bapenda': _ServiceItem(
       id: 'bapenda',
-      label: 'BAPENDA',
+      label: 'Pajak Kendaraan',
       assetPath: 'assets/images/layanan_bapenda.png',
       fallback: Icons.account_balance_rounded,
       route: AppRoutes.bapendaPage,
     ),
-    _ServiceItem(
+    'rsud': _ServiceItem(
       id: 'rsud',
       label: 'RSUD',
       assetPath: 'assets/images/layanan_rsud.png',
       fallback: Icons.local_hospital_rounded,
     ),
-    _ServiceItem(
+    'transjatim': _ServiceItem(
       id: 'transjatim',
       label: 'Transjatim',
       assetPath: 'assets/images/layanan_transportasi.png',
       fallback: Icons.directions_bus_rounded,
       route: AppRoutes.transjatimPage,
     ),
-    _ServiceItem(
+    'siskaperbapo': _ServiceItem(
       id: 'siskaperbapo',
-      label: 'SISKAPERBAPO',
+      label: 'Harga Bahan',
       assetPath: 'assets/images/layanan_siskaperbapo.png',
       fallback: Icons.storefront_rounded,
       route: AppRoutes.siskaperbapoPage,
     ),
-    _ServiceItem(
+    'nomor_darurat': _ServiceItem(
       id: 'nomor_darurat',
       label: 'Nomor Darurat',
       assetPath: 'assets/images/layanan_nomor_darurat.png',
       fallback: Icons.emergency_rounded,
       route: AppRoutes.nomorDaruratLandingPage,
     ),
-  ];
+    'sapa_bansos': _ServiceItem(
+      id: 'sapa_bansos',
+      label: 'Bantuan Sosial',
+      assetPath: 'assets/images/layanan_sapa_bansos.png',
+      fallback: Icons.volunteer_activism_rounded,
+      route: AppRoutes.sapaBansosPage,
+    ),
+    'etibi': _ServiceItem(
+      id: 'etibi',
+      label: 'Skrining TBC',
+      assetPath: 'assets/images/layanan_etibi.png',
+      fallback: Icons.medical_services_rounded,
+      route: AppRoutes.etibiPage,
+    ),
+    'klinik_hoaks': _ServiceItem(
+      id: 'klinik_hoaks',
+      label: 'Klinik Hoaks',
+      assetPath: 'assets/images/layanan_klinik_hoaks.png',
+      fallback: Icons.fact_check_rounded,
+      route: AppRoutes.klinikHoaksLandingPage,
+    ),
+    'open_data': _ServiceItem(
+      id: 'open_data',
+      label: 'Open Data',
+      assetPath: 'assets/images/layanan_open_data.png',
+      fallback: Icons.dataset_rounded,
+      route: AppRoutes.openDataLandingPage,
+    ),
+    'rsud_daha_husada': _ServiceItem(
+      id: 'rsud_daha_husada',
+      label: 'RSUD Daha Husada',
+      assetPath: 'assets/images/layanan_rsud.png',
+      fallback: Icons.local_hospital_rounded,
+      hospital: HospitalConfig.dahaHusada,
+    ),
+    'rsud_karsa_husada': _ServiceItem(
+      id: 'rsud_karsa_husada',
+      label: 'RSUD Karsa Husada',
+      assetPath: 'assets/images/layanan_rsud.png',
+      fallback: Icons.local_hospital_rounded,
+      hospital: HospitalConfig.karsaHusada,
+    ),
+    'rsud_saiful_anwar': _ServiceItem(
+      id: 'rsud_saiful_anwar',
+      label: 'RSUD Saiful Anwar',
+      assetPath: 'assets/images/layanan_rsud.png',
+      fallback: Icons.local_hospital_rounded,
+      hospital: HospitalConfig.saifulAnwar,
+    ),
+    'rsud_prov_jatim': _ServiceItem(
+      id: 'rsud_prov_jatim',
+      label: 'RSUD Prov. Jatim',
+      assetPath: 'assets/images/layanan_rsud.png',
+      fallback: Icons.local_hospital_rounded,
+      hospital: HospitalConfig.provJatim,
+    ),
+  };
+
+  static final List<_ServiceItem> _kDefaultServices =
+      PersonalizationRuleBase.defaultFeatures
+          .map((id) => _kFeatureCatalog[id])
+          .whereType<_ServiceItem>()
+          .toList(growable: false);
 
   static const List<_ArtikelItem> _artikels = [
     _ArtikelItem(
@@ -129,6 +196,7 @@ class _BerandaPageState extends State<BerandaPage> {
   Future<void> _hydrateFromCache() async {
     final loc = await ProfileCache.getLocation();
     final cachedIds = await ProfileCache.getAddedServices();
+    final cachedPrefs = await ProfileCache.getServicePreferences();
     if (!mounted) return;
     setState(() {
       _locationCity = loc.city;
@@ -138,7 +206,28 @@ class _BerandaPageState extends State<BerandaPage> {
           .map((id) => ServiceRegistry.findById(id))
           .whereType<AddableService>()
           .toList();
+      _servicePreferenceIds = cachedPrefs;
+      _services = _resolveServices();
     });
+  }
+
+  List<_ServiceItem> _resolveServices() {
+    final ids = PersonalizationRuleBase.resolveFeatures(
+      selectedCategoryIds: _servicePreferenceIds,
+      city: _locationCity,
+      regency: _locationRegency,
+    );
+    return ids
+        .map((id) => _kFeatureCatalog[id])
+        .whereType<_ServiceItem>()
+        .toList(growable: false);
+  }
+
+  // Hindari duplikat di grid: jangan render lagi addedService yang sudah
+  // muncul sebagai layanan unggulan hasil rule base.
+  List<AddableService> get _visibleAddedServices {
+    final featuredIds = _services.map((s) => s.id).toSet();
+    return _addedServices.where((s) => !featuredIds.contains(s.id)).toList();
   }
 
   Future<void> _loadUserProfile() async {
@@ -158,6 +247,12 @@ class _BerandaPageState extends State<BerandaPage> {
             .toList() ??
         const <String>[];
 
+    final servicePrefs = profile['servicePreferences'] as Map<String, dynamic>?;
+    final preferenceIds = (servicePrefs?['selectedIds'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const <String>[];
+
     setState(() {
       _locationCity = city;
       _locationRegency = regency;
@@ -166,11 +261,14 @@ class _BerandaPageState extends State<BerandaPage> {
           .map((id) => ServiceRegistry.findById(id))
           .whereType<AddableService>()
           .toList();
+      _servicePreferenceIds = preferenceIds;
+      _services = _resolveServices();
     });
 
     // Persist ke cache untuk akses offline berikutnya.
     await ProfileCache.saveLocation(city: city, regency: regency);
     await ProfileCache.saveAddedServices(savedIds);
+    await ProfileCache.saveServicePreferences(preferenceIds);
   }
 
   String _formatLocation(String city, String regency) {
@@ -586,7 +684,7 @@ class _BerandaPageState extends State<BerandaPage> {
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: _services.length + _addedServices.length + 1,
+            itemCount: _services.length + _visibleAddedServices.length + 1,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 10,
@@ -598,8 +696,8 @@ class _BerandaPageState extends State<BerandaPage> {
                 return _buildServiceCard(_services[index]);
               }
               final addedIndex = index - _services.length;
-              if (addedIndex < _addedServices.length) {
-                return _buildAddedServiceCard(_addedServices[addedIndex]);
+              if (addedIndex < _visibleAddedServices.length) {
+                return _buildAddedServiceCard(_visibleAddedServices[addedIndex]);
               }
               return _buildTambahLayananCard();
             },
@@ -610,19 +708,29 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Widget _buildServiceCard(_ServiceItem item) {
-    final isRsud = item.label == 'RSUD';
-    final displayLabel = isRsud
+    final isGenericRsud = item.id == 'rsud';
+    final hospital = item.hospital;
+
+    final displayLabel = isGenericRsud
         ? HospitalConfig.forLocation(_locationCity, _locationRegency).name
         : item.label;
 
-    final VoidCallback? onTap = isRsud
-        ? _navigateToRsud
-        : item.route != null
-            ? () {
-                FeatureUsageService.recordOpen(item.id);
-                Navigator.pushNamed(context, item.route!);
-              }
-            : null;
+    final VoidCallback? onTap;
+    if (isGenericRsud) {
+      onTap = _navigateToRsud;
+    } else if (hospital != null) {
+      onTap = () {
+        FeatureUsageService.recordOpen('rsud');
+        Navigator.pushNamed(context, AppRoutes.rsudPage, arguments: hospital);
+      };
+    } else if (item.route != null) {
+      onTap = () {
+        FeatureUsageService.recordOpen(item.id);
+        Navigator.pushNamed(context, item.route!);
+      };
+    } else {
+      onTap = null;
+    }
 
     return Semantics(
       button: true,
@@ -1123,6 +1231,7 @@ class _ServiceItem {
   final String assetPath;
   final IconData fallback;
   final String? route;
+  final HospitalConfig? hospital;
 
   const _ServiceItem({
     required this.id,
@@ -1130,6 +1239,7 @@ class _ServiceItem {
     required this.assetPath,
     required this.fallback,
     this.route,
+    this.hospital,
   });
 }
 
@@ -1175,7 +1285,7 @@ const List<_ShortcutItem> _kShortcutCatalog = [
   _ShortcutItem(
     bookmarkKey: 'fav_bapenda',
     trackId: 'bapenda',
-    label: 'BAPENDA',
+    label: 'Pajak Kendaraan',
     assetPath: 'assets/images/layanan_bapenda.png',
     fallback: Icons.account_balance_rounded,
     route: AppRoutes.bapendaPage,
@@ -1191,7 +1301,7 @@ const List<_ShortcutItem> _kShortcutCatalog = [
   _ShortcutItem(
     bookmarkKey: 'fav_siskaperbapo',
     trackId: 'siskaperbapo',
-    label: 'SISKAPERBAPO',
+    label: 'Harga Bahan',
     assetPath: 'assets/images/layanan_siskaperbapo.png',
     fallback: Icons.storefront_rounded,
     route: AppRoutes.siskaperbapoPage,
@@ -1199,7 +1309,7 @@ const List<_ShortcutItem> _kShortcutCatalog = [
   _ShortcutItem(
     bookmarkKey: 'fav_etibi',
     trackId: 'etibi',
-    label: 'E-TIBI',
+    label: 'Skrining TBC',
     assetPath: 'assets/images/layanan_etibi.png',
     fallback: Icons.medical_services_rounded,
     route: AppRoutes.etibiPage,
@@ -1207,7 +1317,7 @@ const List<_ShortcutItem> _kShortcutCatalog = [
   _ShortcutItem(
     bookmarkKey: 'fav_sapabansos',
     trackId: 'sapa_bansos',
-    label: 'SAPA BANSOS',
+    label: 'Bantuan Sosial',
     assetPath: 'assets/images/layanan_sapa_bansos.png',
     fallback: Icons.volunteer_activism_rounded,
     route: AppRoutes.sapaBansosPage,

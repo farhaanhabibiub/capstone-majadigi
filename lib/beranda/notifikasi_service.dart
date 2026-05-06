@@ -12,6 +12,17 @@ class NotifikasiService {
   static Stream<QuerySnapshot<Map<String, dynamic>>> stream() =>
       _col.orderBy('createdAt', descending: true).snapshots();
 
+  /// Ambil satu halaman notifikasi terbaru. Lewatkan [startAfter]
+  /// (dokumen terakhir dari halaman sebelumnya) untuk halaman berikutnya.
+  static Future<QuerySnapshot<Map<String, dynamic>>> page({
+    required int limit,
+    DocumentSnapshot<Map<String, dynamic>>? startAfter,
+  }) {
+    var q = _col.orderBy('createdAt', descending: true).limit(limit);
+    if (startAfter != null) q = q.startAfterDocument(startAfter);
+    return q.get();
+  }
+
   static Future<void> create({required String title, required String body}) =>
       _col.add({
         'title': title,

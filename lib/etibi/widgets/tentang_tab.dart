@@ -27,7 +27,7 @@ class TentangTab extends StatelessWidget {
   Widget _buildTentangCard() {
     return _card(
       icon: Icons.info_outline_rounded,
-      title: 'Tentang E-TIBI',
+      title: 'Tentang Skrining TBC',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -138,7 +138,7 @@ class TentangTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _paragraph(
-            'Sistem skrining E-TIBI menggunakan algoritma skor berbobot yang dikembangkan berdasarkan panduan klinis TBC dari WHO dan Kementerian Kesehatan RI.',
+            'Sistem Skrining TBC menggunakan algoritma skor berbobot yang dikembangkan berdasarkan panduan klinis TBC dari WHO dan Kementerian Kesehatan RI.',
           ),
           const SizedBox(height: 14),
           _infoRow(Icons.account_balance_outlined, 'Pengembang', 'Dinkes Provinsi Jawa Timur'),

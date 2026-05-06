@@ -4,6 +4,7 @@ import '../auth_service.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/error_retry.dart';
 import '../widgets/skeleton_loader.dart';
+import 'feature_asset_service.dart';
 import 'service_registry.dart';
 
 class TambahLayananPage extends StatefulWidget {
@@ -64,7 +65,29 @@ class _TambahLayananPageState extends State<TambahLayananPage> {
     if (_isSaving) return;
     setState(() => _isSaving = true);
 
-    final newIds = _selected.map((i) => _availableItems[i].id).toList();
+    final newItems = _selected.map((i) => _availableItems[i]).toList();
+
+    final completed = await Navigator.push<bool>(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        barrierColor: Colors.black.withValues(alpha: 0.45),
+        pageBuilder: (_, _, _) => _DownloadProgressOverlay(
+          services: newItems,
+        ),
+        transitionsBuilder: (_, anim, _, child) =>
+            FadeTransition(opacity: anim, child: child),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (completed != true) {
+      setState(() => _isSaving = false);
+      return;
+    }
+
+    final newIds = newItems.map((s) => s.id).toList();
     final allIds = [..._alreadyAdded, ...newIds];
     await AuthService.instance.saveAddedServices(allIds);
 
@@ -247,6 +270,278 @@ class _TambahLayananPageState extends State<TambahLayananPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Download progress overlay ─────────────────────────────────────────────────
+
+/// Tampilkan progress prefetch tiap fitur yang dipilih user, mirip pengalaman
+/// "downloading content" di Roblox/game launcher. Progress riil berasal dari
+/// [FeatureAssetService.prefetch] (yang men-download manifest + aset dari
+/// Firebase Storage) — jika manifest tidak ada di server, service tetap
+/// mengirim progress halus berbasis simulasi sehingga UX konsisten.
+class _DownloadProgressOverlay extends StatefulWidget {
+  final List<AddableService> services;
+  const _DownloadProgressOverlay({required this.services});
+
+  @override
+  State<_DownloadProgressOverlay> createState() =>
+      _DownloadProgressOverlayState();
+}
+
+class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> {
+  static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
+  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
+  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
+  static const Color _textSecondary = Color.fromRGBO(110, 110, 110, 1);
+
+  int _currentIndex = 0;
+  double _currentProgress = 0;
+  bool _hasFailed = false;
+  Object? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _runDownloads());
+  }
+
+  Future<void> _runDownloads() async {
+    try {
+      for (var i = 0; i < widget.services.length; i++) {
+        if (!mounted) return;
+        setState(() {
+          _currentIndex = i;
+          _currentProgress = 0;
+        });
+
+        await FeatureAssetService.instance.prefetch(
+          widget.services[i].id,
+          onProgress: (p) {
+            if (!mounted) return;
+            setState(() => _currentProgress = p);
+          },
+        );
+      }
+
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _hasFailed = true;
+        _error = e;
+      });
+    }
+  }
+
+  void _retry() {
+    setState(() {
+      _hasFailed = false;
+      _error = null;
+      _currentIndex = 0;
+      _currentProgress = 0;
+    });
+    _runDownloads();
+  }
+
+  double get _overallProgress {
+    if (widget.services.isEmpty) return 1.0;
+    return (_currentIndex + _currentProgress) / widget.services.length;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: _hasFailed,
+      child: Scaffold(
+        backgroundColor: _whiteBg,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: _hasFailed ? _buildError() : _buildProgress(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgress() {
+    final current = widget.services[_currentIndex];
+    final total = widget.services.length;
+    final overallPct = (_overallProgress * 100).clamp(0, 100).toInt();
+
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        Container(
+          width: 88,
+          height: 88,
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(235, 243, 255, 1),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: _blue.withValues(alpha: 0.18),
+                blurRadius: 20,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(18),
+          child: Image.asset(
+            current.assetPath,
+            fit: BoxFit.contain,
+            errorBuilder: (_, _, _) =>
+                Icon(current.fallback, color: _blue, size: 40),
+          ),
+        ),
+        const SizedBox(height: 24),
+        const Text(
+          'Mengunduh fitur…',
+          style: TextStyle(
+            color: _blue,
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.4,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          current.label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: _textPrimary,
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Fitur ${_currentIndex + 1} dari $total',
+          style: const TextStyle(
+            color: _textSecondary,
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 13,
+          ),
+        ),
+        const Spacer(),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(999),
+          child: LinearProgressIndicator(
+            value: _overallProgress,
+            minHeight: 10,
+            backgroundColor: const Color.fromRGBO(229, 235, 244, 1),
+            valueColor: const AlwaysStoppedAnimation<Color>(_blue),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '$overallPct%',
+              style: const TextStyle(
+                color: _textPrimary,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              _currentProgress >= 0.95
+                  ? 'Memasang…'
+                  : 'Mengambil paket aset…',
+              style: const TextStyle(
+                color: _textSecondary,
+                fontFamily: 'PlusJakartaSans',
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 32),
+      ],
+    );
+  }
+
+  Widget _buildError() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.cloud_off_rounded,
+              size: 64, color: Color.fromRGBO(180, 180, 180, 1)),
+          const SizedBox(height: 16),
+          const Text(
+            'Gagal mengunduh fitur',
+            style: TextStyle(
+              color: _textPrimary,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _error?.toString() ?? 'Terjadi kesalahan tidak diketahui.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: _textSecondary,
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: _blue,
+                  side: const BorderSide(color: _blue),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 22, vertical: 12),
+                ),
+                child: const Text(
+                  'Batal',
+                  style: TextStyle(
+                    fontFamily: 'PlusJakartaSans',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: _retry,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 22, vertical: 12),
+                ),
+                child: const Text(
+                  'Coba Lagi',
+                  style: TextStyle(
+                    fontFamily: 'PlusJakartaSans',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -16,6 +16,11 @@ import 'beranda/notifikasi_page.dart';
 import 'beranda/tambah_layanan_page.dart';
 import 'beranda/maja_ai_chat_page.dart';
 import 'beranda/global_search_page.dart';
+import 'beranda/deferred_feature_page.dart';
+
+// ── CORE FEATURES (rule-base, eager-loaded) ───────────────────────────────
+// 5 fitur core selalu di-load saat app start karena merupakan layanan
+// rule-based yang sudah dibangun & ditampilkan di Beranda secara default.
 import 'bapenda/bapenda_page.dart';
 import 'bapenda/info_pajak_page.dart';
 import 'bapenda/hasil_pajak_page.dart';
@@ -28,14 +33,23 @@ import 'rsud/info_antrean_page.dart';
 import 'rsud/hospital_config.dart';
 import 'transjatim/transjatim_page.dart';
 import 'siskaperbapo/siskaperbapo_page.dart';
-import 'etibi/etibi_page.dart';
-import 'sapabansos/sapa_bansos_page.dart';
-import 'open_data_landing_page.dart';
-import 'open_data_list_page.dart';
-import 'open_data_dapurmbg.dart';
-import 'open_data_ayopasok.dart';
-import 'klinikhoaks_permohonan.dart';
-import 'klinikhoaks_landing_page.dart';
+import 'nomordarurat_landing_page.dart';
+import 'nomordarurat_carinomor.dart';
+import 'nomordarurat_informasi.dart';
+
+// ── ADDABLE FEATURES (lazy-loaded via `deferred as`) ───────────────────────
+// Kode fitur addable baru di-load ke memory saat user pertama kali membuka
+// route terkait. Setelah loadLibrary() pertama, pemanggilan berikutnya instan
+// karena Dart meng-cache hasilnya.
+import 'sapabansos/sapa_bansos_page.dart' deferred as sapabansos_lib;
+import 'etibi/etibi_page.dart' deferred as etibi_lib;
+import 'klinikhoaks_landing_page.dart' deferred as klinikhoaks_landing_lib;
+import 'klinikhoaks_permohonan.dart' deferred as klinikhoaks_permohonan_lib;
+import 'open_data_landing_page.dart' deferred as opendata_landing_lib;
+import 'open_data_list_page.dart' deferred as opendata_list_lib;
+import 'open_data_dapurmbg.dart' deferred as opendata_dapurmbg_lib;
+import 'open_data_ayopasok.dart' deferred as opendata_ayopasok_lib;
+
 import 'admin/admin_page.dart';
 import 'admin/admin_notifikasi_page.dart';
 import 'admin/admin_session_guard.dart';
@@ -44,9 +58,6 @@ import 'profil/ubah_profil_page.dart';
 import 'profil/keamanan_akun_page.dart';
 import 'profil/aksesibilitas_page.dart';
 import 'profil/lencana_page.dart';
-import 'nomordarurat_landing_page.dart';
-import 'nomordarurat_carinomor.dart';
-import 'nomordarurat_informasi.dart';
 
 class AppRoutes {
   static const String splashScreen = '/';
@@ -198,29 +209,63 @@ class AppRoutes {
       case siskaperbapoPage:
         return (_) => const SiskaperbapoPage();
 
+      // ── Addable features (deferred) ───────────────────────────────────
       case etibiPage:
-        return (_) => const EtibiPage();
+        return (_) => DeferredFeaturePage(
+              featureLabel: 'Skrining TBC',
+              loader: etibi_lib.loadLibrary,
+              builder: (_) => etibi_lib.EtibiPage(),
+            );
 
       case sapaBansosPage:
-        return (_) => const SapaBansosPage();
+        return (_) => DeferredFeaturePage(
+              featureLabel: 'Bantuan Sosial',
+              loader: sapabansos_lib.loadLibrary,
+              builder: (_) => sapabansos_lib.SapaBansosPage(),
+            );
 
       case openDataLandingPage:
-        return (_) => const OpenDataLandingPage();
+        return (_) => DeferredFeaturePage(
+              featureLabel: 'Open Data',
+              loader: opendata_landing_lib.loadLibrary,
+              builder: (_) => opendata_landing_lib.OpenDataLandingPage(),
+            );
 
       case openDataListPage:
-        return (_) => const OpenDataListPage();
+        return (_) => DeferredFeaturePage(
+              featureLabel: 'Open Data',
+              loader: opendata_list_lib.loadLibrary,
+              builder: (_) => opendata_list_lib.OpenDataListPage(),
+            );
 
       case openDataDapurMBGPage:
-        return (_) => const OpenDataDapurMBGPage();
+        return (_) => DeferredFeaturePage(
+              featureLabel: 'Open Data',
+              loader: opendata_dapurmbg_lib.loadLibrary,
+              builder: (_) => opendata_dapurmbg_lib.OpenDataDapurMBGPage(),
+            );
 
       case openDataAyoPasokPage:
-        return (_) => const OpenDataAyoPasokPage();
-
-      case klinikHoaksPermohonanPage:
-        return (_) => const KlinikHoaksPermohonanPage();
+        return (_) => DeferredFeaturePage(
+              featureLabel: 'Open Data',
+              loader: opendata_ayopasok_lib.loadLibrary,
+              builder: (_) => opendata_ayopasok_lib.OpenDataAyoPasokPage(),
+            );
 
       case klinikHoaksLandingPage:
-        return (_) => const KlinikHoaksLandingPage();
+        return (_) => DeferredFeaturePage(
+              featureLabel: 'Klinik Hoaks',
+              loader: klinikhoaks_landing_lib.loadLibrary,
+              builder: (_) => klinikhoaks_landing_lib.KlinikHoaksLandingPage(),
+            );
+
+      case klinikHoaksPermohonanPage:
+        return (_) => DeferredFeaturePage(
+              featureLabel: 'Klinik Hoaks',
+              loader: klinikhoaks_permohonan_lib.loadLibrary,
+              builder: (_) =>
+                  klinikhoaks_permohonan_lib.KlinikHoaksPermohonanPage(),
+            );
 
       case nomorDaruratLandingPage:
         return (_) => const NomorDaruratLandingPage();

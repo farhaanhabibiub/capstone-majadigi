@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -292,7 +293,7 @@ class _UbahProfilPageState extends State<UbahProfilPage> {
                               backgroundImage: _pickedFile != null
                                   ? FileImage(_pickedFile!)
                                   : (_photoUrl.isNotEmpty
-                                      ? NetworkImage(_photoUrl) as ImageProvider
+                                      ? CachedNetworkImageProvider(_photoUrl) as ImageProvider
                                       : null),
                               child: (_pickedFile == null && _photoUrl.isEmpty)
                                   ? Image.asset(

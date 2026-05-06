@@ -8,6 +8,7 @@ class ProfileCache {
   static const String _kLocationCity = 'profile_cache.location.city';
   static const String _kLocationRegency = 'profile_cache.location.regency';
   static const String _kAddedServices = 'profile_cache.added_services';
+  static const String _kServicePreferences = 'profile_cache.service_preferences';
 
   // ── Lokasi ────────────────────────────────────────────────────────────────
 
@@ -37,11 +38,24 @@ class ProfileCache {
     return prefs.getStringList(_kAddedServices) ?? const [];
   }
 
+  // ── Preferensi kategori personalisasi ─────────────────────────────────────
+
+  static Future<void> saveServicePreferences(List<String> ids) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_kServicePreferences, ids);
+  }
+
+  static Future<List<String>> getServicePreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(_kServicePreferences) ?? const [];
+  }
+
   /// Hapus semua cache profil — dipanggil saat logout.
   static Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_kLocationCity);
     await prefs.remove(_kLocationRegency);
     await prefs.remove(_kAddedServices);
+    await prefs.remove(_kServicePreferences);
   }
 }

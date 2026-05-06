@@ -19,7 +19,7 @@ class _SapaBansosPageState extends State<SapaBansosPage> with FavoriteMixin {
   String get favoriteKey => 'fav_sapabansos';
 
   @override
-  String get favoriteLabel => 'SAPA BANSOS';
+  String get favoriteLabel => 'Bantuan Sosial';
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class _SapaBansosPageState extends State<SapaBansosPage> with FavoriteMixin {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'SAPA BANSOS',
+          'Bantuan Sosial',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'PlusJakartaSans',

@@ -28,7 +28,7 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
   String get favoriteKey => 'fav_etibi';
 
   @override
-  String get favoriteLabel => 'E-TIBI';
+  String get favoriteLabel => 'Skrining TBC';
 
   CollectionReference<Map<String, dynamic>>? get _riwayatCol {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -247,7 +247,7 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'E-TIBI',
+          'Skrining TBC',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'PlusJakartaSans',

@@ -69,7 +69,7 @@ class SearchIndex {
     // ── Layanan utama ──────────────────────────────────────────────────────
     const SearchableItem(
       id: 'bapenda',
-      title: 'BAPENDA',
+      title: 'Pajak Kendaraan',
       subtitle: 'Pajak kendaraan, NJKB, info pajak',
       category: SearchCategory.layanan,
       icon: Icons.account_balance_rounded,
@@ -87,7 +87,7 @@ class SearchIndex {
     ),
     const SearchableItem(
       id: 'siskaperbapo',
-      title: 'SISKAPERBAPO',
+      title: 'Harga Bahan',
       subtitle: 'Sistem informasi harga bahan pokok',
       category: SearchCategory.layanan,
       icon: Icons.storefront_rounded,
@@ -98,7 +98,7 @@ class SearchIndex {
     ),
     const SearchableItem(
       id: 'sapa_bansos',
-      title: 'SAPA BANSOS',
+      title: 'Bantuan Sosial',
       subtitle: 'Cek bantuan sosial & program',
       category: SearchCategory.layanan,
       icon: Icons.volunteer_activism_rounded,
@@ -107,7 +107,7 @@ class SearchIndex {
     ),
     const SearchableItem(
       id: 'etibi',
-      title: 'E-TIBI',
+      title: 'Skrining TBC',
       subtitle: 'Layanan ketertiban & pengaduan',
       category: SearchCategory.layanan,
       icon: Icons.medical_services_rounded,

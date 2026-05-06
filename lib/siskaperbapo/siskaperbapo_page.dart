@@ -30,7 +30,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
   String get favoriteKey => 'fav_siskaperbapo';
 
   @override
-  String get favoriteLabel => 'SISKAPERBAPO';
+  String get favoriteLabel => 'Harga Bahan';
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -152,7 +152,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
           },
         ),
         title: const Text(
-          'SISKAPERBAPO',
+          'Harga Bahan',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'PlusJakartaSans',
@@ -523,8 +523,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       children: const [
         InfoCard(
-          title: 'Tentang SISKAPERBAPO',
-          subtitle: 'Lebih tahu tentang SISKAPERBAPO',
+          title: 'Tentang Harga Bahan',
+          subtitle: 'Lebih tahu tentang layanan ini',
           icon: Icons.info_outline,
           content:
               'SISKAPERBAPO, singkatan dari Sistem Informasi Ketersediaan dan Perkembangan Harga Bahan Pokok. Dia adalah portal berbasis online yang menyajikan info tren harga dan ketersediaan bahan pokok harian dari seluruh area di Jawa Timur. Diantaranya beras, minyak goreng, sayur mayur, ikan segar, produk olahan, perlengkapan rumah tangga, dan komoditas lain. SISKAPERBAPO menyajikan informasi update harga di tingkat konsumen dan produsen, terutama di sentra produksi.',
@@ -532,7 +532,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
         SizedBox(height: 16),
         InfoCard(
           title: 'Sumber Data',
-          subtitle: 'Sumber Data SISKAPERBAPO',
+          subtitle: 'Sumber data harga bahan pokok',
           icon: Icons.storage,
           content:
               'SISKAPERBAPO menggunakan data yang bersumber dari Dinas Perindustrian dan Perdagangan Provinsi Jawa Timur. Informasi harga diperbarui setiap hari pada pukul 00.00 WIB.',

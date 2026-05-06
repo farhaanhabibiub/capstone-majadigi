@@ -14,17 +14,94 @@ class NotifikasiPage extends StatefulWidget {
 }
 
 class _NotifikasiPageState extends State<NotifikasiPage> {
-  Key _streamKey = UniqueKey();
+  static const _pageSize = 20;
+
+  final _scrollCtrl = ScrollController();
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>> _docs = [];
+
+  bool _initialLoading = true;
+  bool _loadingMore = false;
+  bool _hasMore = true;
+  Object? _error;
+  DocumentSnapshot<Map<String, dynamic>>? _cursor;
 
   @override
   void initState() {
     super.initState();
-    // Tandai semua notifikasi sudah dilihat saat halaman dibuka
     NotifikasiService.markAllSeen();
+    _scrollCtrl.addListener(_onScroll);
+    _loadFirstPage();
   }
 
-  void _retry() {
-    setState(() => _streamKey = UniqueKey());
+  @override
+  void dispose() {
+    _scrollCtrl.removeListener(_onScroll);
+    _scrollCtrl.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_loadingMore || !_hasMore) return;
+    if (_scrollCtrl.position.pixels >=
+        _scrollCtrl.position.maxScrollExtent - 200) {
+      _loadMore();
+    }
+  }
+
+  Future<void> _loadFirstPage() async {
+    setState(() {
+      _initialLoading = true;
+      _error = null;
+      _docs.clear();
+      _cursor = null;
+      _hasMore = true;
+    });
+    try {
+      final snap = await NotifikasiService.page(limit: _pageSize);
+      if (!mounted) return;
+      setState(() {
+        _docs.addAll(snap.docs);
+        _cursor = snap.docs.isNotEmpty ? snap.docs.last : null;
+        _hasMore = snap.docs.length == _pageSize;
+        _initialLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e;
+        _initialLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadMore() async {
+    if (_cursor == null) {
+      setState(() => _hasMore = false);
+      return;
+    }
+    setState(() => _loadingMore = true);
+    try {
+      final snap = await NotifikasiService.page(
+        limit: _pageSize,
+        startAfter: _cursor,
+      );
+      if (!mounted) return;
+      setState(() {
+        _docs.addAll(snap.docs);
+        if (snap.docs.isNotEmpty) _cursor = snap.docs.last;
+        _hasMore = snap.docs.length == _pageSize;
+        _loadingMore = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loadingMore = false;
+        _hasMore = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal memuat data: ${ErrorRetry.fromException(e)}')),
+      );
+    }
   }
 
   String _formatTime(Timestamp? ts) {
@@ -63,53 +140,82 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
           ),
         ),
       ),
-      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        key: _streamKey,
-        stream: NotifikasiService.stream(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return SkeletonLoader.list();
-          }
+      body: _buildBody(),
+    );
+  }
 
-          if (snapshot.hasError) {
-            debugPrint('Notifikasi error: ${snapshot.error}');
-            return ErrorRetry(
-              title: 'Gagal memuat notifikasi',
-              subtitle: ErrorRetry.fromException(snapshot.error!),
-              onRetry: _retry,
-            );
-          }
+  Widget _buildBody() {
+    if (_initialLoading) return SkeletonLoader.list();
 
-          final docs = snapshot.data?.docs ?? [];
+    if (_error != null) {
+      return ErrorRetry(
+        title: 'Gagal memuat notifikasi',
+        subtitle: ErrorRetry.fromException(_error!),
+        onRetry: _loadFirstPage,
+      );
+    }
 
-          if (docs.isEmpty) {
-            return const EmptyState(
-              icon: Icons.notifications_off_outlined,
-              title: 'Belum ada notifikasi',
-              subtitle:
-                  'Pemberitahuan layanan & info penting akan muncul di sini.',
-            );
-          }
+    if (_docs.isEmpty) {
+      return const EmptyState(
+        icon: Icons.notifications_off_outlined,
+        title: 'Belum ada notifikasi',
+        subtitle:
+            'Pemberitahuan layanan & info penting akan muncul di sini.',
+      );
+    }
 
-          return ListView.separated(
-            padding: EdgeInsets.zero,
-            itemCount: docs.length,
-            separatorBuilder: (_, _) => const Divider(
-              height: 1,
-              thickness: 1,
-              color: Color.fromRGBO(240, 240, 240, 1),
-            ),
-            itemBuilder: (context, index) {
-              final data = docs[index].data();
-              final title = data['title'] as String? ?? '';
-              final body = data['body'] as String? ?? '';
-              final ts = data['createdAt'] as Timestamp?;
-              return _buildItem(title: title, body: body, time: _formatTime(ts));
-            },
-          );
+    return RefreshIndicator(
+      onRefresh: _loadFirstPage,
+      child: ListView.separated(
+        controller: _scrollCtrl,
+        padding: EdgeInsets.zero,
+        itemCount: _docs.length + 1,
+        separatorBuilder: (_, _) => const Divider(
+          height: 1,
+          thickness: 1,
+          color: Color.fromRGBO(240, 240, 240, 1),
+        ),
+        itemBuilder: (context, index) {
+          if (index == _docs.length) return _buildFooter();
+          final data = _docs[index].data();
+          final title = data['title'] as String? ?? '';
+          final body = data['body'] as String? ?? '';
+          final ts = data['createdAt'] as Timestamp?;
+          return _buildItem(title: title, body: body, time: _formatTime(ts));
         },
       ),
     );
+  }
+
+  Widget _buildFooter() {
+    if (_loadingMore) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        child: Center(
+          child: SizedBox(
+            width: 22,
+            height: 22,
+            child: CircularProgressIndicator(strokeWidth: 2.4),
+          ),
+        ),
+      );
+    }
+    if (!_hasMore && _docs.length > _pageSize) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 18),
+        child: Center(
+          child: Text(
+            'Sudah sampai bawah',
+            style: TextStyle(
+              fontFamily: AppTheme.fontFamily,
+              fontSize: 12,
+              color: AppTheme.textSecondary,
+            ),
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildItem({

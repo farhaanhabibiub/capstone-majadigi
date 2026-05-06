@@ -24,14 +24,14 @@ class ServiceRegistry {
   static const List<AddableService> all = [
     AddableService(
       id: 'sapa_bansos',
-      label: 'SAPA BANSOS',
+      label: 'Bantuan Sosial',
       assetPath: 'assets/images/layanan_sapa_bansos.png',
       fallback: Icons.volunteer_activism_rounded,
       route: AppRoutes.sapaBansosPage,
     ),
     AddableService(
       id: 'etibi',
-      label: 'E-TIBI',
+      label: 'Skrining TBC',
       assetPath: 'assets/images/layanan_etibi.png',
       fallback: Icons.medical_services_rounded,
       route: AppRoutes.etibiPage,
@@ -108,7 +108,7 @@ class ServiceRegistry {
   static const Map<String, FeatureMeta> _coreMeta = {
     'bapenda': FeatureMeta(
       id: 'bapenda',
-      label: 'BAPENDA',
+      label: 'Pajak Kendaraan',
       icon: Icons.account_balance_rounded,
       route: AppRoutes.bapendaPage,
     ),
@@ -125,7 +125,7 @@ class ServiceRegistry {
     ),
     'siskaperbapo': FeatureMeta(
       id: 'siskaperbapo',
-      label: 'SISKAPERBAPO',
+      label: 'Harga Bahan',
       icon: Icons.storefront_rounded,
       route: AppRoutes.siskaperbapoPage,
     ),

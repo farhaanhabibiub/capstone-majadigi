@@ -16,12 +16,14 @@ class GlobalSearchPage extends StatefulWidget {
 class _GlobalSearchPageState extends State<GlobalSearchPage> {
   static const _recentKey = 'global_search_recent';
   static const _maxRecent = 6;
+  static const _itemsPerSection = 5;
 
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
 
   String _query = '';
   List<String> _recent = [];
+  final Set<SearchCategory> _expandedSections = {};
 
   @override
   void initState() {
@@ -130,7 +132,10 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                 controller: _controller,
                 focusNode: _focusNode,
                 textInputAction: TextInputAction.search,
-                onChanged: (v) => setState(() => _query = v),
+                onChanged: (v) => setState(() {
+                  _query = v;
+                  _expandedSections.clear();
+                }),
                 onSubmitted: _saveRecent,
                 style: const TextStyle(
                   fontFamily: AppTheme.fontFamily,
@@ -160,7 +165,10 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                           ),
                           onPressed: () {
                             _controller.clear();
-                            setState(() => _query = '');
+                            setState(() {
+                              _query = '';
+                              _expandedSections.clear();
+                            });
                           },
                         ),
                   border: InputBorder.none,
@@ -220,7 +228,10 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                   _controller.selection = TextSelection.fromPosition(
                     TextPosition(offset: term.length),
                   );
-                  setState(() => _query = term);
+                  setState(() {
+                    _query = term;
+                    _expandedSections.clear();
+                  });
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -275,7 +286,10 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                 _controller.selection = TextSelection.fromPosition(
                   TextPosition(offset: s.length),
                 );
-                setState(() => _query = s);
+                setState(() {
+                  _query = s;
+                  _expandedSections.clear();
+                });
               },
               child: Container(
                 padding:
@@ -333,14 +347,18 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
     for (final cat in SearchCategory.values) {
       final items = byCategory[cat];
       if (items == null || items.isEmpty) continue;
-      widgets.add(_buildSection(cat.label, cat.icon, items));
+      widgets.add(_buildSection(cat, items));
       widgets.add(const SizedBox(height: 14));
     }
     return widgets;
   }
 
-  Widget _buildSection(
-      String title, IconData icon, List<SearchableItem> items) {
+  Widget _buildSection(SearchCategory cat, List<SearchableItem> items) {
+    final isExpanded = _expandedSections.contains(cat);
+    final hasMore = items.length > _itemsPerSection;
+    final visible =
+        (isExpanded || !hasMore) ? items : items.sublist(0, _itemsPerSection);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -359,24 +377,78 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
             padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
             child: Row(
               children: [
-                Icon(icon, size: 16, color: AppTheme.primary),
+                Icon(cat.icon, size: 16, color: AppTheme.primary),
                 const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    cat.label,
+                    style: const TextStyle(
+                      fontFamily: AppTheme.fontFamily,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.textPrimary,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ),
                 Text(
-                  title,
+                  '${items.length}',
                   style: const TextStyle(
                     fontFamily: AppTheme.fontFamily,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.textPrimary,
-                    letterSpacing: 0.2,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.textSecondary,
                   ),
                 ),
               ],
             ),
           ),
-          ...items.map(_buildResultTile),
+          ...visible.map(_buildResultTile),
+          if (hasMore) _buildExpandToggle(cat, items.length, isExpanded),
           const SizedBox(height: 4),
         ],
+      ),
+    );
+  }
+
+  Widget _buildExpandToggle(SearchCategory cat, int total, bool isExpanded) {
+    final remaining = total - _itemsPerSection;
+    final label = isExpanded
+        ? 'Tampilkan lebih sedikit'
+        : 'Lihat semua ($remaining lainnya)';
+    return InkWell(
+      onTap: () {
+        setState(() {
+          if (isExpanded) {
+            _expandedSections.remove(cat);
+          } else {
+            _expandedSections.add(cat);
+          }
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Row(
+          children: [
+            Icon(
+              isExpanded
+                  ? Icons.expand_less_rounded
+                  : Icons.expand_more_rounded,
+              size: 18,
+              color: AppTheme.primary,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                fontFamily: AppTheme.fontFamily,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.primary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -405,7 +477,7 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
         ),
         for (final cat in SearchCategory.values)
           if (byCategory[cat] != null) ...[
-            _buildSection(cat.label, cat.icon, byCategory[cat]!),
+            _buildSection(cat, byCategory[cat]!),
             const SizedBox(height: 14),
           ],
       ],
@@ -480,7 +552,10 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
       actionLabel: 'Hapus pencarian',
       onAction: () {
         _controller.clear();
-        setState(() => _query = '');
+        setState(() {
+          _query = '';
+          _expandedSections.clear();
+        });
       },
     );
   }
