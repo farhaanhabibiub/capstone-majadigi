@@ -10,3 +10,27 @@ no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_t
 9|20/04/2026|Senin|13:30|15:30|Nefrektomi|dr. Eko Santoso, Sp.U|UROLOGI|Terjadwal|
 10|21/04/2026|Selasa|07:00|10:00|Transplantasi Ginjal|dr. Eko Santoso, Sp.U|UROLOGI|Terjadwal|
 12|21/04/2026|Selasa|10:00|12:00|TAVI|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|
+13|22/04/2026|Rabu|07:00|10:00|CABG (Bypass Jantung)|dr. Wahyu Pradana, Sp.JP|JANTUNG|Selesai|
+14|22/04/2026|Rabu|10:00|12:00|Total Knee Replacement|dr. Bayu Kurniawan, Sp.OT|ORTOPEDI|Selesai|
+15|26/04/2026|Minggu|07:00|10:00|Kraniotomi|dr. Surya Nugroho, Sp.BS|BEDAH SARAF|Selesai|
+16|26/04/2026|Minggu|10:00|12:00|Laparotomi|dr. Andi Wicaksono, Sp.B|BEDAH UMUM|Selesai|
+17|29/04/2026|Rabu|07:30|09:30|Reseksi Paru|dr. Citra Dewi, Sp.P|PARU|Selesai|
+18|29/04/2026|Rabu|10:00|12:00|Histerektomi Radikal|dr. Dewi Anggraini, Sp.OG|KEBIDANAN|Selesai|
+19|03/05/2026|Minggu|06:30|09:30|TAVI|dr. Wahyu Pradana, Sp.JP|JANTUNG|Selesai|
+20|03/05/2026|Minggu|10:00|12:30|Gastrektomi|dr. Andi Wicaksono, Sp.B|BEDAH DIGESTIF|Selesai|
+21|06/05/2026|Rabu|07:00|09:00|ORIF Pelvis|dr. Bayu Kurniawan, Sp.OT|ORTOPEDI|Selesai|
+22|06/05/2026|Rabu|09:30|11:30|Nefrektomi|dr. Eko Santoso, Sp.U|UROLOGI|Selesai|
+23|10/05/2026|Minggu|06:30|09:00|CABG (Bypass Jantung)|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|
+24|10/05/2026|Minggu|09:30|12:30|Kraniotomi|dr. Surya Nugroho, Sp.BS|BEDAH SARAF|Terjadwal|
+25|13/05/2026|Rabu|07:00|10:00|Transplantasi Ginjal|dr. Eko Santoso, Sp.U|UROLOGI|Terjadwal|
+26|13/05/2026|Rabu|10:00|12:00|Reseksi Paru|dr. Citra Dewi, Sp.P|PARU|Terjadwal|
+27|17/05/2026|Minggu|07:00|09:30|Histerektomi Radikal|dr. Dewi Anggraini, Sp.OG|KEBIDANAN|Terjadwal|
+28|17/05/2026|Minggu|10:00|12:30|Total Knee Replacement|dr. Bayu Kurniawan, Sp.OT|ORTOPEDI|Terjadwal|
+29|20/05/2026|Rabu|07:00|09:00|Laparotomi|dr. Andi Wicaksono, Sp.B|BEDAH UMUM|Terjadwal|
+30|20/05/2026|Rabu|09:30|11:30|TAVI|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|
+31|24/05/2026|Minggu|07:00|10:00|Gastrektomi|dr. Andi Wicaksono, Sp.B|BEDAH DIGESTIF|Terjadwal|
+32|24/05/2026|Minggu|10:00|12:00|ORIF Pelvis|dr. Bayu Kurniawan, Sp.OT|ORTOPEDI|Terjadwal|
+33|27/05/2026|Rabu|07:00|09:00|Nefrektomi|dr. Eko Santoso, Sp.U|UROLOGI|Terjadwal|
+34|27/05/2026|Rabu|09:30|11:30|Kraniotomi|dr. Surya Nugroho, Sp.BS|BEDAH SARAF|Terjadwal|
+35|31/05/2026|Minggu|07:00|10:00|CABG (Bypass Jantung)|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|
+36|31/05/2026|Minggu|09:30|11:30|Reseksi Paru|dr. Citra Dewi, Sp.P|PARU|Terjadwal|

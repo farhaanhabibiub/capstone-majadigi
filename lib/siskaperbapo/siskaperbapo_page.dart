@@ -103,6 +103,38 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
         .toList();
   }
 
+  /// Cari KabupatenPrice di [item] yang cocok dengan filter aktif.
+  /// Mengembalikan null jika tidak ada filter atau tidak match.
+  KabupatenPrice? _kabupatenPriceFor(SembakoItem item) {
+    if (_selectedKabupatenFilter == null) return null;
+    for (final k in item.kabupatenPrices) {
+      if (k.kabupaten == _selectedKabupatenFilter) return k;
+    }
+    return null;
+  }
+
+  /// Harga yang ditampilkan di card list. Jika user pilih kabupaten,
+  /// kembalikan rata-rata harga kecamatan di kabupaten itu; jika tidak,
+  /// kembalikan harga rata-rata global ([item.price]).
+  int _priceForCard(SembakoItem item) {
+    final kab = _kabupatenPriceFor(item);
+    if (kab == null || kab.kecamatanPrices.isEmpty) return item.price;
+    final total = kab.kecamatanPrices.fold<int>(0, (sum, kp) => sum + kp.price);
+    return (total / kab.kecamatanPrices.length).round();
+  }
+
+  /// Status naik/turun dihitung dari `historyPrices` kabupaten yang dipilih
+  /// agar konsisten dengan harga yang ditampilkan.
+  int _statusForCard(SembakoItem item) {
+    final kab = _kabupatenPriceFor(item);
+    if (kab == null || kab.historyPrices.length < 2) return item.status;
+    final last = kab.historyPrices.last;
+    final prev = kab.historyPrices[kab.historyPrices.length - 2];
+    if (last > prev) return 1;
+    if (last < prev) return -1;
+    return 0;
+  }
+
   Future<void> _onRefresh() async {
     await Future.delayed(const Duration(milliseconds: 800));
     if (!mounted) return;
@@ -385,10 +417,11 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                                 return const SizedBox(height: 12);
                               }
                               final itemIndex = index ~/ 2;
+                              final cardItem = listDitampilkan[itemIndex];
                               return SembakoCard(
-                                item: listDitampilkan[itemIndex],
+                                item: cardItem,
                                 onTap: () {
-                                  final tapped = listDitampilkan[itemIndex];
+                                  final tapped = cardItem;
                                   int kabIndex = _selectedKabupatenFilter != null
                                       ? tapped.kabupatenPrices.indexWhere(
                                           (k) => k.kabupaten == _selectedKabupatenFilter)
@@ -400,6 +433,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                                   });
                                 },
                                 formatRupiah: _formatRupiah,
+                                displayPrice: _priceForCard(cardItem),
+                                displayStatus: _statusForCard(cardItem),
                               );
                             },
                             childCount: listDitampilkan.length * 2 - 1,

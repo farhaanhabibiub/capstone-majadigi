@@ -7,11 +7,18 @@ class SembakoCard extends StatelessWidget {
   final VoidCallback onTap;
   final String Function(int) formatRupiah;
 
+  /// Override harga & status saat user filter berdasarkan kabupaten.
+  /// Bila null, fallback ke nilai rata-rata global (`item.price`/`item.status`).
+  final int? displayPrice;
+  final int? displayStatus;
+
   const SembakoCard({
     super.key,
     required this.item,
     required this.onTap,
     required this.formatRupiah,
+    this.displayPrice,
+    this.displayStatus,
   });
 
   @override
@@ -63,7 +70,7 @@ class SembakoCard extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              '${formatRupiah(item.price)} / kg',
+              '${formatRupiah(displayPrice ?? item.price)} / kg',
               style: const TextStyle(
                 color: Color.fromRGBO(32, 32, 32, 1),
                 fontFamily: 'PlusJakartaSans',
@@ -72,7 +79,7 @@ class SembakoCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            _buildMiniBadge(item.status),
+            _buildMiniBadge(displayStatus ?? item.status),
           ],
         ),
       ),

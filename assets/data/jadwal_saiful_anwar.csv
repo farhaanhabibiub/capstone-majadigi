@@ -9,3 +9,27 @@ no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_t
 8|21/04/2026|Selasa|07:00|09:00|Sectio Caesarea|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
 9|21/04/2026|Selasa|09:30|11:30|Artroskopi Lutut|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Terjadwal|
 10|21/04/2026|Selasa|13:00|14:30|Pterigium Eksisi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|
+11|22/04/2026|Rabu|07:00|09:00|Apendektomi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Selesai|
+12|22/04/2026|Rabu|10:00|11:30|Tonsilektomi|dr. Fitri Handayani, Sp.THT|THT|Selesai|
+13|26/04/2026|Minggu|08:00|10:00|Sectio Caesarea|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Selesai|
+14|26/04/2026|Minggu|10:30|12:30|ORIF Femur|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Selesai|
+15|29/04/2026|Rabu|07:30|10:00|Histerektomi|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Selesai|
+16|29/04/2026|Rabu|10:00|12:00|Katarak Phacoemulsifikasi|dr. Budi Santoso, Sp.M|MATA|Selesai|
+17|03/05/2026|Minggu|07:00|09:00|Apendektomi Laparoskopi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Selesai|
+18|03/05/2026|Minggu|09:30|11:30|Herniorafi Inguinal|dr. Dedi Kurniawan, Sp.B|BEDAH UMUM|Selesai|
+19|06/05/2026|Rabu|07:30|09:30|ORIF Radius|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Selesai|
+20|06/05/2026|Rabu|10:00|11:30|Pterigium Eksisi|dr. Budi Santoso, Sp.M|MATA|Selesai|
+21|10/05/2026|Minggu|07:00|09:00|Sectio Caesarea|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+22|10/05/2026|Minggu|09:30|11:30|Kolesistektomi Laparoskopi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Terjadwal|
+23|13/05/2026|Rabu|07:00|09:00|Tonsilektomi|dr. Fitri Handayani, Sp.THT|THT|Terjadwal|
+24|13/05/2026|Rabu|10:00|12:00|Histerektomi|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+25|17/05/2026|Minggu|07:30|09:30|Artroskopi Lutut|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Terjadwal|
+26|17/05/2026|Minggu|10:00|11:30|Katarak Phacoemulsifikasi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|
+27|20/05/2026|Rabu|07:00|09:00|Apendektomi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Terjadwal|
+28|20/05/2026|Rabu|09:30|11:30|Herniorafi Inguinal|dr. Dedi Kurniawan, Sp.B|BEDAH UMUM|Terjadwal|
+29|24/05/2026|Minggu|07:00|09:00|Sectio Caesarea|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+30|24/05/2026|Minggu|10:00|12:00|ORIF Femur|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Terjadwal|
+31|27/05/2026|Rabu|07:30|09:30|Tonsilektomi|dr. Fitri Handayani, Sp.THT|THT|Terjadwal|
+32|27/05/2026|Rabu|10:00|11:30|Pterigium Eksisi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|
+33|31/05/2026|Minggu|07:00|09:00|Apendektomi Laparoskopi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Terjadwal|
+34|31/05/2026|Minggu|09:30|11:30|Histerektomi|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|

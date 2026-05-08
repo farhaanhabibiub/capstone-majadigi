@@ -30,9 +30,36 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
   @override
   void initState() {
     super.initState();
+    _oldPassCtrl.addListener(_refresh);
     _newPassCtrl.addListener(_refresh);
     _confirmPassCtrl.addListener(_refresh);
     _loadBiometricState();
+  }
+
+  String? _validateOldPassword(String? v) {
+    if (v == null || v.isEmpty) return 'Password lama tidak boleh kosong';
+    return null;
+  }
+
+  String? _validateNewPassword(String? v) {
+    if (v == null || v.isEmpty) return 'Password baru tidak boleh kosong';
+    if (v.length < 6) return 'Minimal 6 karakter';
+    if (v == _oldPassCtrl.text) {
+      return 'Password baru tidak boleh sama dengan yang lama';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? v) {
+    if (v == null || v.isEmpty) return 'Konfirmasi password tidak boleh kosong';
+    if (v != _newPassCtrl.text) return 'Password tidak cocok';
+    return null;
+  }
+
+  bool get _isFormValid {
+    return _validateOldPassword(_oldPassCtrl.text) == null &&
+        _validateNewPassword(_newPassCtrl.text) == null &&
+        _validateConfirmPassword(_confirmPassCtrl.text) == null;
   }
 
   Future<void> _loadBiometricState() async {
@@ -77,6 +104,7 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
 
   @override
   void dispose() {
+    _oldPassCtrl.removeListener(_refresh);
     _newPassCtrl.removeListener(_refresh);
     _confirmPassCtrl.removeListener(_refresh);
     _oldPassCtrl.dispose();
@@ -242,10 +270,7 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
                       obscure: !_showOld,
                       onToggle: () => setState(() => _showOld = !_showOld),
                       action: TextInputAction.next,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Password lama tidak boleh kosong';
-                        return null;
-                      },
+                      validator: _validateOldPassword,
                     ),
 
                     const SizedBox(height: 18),
@@ -259,12 +284,7 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
                       obscure: !_showNew,
                       onToggle: () => setState(() => _showNew = !_showNew),
                       action: TextInputAction.next,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Password baru tidak boleh kosong';
-                        if (v.length < 6) return 'Minimal 6 karakter';
-                        if (v == _oldPassCtrl.text) return 'Password baru tidak boleh sama dengan yang lama';
-                        return null;
-                      },
+                      validator: _validateNewPassword,
                     ),
                     PasswordStrengthMeter(password: _newPassCtrl.text),
 
@@ -280,11 +300,7 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
                       onToggle: () => setState(() => _showConfirm = !_showConfirm),
                       action: TextInputAction.done,
                       onSubmitted: (_) => _simpan(),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Konfirmasi password tidak boleh kosong';
-                        if (v != _newPassCtrl.text) return 'Password tidak cocok';
-                        return null;
-                      },
+                      validator: _validateConfirmPassword,
                     ),
                   ],
                 ),
@@ -303,7 +319,7 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: _isSaving ? null : _simpan,
+                  onPressed: (_isFormValid && !_isSaving) ? _simpan : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primary,
                     disabledBackgroundColor: const Color.fromRGBO(210, 210, 210, 1),

@@ -111,12 +111,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  bool get _isFormFilled {
-    return _nameController.text.trim().isNotEmpty &&
-        _emailController.text.trim().isNotEmpty &&
-        _phoneController.text.trim().isNotEmpty &&
-        _passwordController.text.isNotEmpty &&
-        _confirmPasswordController.text.isNotEmpty;
+  bool get _isFormValid {
+    return _validateName(_nameController.text) == null &&
+        _validateEmail(_emailController.text) == null &&
+        _validatePhone(_phoneController.text) == null &&
+        _validatePassword(_passwordController.text) == null &&
+        _validateConfirmPassword(_confirmPasswordController.text) == null;
   }
 
   Future<void> _handleRegister() async {
@@ -366,7 +366,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           width: double.infinity,
                           height: 48,
                           child: ElevatedButton(
-                            onPressed: (_isFormFilled && !_isSubmitting)
+                            onPressed: (_isFormValid && !_isSubmitting)
                                 ? _handleRegister
                                 : null,
                             style: ElevatedButton.styleFrom(

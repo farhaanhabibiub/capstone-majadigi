@@ -191,6 +191,23 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
   List<String> get _availableKliniks =>
       _allData.map((d) => d.klinik).toSet().toList()..sort();
 
+  /// Set tanggal (normalized ke midnight) yang tersedia di CSV.
+  /// Dipakai date picker untuk membatasi pilihan ke tanggal yang punya data,
+  /// supaya filter tidak pernah kembalikan list kosong karena salah pilih hari.
+  Set<DateTime> get _availableDateSet {
+    final s = <DateTime>{};
+    for (final d in _allData) {
+      final parts = d.tanggal.split('/');
+      if (parts.length != 3) continue;
+      final dd = int.tryParse(parts[0]);
+      final mm = int.tryParse(parts[1]);
+      final yyyy = int.tryParse(parts[2]);
+      if (dd == null || mm == null || yyyy == null) continue;
+      s.add(DateTime(yyyy, mm, dd));
+    }
+    return s;
+  }
+
   // â”€â”€ filter helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   void _onFilterChanged() {
@@ -224,12 +241,42 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
   }
 
   Future<void> _pickDate() async {
+    final dates = _availableDateSet;
+    if (dates.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Belum ada data jadwal untuk difilter')),
+      );
+      return;
+    }
+
+    final sorted = dates.toList()..sort();
+    final firstDate = sorted.first;
+    final lastDate = sorted.last;
+
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    DateTime initialDate;
+    if (dates.contains(today)) {
+      initialDate = today;
+    } else if (today.isBefore(firstDate)) {
+      initialDate = firstDate;
+    } else if (today.isAfter(lastDate)) {
+      initialDate = lastDate;
+    } else {
+      // Pilih tanggal terdekat ≥ hari ini yang punya data; fallback ke firstDate.
+      initialDate = sorted.firstWhere(
+        (d) => !d.isBefore(today),
+        orElse: () => firstDate,
+      );
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: now,
-      firstDate: DateTime(now.year - 1, 1, 1),
-      lastDate: DateTime(now.year + 2, 12, 31),
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      selectableDayPredicate: (date) =>
+          dates.contains(DateTime(date.year, date.month, date.day)),
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
           colorScheme:

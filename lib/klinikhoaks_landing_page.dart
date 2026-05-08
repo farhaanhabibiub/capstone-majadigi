@@ -1,4 +1,5 @@
 ﻿import 'dart:io';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,25 +43,76 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
       _isiController.text.isNotEmpty &&
       _isLinkValid;
 
+  static const int _maxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
+
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'mp4', 'mov'],
       allowMultiple: false,
+      // Penting: load bytes ke memory agar tidak bergantung pada path
+      // (di Android modern, file dari Drive/Photos seringkali cuma punya
+      // content URI yang tidak bisa dibaca langsung via File(path)).
+      withData: true,
     );
-    if (result != null && result.files.isNotEmpty) {
-      setState(() => _pickedFile = result.files.first);
+    if (result == null || result.files.isEmpty) return;
+    final f = result.files.first;
+
+    if (f.size > _maxFileSizeBytes) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('File terlalu besar. Maksimal 10 MB.')),
+        );
+      }
+      return;
     }
+    setState(() => _pickedFile = f);
   }
 
+  /// Upload file lampiran ke Firebase Storage. Memprioritaskan `bytes`
+  /// (selalu tersedia karena `withData: true`); fallback ke `File(path)`
+  /// jika bytes tidak ada (mis. file besar yang di-stream).
   Future<String> _uploadFile(String tiketId) async {
-    if (_pickedFile == null || _pickedFile!.path == null) return '';
-    final file = File(_pickedFile!.path!);
+    if (_pickedFile == null) return '';
+    final f = _pickedFile!;
+
+    Uint8List? bytes = f.bytes;
+    if (bytes == null && f.path != null) {
+      try {
+        bytes = await File(f.path!).readAsBytes();
+      } catch (e) {
+        throw Exception('Tidak dapat membaca file: $e');
+      }
+    }
+    if (bytes == null) {
+      throw Exception('File tidak dapat dibaca. Silakan pilih ulang.');
+    }
+
     final ref = FirebaseStorage.instance
         .ref()
-        .child('laporan_hoaks/$tiketId/${_pickedFile!.name}');
-    final uploadTask = await ref.putFile(file);
+        .child('laporan_hoaks/$tiketId/${f.name}');
+    final metadata = SettableMetadata(contentType: _mimeTypeFor(f.extension));
+
+    final uploadTask = await ref.putData(bytes, metadata);
     return await uploadTask.ref.getDownloadURL();
+  }
+
+  String _mimeTypeFor(String? ext) {
+    switch (ext?.toLowerCase()) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'pdf':
+        return 'application/pdf';
+      case 'mp4':
+        return 'video/mp4';
+      case 'mov':
+        return 'video/quicktime';
+      default:
+        return 'application/octet-stream';
+    }
   }
 
   Future<void> _submit() async {
@@ -199,11 +251,26 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
           ),
         );
       }
-    } catch (_) {
+    } on FirebaseException catch (e) {
       if (mounted) {
         setState(() => _isSubmitting = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gagal mengirim laporan. Coba lagi.')),
+          SnackBar(
+            content: Text(
+              'Gagal mengirim laporan. (${e.code}) ${e.message ?? ''}',
+            ),
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal mengirim laporan. $e'),
+            duration: const Duration(seconds: 5),
+          ),
         );
       }
     }
@@ -276,14 +343,15 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLabel('Topik'),
+                          _buildRequiredLegend(),
+                          _buildLabel('Topik', required: true),
                           _buildTextField(
                             controller: _topikController,
                             hint: 'Contoh: Hoaks Bansos, Penipuan CPNS...',
                             onChanged: (_) => setState(() {}),
                           ),
                           const SizedBox(height: 20),
-                          _buildLabel('Isi Laporan'),
+                          _buildLabel('Isi Laporan', required: true),
                           _buildTextField(
                             controller: _isiController,
                             hint:
@@ -292,7 +360,7 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
                             onChanged: (_) => setState(() {}),
                           ),
                           const SizedBox(height: 20),
-                          _buildLabel('Link Bukti / Alamat Website'),
+                          _buildLabel('Link Bukti / Alamat Website', required: true),
                           _buildTextField(
                             controller: _linkController,
                             hint: 'https://',
@@ -311,7 +379,7 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
                               ),
                             ),
                           const SizedBox(height: 20),
-                          _buildLabel('Bukti File (opsional)'),
+                          _buildLabel('Bukti File', optional: true),
                           if (_pickedFile != null) _buildSelectedFile(),
                           _buildFilePickerButton(),
                           const SizedBox(height: 40),
@@ -330,17 +398,68 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
     );
   }
 
-  Widget _buildLabel(String label) {
+  Widget _buildLabel(String label, {bool required = false, bool optional = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, left: 4),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          fontFamily: 'PlusJakartaSans',
-          color: Color(0xFF1F2937),
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'PlusJakartaSans',
+            color: Color(0xFF1F2937),
+          ),
+          children: [
+            TextSpan(text: label),
+            if (required)
+              const TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Color(0xFFE52B44),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            if (optional)
+              const TextSpan(
+                text: '  (opsional)',
+                style: TextStyle(
+                  color: Color(0xFF9CA3AF),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRequiredLegend() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16, left: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Text(
+            '*',
+            style: TextStyle(
+              color: Color(0xFFE52B44),
+              fontFamily: 'PlusJakartaSans',
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+          ),
+          SizedBox(width: 4),
+          Text(
+            'Field wajib diisi',
+            style: TextStyle(
+              color: Color(0xFF6B7280),
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }

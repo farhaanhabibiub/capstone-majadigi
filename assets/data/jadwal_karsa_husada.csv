@@ -7,3 +7,20 @@ no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_t
 6|21/04/2026|Selasa|07:30|09:30|ORIF Radius|dr. Agus Setiawan, Sp.OT|ORTOPEDI|Terjadwal|
 7|21/04/2026|Selasa|10:00|11:30|Miomektomi|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
 8|22/04/2026|Rabu|07:00|08:30|Polipektomi Nasal|dr. Nina Kusuma, Sp.THT|THT|Terjadwal|
+9|26/04/2026|Minggu|07:00|08:30|Apendektomi|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Selesai|
+10|26/04/2026|Minggu|09:00|11:00|Sectio Caesarea|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Selesai|
+11|29/04/2026|Rabu|07:30|09:00|Tonsilektomi|dr. Nina Kusuma, Sp.THT|THT|Selesai|
+12|03/05/2026|Minggu|07:00|09:00|Hernia Repair|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Selesai|
+13|03/05/2026|Minggu|10:00|11:30|Katarak|dr. Hendra Wijaya, Sp.M|MATA|Selesai|
+14|06/05/2026|Rabu|07:30|09:00|Miomektomi|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Selesai|
+15|10/05/2026|Minggu|07:00|08:30|Apendektomi|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
+16|10/05/2026|Minggu|09:00|11:00|ORIF Radius|dr. Agus Setiawan, Sp.OT|ORTOPEDI|Terjadwal|
+17|13/05/2026|Rabu|07:00|08:30|Polipektomi Nasal|dr. Nina Kusuma, Sp.THT|THT|Terjadwal|
+18|17/05/2026|Minggu|07:00|09:00|Sectio Caesarea|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
+19|17/05/2026|Minggu|10:00|11:30|Katarak|dr. Hendra Wijaya, Sp.M|MATA|Terjadwal|
+20|20/05/2026|Rabu|07:30|09:00|Tonsilektomi|dr. Nina Kusuma, Sp.THT|THT|Terjadwal|
+21|24/05/2026|Minggu|07:00|08:30|Hernia Repair|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
+22|24/05/2026|Minggu|09:00|11:00|Miomektomi|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
+23|27/05/2026|Rabu|07:30|09:30|ORIF Radius|dr. Agus Setiawan, Sp.OT|ORTOPEDI|Terjadwal|
+24|31/05/2026|Minggu|07:00|08:30|Apendektomi|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
+25|31/05/2026|Minggu|09:00|11:00|Sectio Caesarea|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
