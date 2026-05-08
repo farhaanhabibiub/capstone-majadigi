@@ -1,11 +1,12 @@
-import 'package:csv/csv.dart';
+﻿import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import '../widgets/error_retry.dart';
 import '../widgets/skeleton_loader.dart';
 import 'hospital_config.dart';
 
-// ── Model ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class JadwalData {
   final String tanggal; // DD/MM/YYYY
@@ -17,7 +18,7 @@ class JadwalData {
   final String klinik;
   final String status;
 
-  String get jamRange => '$jamMulai – $jamSelesai';
+  String get jamRange => '$jamMulai â€“ $jamSelesai';
   bool get isTerjadwal => status == 'Terjadwal';
 
   const JadwalData({
@@ -32,7 +33,7 @@ class JadwalData {
   });
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class JadwalOperasiPage extends StatefulWidget {
   final HospitalConfig hospital;
@@ -43,20 +44,20 @@ class JadwalOperasiPage extends StatefulWidget {
 }
 
 class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
-  // ── data ───────────────────────────────────────────────────────────────────
+  // â”€â”€ data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   List<JadwalData> _allData = [];
   String _updateTerakhir = '-';
   bool _isLoading = true;
   Object? _loadError;
 
-  // ── filter state ───────────────────────────────────────────────────────────
+  // â”€â”€ filter state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final _searchCtrl = TextEditingController();
   String? _selectedTanggal; // DD/MM/YYYY
   String? _selectedKlinik;
   bool _isFilterApplied = false;
   List<JadwalData> _hasilList = [];
 
-  // ── theme ──────────────────────────────────────────────────────────────────
+  // â”€â”€ theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
@@ -89,7 +90,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     'KLINIK JANTUNG': Color.fromRGBO(200, 30, 30, 1),
   };
 
-  // ── lifecycle ──────────────────────────────────────────────────────────────
+  // â”€â”€ lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   void initState() {
@@ -105,7 +106,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     super.dispose();
   }
 
-  // ── data loading ───────────────────────────────────────────────────────────
+  // â”€â”€ data loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _loadData() async {
     try {
@@ -156,7 +157,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
         });
       }
     } catch (e) {
-      debugPrint('JadwalOperasi: gagal load CSV – $e');
+      debugPrint('JadwalOperasi: gagal load CSV â€“ $e');
       if (mounted) {
         setState(() {
           _loadError = e;
@@ -174,7 +175,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     await _loadData();
   }
 
-  // ── computed ───────────────────────────────────────────────────────────────
+  // â”€â”€ computed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   int get _totalOperasi => _allData.length;
   int get _totalTerjadwal =>
@@ -190,7 +191,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
   List<String> get _availableKliniks =>
       _allData.map((d) => d.klinik).toSet().toList()..sort();
 
-  // ── filter helpers ─────────────────────────────────────────────────────────
+  // â”€â”€ filter helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   void _onFilterChanged() {
     if (_isFilterApplied && mounted) {
@@ -320,7 +321,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     );
   }
 
-  // ── date helpers ───────────────────────────────────────────────────────────
+  // â”€â”€ date helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   int _dateSortKey(String ddmmyyyy) {
     final p = ddmmyyyy.split('/');
@@ -350,7 +351,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     return map;
   }
 
-  // ── build ──────────────────────────────────────────────────────────────────
+  // â”€â”€ build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   Widget build(BuildContext context) {
@@ -441,7 +442,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     );
   }
 
-  // ── Summary Banner ─────────────────────────────────────────────────────────
+  // â”€â”€ Summary Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildSummaryBanner() {
     return Container(
@@ -532,7 +533,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     );
   }
 
-  // ── Stat Row ───────────────────────────────────────────────────────────────
+  // â”€â”€ Stat Row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildStatRow() {
     return Row(
@@ -573,7 +574,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
@@ -623,7 +624,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     );
   }
 
-  // ── Filter Card ────────────────────────────────────────────────────────────
+  // â”€â”€ Filter Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildFilterCard() {
     final buttonActive = _isAnyFilterSet && !_isFilterApplied;
@@ -631,7 +632,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -808,7 +809,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     );
   }
 
-  // ── Grouped List (default view) ────────────────────────────────────────────
+  // â”€â”€ Grouped List (default view) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildGroupedList() {
     if (_allData.isEmpty) {
@@ -868,7 +869,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
     );
   }
 
-  // ── Hasil Section ──────────────────────────────────────────────────────────
+  // â”€â”€ Hasil Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildHasilSection() {
     return Column(
@@ -918,7 +919,7 @@ class _JadwalOperasiPageState extends State<JadwalOperasiPage> {
   }
 }
 
-// ── Jadwal Card ───────────────────────────────────────────────────────────────
+// â”€â”€ Jadwal Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _JadwalCard extends StatelessWidget {
   final JadwalData data;
@@ -945,7 +946,7 @@ class _JadwalCard extends StatelessWidget {
       width: fullWidth ? double.infinity : 230,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
@@ -1044,7 +1045,7 @@ class _JadwalCard extends StatelessWidget {
   }
 }
 
-// ── Sub-widgets ───────────────────────────────────────────────────────────────
+// â”€â”€ Sub-widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _Chip extends StatelessWidget {
   final String label;

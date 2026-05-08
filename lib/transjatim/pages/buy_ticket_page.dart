@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import '../models/transjatim_model.dart';
 import 'payment_page.dart';
 
@@ -119,7 +120,7 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
@@ -170,7 +171,7 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
@@ -253,7 +254,7 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
@@ -332,7 +333,7 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
@@ -393,7 +394,7 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
         children: [
           _priceRow('Harga/penumpang', _formatRupiah(_pricePerPax)),
           const SizedBox(height: 6),
-          _priceRow('Penumpang', '× $_passengerCount'),
+          _priceRow('Penumpang', 'Ã— $_passengerCount'),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
             child: Divider(thickness: 1, color: Color.fromRGBO(0, 101, 255, 0.2)),

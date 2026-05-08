@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
 import 'open_data_datasebaran.dart';
 import 'open_data_dapurmbg.dart';
 import 'open_data_ayopasok.dart';
@@ -60,7 +61,7 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
       'route': 'penduduk',
     },
     {
-      'title': 'Angka Kemiskinan Jawa Timur 2020–2024',
+      'title': 'Angka Kemiskinan Jawa Timur 2020â€“2024',
       'date': '15 Maret 2025',
       'category': 'Sosial',
       'type': 'Statistik',
@@ -233,7 +234,7 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
                           padding: const EdgeInsets.fromLTRB(20, 28, 20, 16),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: AppTheme.surfaceOf(context),
                               borderRadius: BorderRadius.circular(30),
                               border: Border.all(
                                 color: _blue.withValues(alpha: 0.3),
@@ -388,7 +389,7 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(color: Color(0x08000000), blurRadius: 12, offset: Offset(0, 4)),

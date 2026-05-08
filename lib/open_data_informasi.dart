@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'common/favorite_mixin.dart';
 import 'theme/app_theme.dart';
@@ -82,8 +82,8 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage>
                           child: Container(
                             width: 44,
                             height: 44,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: AppTheme.surfaceOf(context),
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
@@ -123,7 +123,7 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage>
                             Container(
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: AppTheme.surfaceOf(context),
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: const [
                                   BoxShadow(
@@ -232,7 +232,7 @@ class _OpenDataInformasiPageState extends State<OpenDataInformasiPage>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'common/favorite_mixin.dart';
 import 'theme/app_theme.dart';
 
@@ -77,8 +77,8 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage>
                           child: Container(
                             width: 44,
                             height: 44,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: AppTheme.surfaceOf(context),
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
@@ -120,7 +120,7 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage>
                             Container(
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: AppTheme.surfaceOf(context),
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: const [
                                   BoxShadow(
@@ -231,7 +231,7 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
@@ -302,7 +302,7 @@ class _NomorDaruratInformasiPageState extends State<NomorDaruratInformasiPage>
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Text(
-          'Nomor darurat merupakan layanan cepat tanggap dari pemerintah atau instansi terkait untuk memberikan bantuan kepada masyarakat. Nomor ini dapat dihubungi saat warga menghadapi situasi mendesak, berbahaya, atau yang mengancam nyawa—seperti kecelakaan, kebakaran, bencana alam, gangguan keamanan, hingga kondisi medis gawat darurat.',
+          'Nomor darurat merupakan layanan cepat tanggap dari pemerintah atau instansi terkait untuk memberikan bantuan kepada masyarakat. Nomor ini dapat dihubungi saat warga menghadapi situasi mendesak, berbahaya, atau yang mengancam nyawaâ€”seperti kecelakaan, kebakaran, bencana alam, gangguan keamanan, hingga kondisi medis gawat darurat.',
           style: TextStyle(
             fontSize: 14,
             fontFamily: 'PlusJakartaSans',

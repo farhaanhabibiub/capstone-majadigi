@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../app_route.dart';
 import '../common/favorite_mixin.dart';
@@ -33,7 +33,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundOf(context),
       appBar: _buildAppBar(),
       body: Column(
         children: [
@@ -48,7 +48,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     );
   }
 
-  // ── AppBar ────────────────────────────────────────────────────────────────
+  // â”€â”€ AppBar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
@@ -76,8 +76,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
             child: Container(
               width: 36,
               height: 36,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: AppTheme.surfaceOf(context),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -94,7 +94,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     );
   }
 
-  // ── Tab Bar ───────────────────────────────────────────────────────────────
+  // â”€â”€ Tab Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildTabBar() {
     return Padding(
@@ -103,7 +103,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
         height: 44,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(999),
           boxShadow: [
             BoxShadow(
@@ -138,7 +138,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
           child: Text(
             label,
             style: TextStyle(
-              color: isActive ? Colors.white : AppTheme.textSecondary,
+              color: isActive ? Colors.white : AppTheme.textSecondaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
@@ -149,7 +149,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     );
   }
 
-  // ── Tab Layanan ───────────────────────────────────────────────────────────
+  // â”€â”€ Tab Layanan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildLayananTab() {
     return SingleChildScrollView(
@@ -192,7 +192,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -226,8 +226,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
           const SizedBox(height: 14),
           Text(
             title,
-            style: const TextStyle(
-              color: AppTheme.textPrimary,
+            style: TextStyle(
+              color: AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -237,8 +237,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
           const SizedBox(height: 6),
           Text(
             description,
-            style: const TextStyle(
-              color: AppTheme.textSecondary,
+            style: TextStyle(
+              color: AppTheme.textSecondaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -273,7 +273,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     );
   }
 
-  // ── Tab Informasi ─────────────────────────────────────────────────────────
+  // â”€â”€ Tab Informasi â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildInformasiTab() {
     return SingleChildScrollView(
@@ -303,7 +303,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     );
   }
 
-  // ── Accordion ─────────────────────────────────────────────────────────────
+  // â”€â”€ Accordion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildAccordion({
     required IconData icon,
@@ -315,7 +315,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -352,8 +352,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
                   Expanded(
                     child: Text(
                       title,
-                      style: const TextStyle(
-                        color: AppTheme.textPrimary,
+                      style: TextStyle(
+                        color: AppTheme.textPrimaryOf(context),
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -390,7 +390,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     );
   }
 
-  // ── Konten Operasional ────────────────────────────────────────────────────
+  // â”€â”€ Konten Operasional â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildOperasionalContent() {
     return Column(
@@ -419,10 +419,10 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
         const SizedBox(height: 14),
         _infoRow(
           label: 'Alamat',
-          child: const Text(
+          child: Text(
             'Jl. Manyar Kertoarjo No.1, Manyar Sabrangan, Kec. Mulyorejo, Surabaya, Jawa Timur 60116',
             style: TextStyle(
-              color: AppTheme.textPrimary,
+              color: AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -499,8 +499,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
             width: 60,
             child: Text(
               hari,
-              style: const TextStyle(
-                color: AppTheme.textPrimary,
+              style: TextStyle(
+                color: AppTheme.textPrimaryOf(context),
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
@@ -510,8 +510,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
           ),
           Text(
             '($jam)',
-            style: const TextStyle(
-              color: AppTheme.textSecondary,
+            style: TextStyle(
+              color: AppTheme.textSecondaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -523,7 +523,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     );
   }
 
-  // ── Konten Ketentuan Umum ─────────────────────────────────────────────────
+  // â”€â”€ Konten Ketentuan Umum â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildKetentuanContent() {
     return Column(
@@ -531,10 +531,10 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
       children: [
         _infoRow(
           label: 'Manfaat',
-          child: const Text(
+          child: Text(
             'Sebagai institusi yang berperan penting dalam pengelolaan Pendapatan Asli Daerah, BAPENDA berupaya meningkatkan transparansi, akuntabilitas, dan kualitas pelayanan keuangan di tingkat Provinsi dan Kabupaten/Kota di Jawa Timur.',
             style: TextStyle(
-              color: AppTheme.textPrimary,
+              color: AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -548,10 +548,10 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Cara cek informasi pajak dan nilai jual kendaraan:',
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -567,8 +567,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
                     children: [
                       Text(
                         '${i + 1}. ',
-                        style: const TextStyle(
-                          color: AppTheme.textPrimary,
+                        style: TextStyle(
+                          color: AppTheme.textPrimaryOf(context),
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
@@ -578,8 +578,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
                       Expanded(
                         child: Text(
                           _pendaftaranSteps[i],
-                          style: const TextStyle(
-                            color: AppTheme.textPrimary,
+                          style: TextStyle(
+                            color: AppTheme.textPrimaryOf(context),
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
@@ -591,10 +591,10 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
                   ),
                 ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'Pembayaran Pajak Kendaraan Bermotor (PKB) tahunan bisa dilakukan di Kantor Bersama Samsat atau melalui E-Samsat. Aplikasi E-Samsat merupakan sistem pembayaran PKB, Sumbangan Wajib Dana Kecelakaan Lalu Lintas Jalan (SWDKLLJ), dan biaya administrasi.',
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -602,10 +602,10 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'Tersedia juga melalui marketplace, e-wallet, Payment Point Online Bank (PPOB) seperti Indomaret, Alfamart, Alfamidi, Kantor Pos, Agen Badan Usaha Mitra Desa, Samsat Kampus, dan sebagainya.',
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -619,7 +619,7 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
     );
   }
 
-  // ── Helper ────────────────────────────────────────────────────────────────
+  // â”€â”€ Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _infoRow({required String label, required Widget child}) {
     return Column(
@@ -627,8 +627,8 @@ class _BapendaPageState extends State<BapendaPage> with FavoriteMixin {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: AppTheme.textSecondary,
+          style: TextStyle(
+            color: AppTheme.textSecondaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 11,
             fontWeight: FontWeight.w600,

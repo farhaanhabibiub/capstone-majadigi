@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import '../models/sembako_model.dart';
 
 class SembakoCard extends StatelessWidget {
@@ -20,7 +21,7 @@ class SembakoCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

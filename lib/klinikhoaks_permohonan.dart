@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -184,8 +184,8 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
                                     width: 40,
                                     height: 40,
                                     margin: const EdgeInsets.only(right: 8),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.surfaceOf(context),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(Icons.admin_panel_settings, color: AppTheme.primary, size: 22),
@@ -194,8 +194,8 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
                               Container(
                                 width: 40,
                                 height: 40,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.surfaceOf(context),
                                   shape: BoxShape.circle,
                                 ),
                                 child: IconButton(
@@ -247,7 +247,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
       child: Container(
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(30),
           boxShadow: const [
             BoxShadow(color: Color(0x0A000000), blurRadius: 6, offset: Offset(0, 3)),
@@ -302,14 +302,14 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
     }
   }
 
-  // ── Tab 0: Layanan ────────────────────────────────────────────────────────────
+  // â”€â”€ Tab 0: Layanan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildLayananTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(24),
           boxShadow: const [
             BoxShadow(color: Color(0x0D000000), blurRadius: 20, offset: Offset(0, 8)),
@@ -335,7 +335,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
             ),
             const SizedBox(height: 10),
             const Text(
-              'Kirimkan detail informasi yang ingin diklarifikasi. Tim kami akan memverifikasi dalam 1×24 jam.',
+              'Kirimkan detail informasi yang ingin diklarifikasi. Tim kami akan memverifikasi dalam 1Ã—24 jam.',
               style: TextStyle(
                 fontSize: 14,
                 fontFamily: 'PlusJakartaSans',
@@ -381,7 +381,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
     );
   }
 
-  // ── Tab 1: Tiket Saya ─────────────────────────────────────────────────────────
+  // â”€â”€ Tab 1: Tiket Saya â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildTiketSayaTab() {
     if (_isLoadingLaporan) {
       return SkeletonLoader.list();
@@ -422,7 +422,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(color: Color(0x0D000000), blurRadius: 16, offset: Offset(0, 6)),
@@ -515,7 +515,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
     );
   }
 
-  // ── Tab 2: Informasi ──────────────────────────────────────────────────────────
+  // â”€â”€ Tab 2: Informasi â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildInformasiTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -576,9 +576,9 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
           'Jam Operasional',
           Column(
             children: [
-              _dayRow('Senin – Kamis', '08:00 – 16:00', closed: false),
-              _dayRow('Jumat', '08:00 – 11:00', closed: false),
-              _dayRow('Sabtu – Minggu', 'Tutup', closed: true),
+              _dayRow('Senin â€“ Kamis', '08:00 â€“ 16:00', closed: false),
+              _dayRow('Jumat', '08:00 â€“ 11:00', closed: false),
+              _dayRow('Sabtu â€“ Minggu', 'Tutup', closed: true),
             ],
           ),
         ),
@@ -627,7 +627,7 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
           'Akses aplikasi MajaDigitalJatim dan pilih fitur Klinik Hoaks.',
           'Pilih tab "Layanan" lalu tekan "Ajukan Laporan".',
           'Isi formulir dengan topik, isi laporan, dan link bukti.',
-          'Tekan "Ajukan" — tiket dibuat otomatis dan tercatat di sistem.',
+          'Tekan "Ajukan" â€” tiket dibuat otomatis dan tercatat di sistem.',
           'Pantau status verifikasi di tab "Tiket Saya".',
         ]),
       ],
@@ -778,7 +778,7 @@ class _ExpandableCardState extends State<_ExpandableCard> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(color: Color(0x0D000000), blurRadius: 16, offset: Offset(0, 6)),

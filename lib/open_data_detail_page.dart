@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'widgets/empty_state.dart';
 
@@ -84,16 +85,16 @@ class OpenDataDetailPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHeader(c),
+                          _buildHeader(context, c),
                           const SizedBox(height: 20),
                           _buildDescription(c),
                           const SizedBox(height: 20),
                           if (c.stats.isNotEmpty) ...[
-                            _buildStats(c),
+                            _buildStats(context, c),
                             const SizedBox(height: 20),
                           ],
                           if (c.tableHeaders.isNotEmpty) ...[
-                            _buildTable(c),
+                            _buildTable(context, c),
                             const SizedBox(height: 20),
                           ],
                           _buildDownloadButton(context, c),
@@ -110,11 +111,11 @@ class OpenDataDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(_Content c) {
+  Widget _buildHeader(BuildContext context, _Content c) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [BoxShadow(color: Color(0x0A000000), blurRadius: 12, offset: Offset(0, 4))],
       ),
@@ -181,7 +182,7 @@ class OpenDataDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStats(_Content c) {
+  Widget _buildStats(BuildContext context, _Content c) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -194,17 +195,17 @@ class OpenDataDetailPage extends StatelessWidget {
           childAspectRatio: 1.6,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          children: c.stats.map((s) => _buildStatBox(s)).toList(),
+          children: c.stats.map((s) => _buildStatBox(context, s)).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildStatBox(_Stat s) {
+  Widget _buildStatBox(BuildContext context, _Stat s) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [BoxShadow(color: Color(0x08000000), blurRadius: 8, offset: Offset(0, 4))],
       ),
@@ -220,7 +221,7 @@ class OpenDataDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTable(_Content c) {
+  Widget _buildTable(BuildContext context, _Content c) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -228,7 +229,7 @@ class OpenDataDetailPage extends StatelessWidget {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.surfaceOf(context),
             borderRadius: BorderRadius.circular(16),
             boxShadow: const [BoxShadow(color: Color(0x08000000), blurRadius: 8, offset: Offset(0, 4))],
           ),
@@ -296,7 +297,7 @@ class OpenDataDetailPage extends StatelessWidget {
     }
   }
 
-  // ── Content Data ────────────────────────────────────────────────────────────
+  // â”€â”€ Content Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   static final Map<String, _Content> _content = {
     'penduduk': _Content(
@@ -311,7 +312,7 @@ class OpenDataDetailPage extends StatelessWidget {
       stats: [
         _Stat('41,16 jt', 'Total Penduduk Jatim', color: Color(0xFF7C3AED)),
         _Stat('38', 'Kab/Kota', color: Color(0xFF0891B2)),
-        _Stat('855/km²', 'Kepadatan Rata-rata', color: Color(0xFF059669)),
+        _Stat('855/kmÂ²', 'Kepadatan Rata-rata', color: Color(0xFF059669)),
         _Stat('99,7', 'Rasio Jenis Kelamin', color: Color(0xFFEA580C)),
       ],
       tableTitle: 'Penduduk 10 Kota/Kabupaten Terbesar',
@@ -332,21 +333,21 @@ class OpenDataDetailPage extends StatelessWidget {
     ),
 
     'kemiskinan': _Content(
-      title: 'Angka Kemiskinan Jawa Timur 2020–2024',
+      title: 'Angka Kemiskinan Jawa Timur 2020â€“2024',
       date: '15 Maret 2025',
       category: 'Sosial',
       type: 'Statistik',
       source: 'BPS Jawa Timur',
       iconData: Icons.trending_down_outlined,
       iconColor: Color(0xFFDC2626),
-      description: 'Data perkembangan tingkat kemiskinan Provinsi Jawa Timur periode 2020–2024 berdasarkan survei sosial ekonomi nasional (Susenas) yang dilaksanakan setiap tahun oleh BPS.',
+      description: 'Data perkembangan tingkat kemiskinan Provinsi Jawa Timur periode 2020â€“2024 berdasarkan survei sosial ekonomi nasional (Susenas) yang dilaksanakan setiap tahun oleh BPS.',
       stats: [
         _Stat('10,16%', 'Tingkat Kemiskinan 2024', color: Color(0xFFDC2626)),
         _Stat('4,2 jt', 'Penduduk Miskin', color: Color(0xFFEA580C)),
         _Stat('-0,58%', 'Penurunan vs 2023', color: Color(0xFF059669)),
-        _Stat('11,40%', 'Rata-rata 2020–2024', color: Color(0xFF7C3AED)),
+        _Stat('11,40%', 'Rata-rata 2020â€“2024', color: Color(0xFF7C3AED)),
       ],
-      tableTitle: 'Tren Angka Kemiskinan 2020–2024',
+      tableTitle: 'Tren Angka Kemiskinan 2020â€“2024',
       tableHeaders: ['Tahun', 'Persentase'],
       tableRows: [
         ['2020', '11,46%'],
@@ -450,7 +451,7 @@ class OpenDataDetailPage extends StatelessWidget {
       source: 'Dispar Jawa Timur',
       iconData: Icons.beach_access_outlined,
       iconColor: Color(0xFF0284C7),
-      description: 'Statistik kunjungan wisatawan nusantara dan mancanegara ke destinasi wisata di Provinsi Jawa Timur pada kuartal keempat tahun 2024 (Oktober – Desember).',
+      description: 'Statistik kunjungan wisatawan nusantara dan mancanegara ke destinasi wisata di Provinsi Jawa Timur pada kuartal keempat tahun 2024 (Oktober â€“ Desember).',
       stats: [
         _Stat('18,4 jt', 'Wisatawan Q4 2024', color: Color(0xFF0284C7)),
         _Stat('142 rb', 'Wisman Q4 2024', color: Color(0xFFEA580C)),
@@ -561,7 +562,7 @@ class OpenDataDetailPage extends StatelessWidget {
   };
 }
 
-// ── Data classes ──────────────────────────────────────────────────────────────
+// â”€â”€ Data classes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _Content {
   final String title;

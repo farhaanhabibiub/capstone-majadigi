@@ -34,9 +34,6 @@ class _BerandaPageState extends State<BerandaPage> {
   List<_ServiceItem> _services = _kDefaultServices;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
-  static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
 
   // Katalog metadata semua kemungkinan fitur unggulan. Dipakai untuk merender
   // 5 kartu di beranda berdasarkan hasil [PersonalizationRuleBase].
@@ -287,7 +284,7 @@ class _BerandaPageState extends State<BerandaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _whiteBg,
+      backgroundColor: AppTheme.backgroundOf(context),
       body: SafeArea(
         bottom: false,
         child: Stack(
@@ -364,10 +361,10 @@ class _BerandaPageState extends State<BerandaPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Lokasi Saat Ini:',
                   style: TextStyle(
-                    color: _textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -380,18 +377,18 @@ class _BerandaPageState extends State<BerandaPage> {
                       child: Text(
                         _locationText,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: _textPrimary,
+                        style: TextStyle(
+                          color: AppTheme.textPrimaryOf(context),
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.keyboard_arrow_down_rounded,
                       size: 16,
-                      color: _textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                     ),
                   ],
                 ),
@@ -414,7 +411,7 @@ class _BerandaPageState extends State<BerandaPage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppTheme.surfaceOf(context),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -424,9 +421,9 @@ class _BerandaPageState extends State<BerandaPage> {
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.notifications_outlined,
-                      color: _textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                       size: 20,
                     ),
                   ),
@@ -477,7 +474,7 @@ class _BerandaPageState extends State<BerandaPage> {
           height: 46,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.surfaceOf(context),
             borderRadius: BorderRadius.circular(23),
             boxShadow: [
               BoxShadow(
@@ -488,21 +485,21 @@ class _BerandaPageState extends State<BerandaPage> {
             ],
           ),
           child: Row(
-            children: const [
-              Icon(Icons.search_rounded, color: _textSecondary, size: 20),
-              SizedBox(width: 10),
+            children: [
+              Icon(Icons.search_rounded, color: AppTheme.textSecondaryOf(context), size: 20),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   'Cari layanan, RSUD, hoaks, data…',
                   style: TextStyle(
-                    color: _textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              Icon(Icons.tune_rounded, color: _textSecondary, size: 18),
+              Icon(Icons.tune_rounded, color: AppTheme.textSecondaryOf(context), size: 18),
             ],
           ),
         ),
@@ -562,11 +559,11 @@ class _BerandaPageState extends State<BerandaPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Akses Cepat',
                   style: TextStyle(
-                    color: _textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -616,7 +613,7 @@ class _BerandaPageState extends State<BerandaPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.surfaceOf(context),
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
@@ -646,8 +643,8 @@ class _BerandaPageState extends State<BerandaPage> {
               const SizedBox(width: 10),
               Text(
                 item.label,
-                style: const TextStyle(
-                  color: _textPrimary,
+                style: TextStyle(
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -666,12 +663,12 @@ class _BerandaPageState extends State<BerandaPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Layanan Unggulan',
             style: TextStyle(
-              color: _textPrimary,
+              color: AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -739,7 +736,7 @@ class _BerandaPageState extends State<BerandaPage> {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.surfaceOf(context),
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
@@ -781,8 +778,8 @@ class _BerandaPageState extends State<BerandaPage> {
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: _textPrimary,
+                  style: TextStyle(
+                    color: AppTheme.textPrimaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -817,7 +814,7 @@ class _BerandaPageState extends State<BerandaPage> {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
@@ -856,8 +853,8 @@ class _BerandaPageState extends State<BerandaPage> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: _textPrimary,
+                style: TextStyle(
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -881,7 +878,7 @@ class _BerandaPageState extends State<BerandaPage> {
           .then((_) { if (mounted) _loadUserProfile(); }),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
@@ -916,15 +913,15 @@ class _BerandaPageState extends State<BerandaPage> {
               ),
             ),
             const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
                 'Tambah Layanan',
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: _textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -949,11 +946,11 @@ class _BerandaPageState extends State<BerandaPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Berita & Artikel',
                   style: TextStyle(
-                    color: _textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -1002,7 +999,7 @@ class _BerandaPageState extends State<BerandaPage> {
       },
       child: Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
@@ -1058,8 +1055,8 @@ class _BerandaPageState extends State<BerandaPage> {
                     item.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: _textPrimary,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -1069,12 +1066,12 @@ class _BerandaPageState extends State<BerandaPage> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today_rounded, size: 10, color: _textSecondary),
+                      Icon(Icons.calendar_today_rounded, size: 10, color: AppTheme.textSecondaryOf(context)),
                       const SizedBox(width: 4),
                       Text(
                         item.date,
-                        style: const TextStyle(
-                          color: _textSecondary,
+                        style: TextStyle(
+                          color: AppTheme.textSecondaryOf(context),
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 11,
                         ),
@@ -1115,7 +1112,7 @@ class _BerandaPageState extends State<BerandaPage> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               constraints: const BoxConstraints(maxWidth: 136),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.surfaceOf(context),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
@@ -1125,7 +1122,7 @@ class _BerandaPageState extends State<BerandaPage> {
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1135,11 +1132,11 @@ class _BerandaPageState extends State<BerandaPage> {
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                     ),
                   ),
-                  SizedBox(height: 2),
-                  Text(
+                  const SizedBox(height: 2),
+                  const Text(
                     'Tanya Maja AI →',
                     style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
@@ -1155,7 +1152,7 @@ class _BerandaPageState extends State<BerandaPage> {
             Padding(
               padding: const EdgeInsets.only(right: 28),
               child: CustomPaint(
-                painter: _BubbleTailPainter(),
+                painter: _BubbleTailPainter(AppTheme.surfaceOf(context)),
                 child: const SizedBox(width: 14, height: 7),
               ),
             ),
@@ -1179,9 +1176,9 @@ class _BerandaPageState extends State<BerandaPage> {
 
   Widget _buildBottomNav() {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceOf(context),
+        boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(0, 0, 0, 0.07),
             blurRadius: 12,
@@ -1358,7 +1355,6 @@ class _BottomNavItem extends StatelessWidget {
   final VoidCallback onTap;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
-  static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
 
   const _BottomNavItem({
     required this.icon,
@@ -1371,6 +1367,7 @@ class _BottomNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayIcon = isActive ? (activeIcon ?? icon) : icon;
+    final inactiveColor = AppTheme.textSecondaryOf(context);
     return Semantics(
       button: true,
       selected: isActive,
@@ -1384,12 +1381,12 @@ class _BottomNavItem extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(displayIcon, color: isActive ? _blue : _textSecondary, size: 24),
+              Icon(displayIcon, color: isActive ? _blue : inactiveColor, size: 24),
               const SizedBox(height: 3),
               Text(
                 label,
                 style: TextStyle(
-                  color: isActive ? _blue : _textSecondary,
+                  color: isActive ? _blue : inactiveColor,
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 10,
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
@@ -1406,9 +1403,12 @@ class _BottomNavItem extends StatelessWidget {
 // ── Segitiga ekor speech bubble ──────────────────────────────────────────────
 
 class _BubbleTailPainter extends CustomPainter {
+  final Color color;
+  _BubbleTailPainter(this.color);
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white;
+    final paint = Paint()..color = color;
     final path = Path()
       ..moveTo(0, 0)
       ..lineTo(size.width, 0)
@@ -1418,6 +1418,6 @@ class _BubbleTailPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter _) => false;
+  bool shouldRepaint(covariant _BubbleTailPainter old) => old.color != color;
 }
 

@@ -1,5 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
+﻿import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import 'package:intl/intl.dart';
 import '../models/etibi_model.dart';
 
@@ -271,7 +272,7 @@ class _SkriningTabState extends State<SkriningTab> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -488,7 +489,7 @@ class _SkriningTabState extends State<SkriningTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ── Level Badge ──────────────────────────────────────────────────────────
+        // â”€â”€ Level Badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(20),
@@ -524,7 +525,7 @@ class _SkriningTabState extends State<SkriningTab> {
 
         const SizedBox(height: 20),
 
-        // ── Skor Total ───────────────────────────────────────────────────────────
+        // â”€â”€ Skor Total â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),
@@ -545,11 +546,11 @@ class _SkriningTabState extends State<SkriningTab> {
                     style: const TextStyle(color: _textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 18, fontWeight: FontWeight.w500),
                   ),
                   const Spacer(),
-                  _levelPill('≤ 5', 'Rendah', const Color(0xFF2E7D32), _levelRisiko == 'Rendah'),
+                  _levelPill('â‰¤ 5', 'Rendah', const Color(0xFF2E7D32), _levelRisiko == 'Rendah'),
                   const SizedBox(width: 6),
-                  _levelPill('6–12', 'Sedang', const Color(0xFFF59E0B), _levelRisiko == 'Sedang'),
+                  _levelPill('6â€“12', 'Sedang', const Color(0xFFF59E0B), _levelRisiko == 'Sedang'),
                   const SizedBox(width: 6),
-                  _levelPill('≥ 13', 'Tinggi', const Color(0xFFD32F2F), _levelRisiko == 'Tinggi'),
+                  _levelPill('â‰¥ 13', 'Tinggi', const Color(0xFFD32F2F), _levelRisiko == 'Tinggi'),
                 ],
               ),
               const SizedBox(height: 12),
@@ -568,7 +569,7 @@ class _SkriningTabState extends State<SkriningTab> {
 
         const SizedBox(height: 16),
 
-        // ── Breakdown per Kategori ───────────────────────────────────────────────
+        // â”€â”€ Breakdown per Kategori â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const Text('Detail per Kategori', style: TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w700)),
         const SizedBox(height: 10),
         _kategoriRow(Icons.coronavirus_outlined,     'Gejala Utama',       _skorGejalaUtama,    _maxGejalaUtama,    const Color(0xFFD32F2F)),
@@ -581,7 +582,7 @@ class _SkriningTabState extends State<SkriningTab> {
 
         const SizedBox(height: 20),
 
-        // ── Disclaimer ───────────────────────────────────────────────────────────
+        // â”€â”€ Disclaimer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
@@ -633,7 +634,7 @@ class _SkriningTabState extends State<SkriningTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 6, offset: const Offset(0, 2))],
       ),
@@ -685,7 +686,7 @@ class _SkriningTabState extends State<SkriningTab> {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         border: Border.all(color: _blue, width: 1.5),
         borderRadius: BorderRadius.circular(24),
       ),
@@ -716,7 +717,7 @@ class _SkriningTabState extends State<SkriningTab> {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         border: Border.all(color: _blue, width: 1.5),
         borderRadius: BorderRadius.circular(24),
       ),

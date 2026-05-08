@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'auth_service.dart';
 
@@ -590,7 +591,7 @@ class _NomorDaruratCariNomorPageState extends State<NomorDaruratCariNomorPage> {
   Widget _buildContactCard({required String title, required String number}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(

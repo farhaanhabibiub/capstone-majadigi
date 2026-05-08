@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'common/favorite_mixin.dart';
 import 'open_data_list_page.dart';
@@ -123,7 +123,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage>
       child: Container(
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(30),
           boxShadow: const [
             BoxShadow(color: Color(0x0A000000), blurRadius: 6, offset: Offset(0, 3)),
@@ -167,7 +167,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage>
     );
   }
 
-  // ── Tab Layanan ────────────────────────────────────────────────────────────
+  // â”€â”€ Tab Layanan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildLayananTab() {
     return SingleChildScrollView(
@@ -175,7 +175,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage>
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(24),
           boxShadow: const [
             BoxShadow(color: Color(0x0D000000), blurRadius: 20, offset: Offset(0, 8)),
@@ -239,7 +239,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage>
     );
   }
 
-  // ── Tab Informasi ──────────────────────────────────────────────────────────
+  // â”€â”€ Tab Informasi â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildInformasiTab() {
     return SingleChildScrollView(
@@ -278,7 +278,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(color: Color(0x0D000000), blurRadius: 20, offset: Offset(0, 8)),
@@ -395,7 +395,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage>
               ),
               const SizedBox(height: 8),
               const Text(
-                'Pertanyaan & aduan melalui email pada jam kerja:\nSenin–Jumat, 08:00–16:00 WIB',
+                'Pertanyaan & aduan melalui email pada jam kerja:\nSeninâ€“Jumat, 08:00â€“16:00 WIB',
                 style: TextStyle(
                   color: Color(0xFF4B5563),
                   fontFamily: 'PlusJakartaSans',

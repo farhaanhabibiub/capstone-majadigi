@@ -1,4 +1,4 @@
-import 'package:csv/csv.dart';
+﻿import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -77,7 +77,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
         });
       }
     } catch (e) {
-      debugPrint('InfoPajak: gagal load CSV – $e');
+      debugPrint('InfoPajak: gagal load CSV â€“ $e');
       if (mounted) {
         setState(() {
           _loadError = e;
@@ -185,7 +185,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundOf(context),
       appBar: AppBar(
         backgroundColor: AppTheme.primary,
         elevation: 0,
@@ -217,12 +217,12 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Kartu Header ──────────────────────────────────────────────
+            // â”€â”€ Kartu Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.surfaceOf(context),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -248,13 +248,13 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Cek Pajak Kendaraan',
                         style: TextStyle(
-                          color: AppTheme.textPrimary,
+                          color: AppTheme.textPrimaryOf(context),
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -264,7 +264,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
                       Text(
                         'BAPENDA Provinsi Jawa Timur',
                         style: TextStyle(
-                          color: AppTheme.textSecondary,
+                          color: AppTheme.textSecondaryOf(context),
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -278,11 +278,11 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
 
             const SizedBox(height: 24),
 
-            // ── Plat Nomor ────────────────────────────────────────────────
-            const Text(
+            // â”€â”€ Plat Nomor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            Text(
               'Plat Nomor Kendaraan',
               style: TextStyle(
-                color: AppTheme.textPrimary,
+                color: AppTheme.textPrimaryOf(context),
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -317,11 +317,11 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
 
             const SizedBox(height: 18),
 
-            // ── Nomor Rangka ──────────────────────────────────────────────
-            const Text(
+            // â”€â”€ Nomor Rangka â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            Text(
               '5 Digit Terakhir Nomor Rangka',
               style: TextStyle(
-                color: AppTheme.textPrimary,
+                color: AppTheme.textPrimaryOf(context),
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -342,7 +342,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
 
             const SizedBox(height: 28),
 
-            // ── Tombol ────────────────────────────────────────────────────
+            // â”€â”€ Tombol â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -404,7 +404,7 @@ class _InfoPajakPageState extends State<InfoPajakPage> {
       inputFormatters: inputFormatters,
       onChanged: hasError ? (_) => setState(() => _platError = null) : null,
       style: TextStyle(
-        color: hasError ? const Color.fromRGBO(220, 38, 38, 1) : isFilled ? AppTheme.primary : AppTheme.textPrimary,
+        color: hasError ? const Color.fromRGBO(220, 38, 38, 1) : isFilled ? AppTheme.primary : AppTheme.textPrimaryOf(context),
         fontFamily: 'PlusJakartaSans',
         fontSize: 14,
         fontWeight: FontWeight.w500,

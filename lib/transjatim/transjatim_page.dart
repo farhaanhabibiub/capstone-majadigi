@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../common/favorite_mixin.dart';
 import '../theme/app_theme.dart';
 import '../widgets/empty_state.dart';
@@ -90,8 +90,8 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.background,
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundOf(context),
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: Column(
@@ -132,7 +132,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
                   child: Text(
                     _tabs[i],
                     style: TextStyle(
-                      color: isSelected ? Colors.white : AppTheme.textPrimary,
+                      color: isSelected ? Colors.white : AppTheme.textPrimaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
@@ -177,7 +177,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
           return [
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 10),
-              child: Text(city, style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w600)),
+              child: Text(city, style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 12, fontWeight: FontWeight.w600)),
             ),
             ...cityRoutes.map((r) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -193,7 +193,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
       ),
@@ -224,17 +224,17 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
                   ),
                 ),
               const Spacer(),
-              const Icon(Icons.access_time_rounded, size: 12, color: AppTheme.textSecondary),
+              Icon(Icons.access_time_rounded, size: 12, color: AppTheme.textSecondaryOf(context)),
               const SizedBox(width: 4),
-              Text(route.operationalHours, style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
+              Text(route.operationalHours, style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 11)),
             ],
           ),
           const SizedBox(height: 10),
-          Text(route.title, style: const TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700)),
+          Text(route.title, style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text(
-            '${route.stops.length} halte  •  Ekonomi mulai Rp 2.500',
-            style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12),
+            '${route.stops.length} halte  â€¢  Ekonomi mulai Rp 2.500',
+            style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 12),
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -303,7 +303,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
                 children: [
                   Text(
                     '${tickets.length} tiket tersimpan',
-                    style: const TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 13, color: AppTheme.textSecondary),
+                    style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 13, color: AppTheme.textSecondaryOf(context)),
                   ),
                   TextButton(
                     onPressed: () async {
@@ -349,7 +349,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
       ),
@@ -365,7 +365,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(t['city'] as String? ?? '', style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
+                child: Text(t['city'] as String? ?? '', style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 11)),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -376,15 +376,15 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
           ),
           const SizedBox(height: 8),
           Text(
-            '${t['fromStop']} → ${t['toStop']}',
-            style: const TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700),
+            '${t['fromStop']} â†’ ${t['toStop']}',
+            style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.person_outline, size: 13, color: AppTheme.textSecondary),
+              Icon(Icons.person_outline, size: 13, color: AppTheme.textSecondaryOf(context)),
               const SizedBox(width: 4),
-              Text('${t['passengerCount']} orang • ${t['ticketClass']}', style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12)),
+              Text('${t['passengerCount']} orang â€¢ ${t['ticketClass']}', style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 12)),
               const Spacer(),
               Text(totalStr, style: const TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700)),
             ],
@@ -392,9 +392,9 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.access_time, size: 13, color: AppTheme.textSecondary),
+              Icon(Icons.access_time, size: 13, color: AppTheme.textSecondaryOf(context)),
               const SizedBox(width: 4),
-              Text(dateStr, style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 11)),
+              Text(dateStr, style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 11)),
             ],
           ),
         ],

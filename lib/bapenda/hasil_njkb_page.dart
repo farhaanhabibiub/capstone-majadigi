@@ -59,8 +59,11 @@ class HasilNjkbPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = AppTheme.backgroundOf(context);
+    final surfaceColor = AppTheme.surfaceOf(context);
+
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: AppTheme.primary,
         elevation: 0,
@@ -80,85 +83,81 @@ class HasilNjkbPage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Header card ─────────────────────────────────────────────────
-            _buildHeaderCard(),
-
+            _buildHeaderCard(context),
             const SizedBox(height: 16),
-
-            // ── NJKB Banner ──────────────────────────────────────────────────
             _buildNjkbBanner(),
-
             const SizedBox(height: 20),
-
-            // ── Label ────────────────────────────────────────────────────────
-            const Text(
+            Text(
               'HASIL PENCARIAN',
               style: TextStyle(
-                color: AppTheme.textSecondary,
+                color: AppTheme.textSecondaryOf(context),
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
               ),
             ),
-
             const SizedBox(height: 12),
-
-            // ── Card 1: Identitas ────────────────────────────────────────────
             _buildCard(
+              context: context,
               icon: Icons.directions_car_rounded,
               title: 'Identitas Kendaraan',
-              child: _buildIdentitas(),
+              child: _buildIdentitas(context),
             ),
-
             const SizedBox(height: 12),
-
-            // ── Card 2: PKB ──────────────────────────────────────────────────
             _buildCard(
+              context: context,
               icon: Icons.receipt_long_rounded,
               title: 'Pajak Kendaraan (PKB)',
-              child: _buildPkb(),
+              child: _buildPkb(context),
             ),
-
-            const SizedBox(height: 20),
-
-            // ── Tombol ───────────────────────────────────────────────────────
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton(
-                onPressed: () => Navigator.pop(context),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppTheme.primary, width: 1.4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(999),
-                  ),
+            const SizedBox(height: 12),
+            _buildCard(
+              context: context,
+              icon: Icons.account_balance_rounded,
+              title: 'Penerimaan Negara Bukan Pajak (PNBP)',
+              child: _buildPnbp(context),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            border: Border(
+              top: BorderSide(color: AppTheme.borderOf(context), width: 1),
+            ),
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: OutlinedButton(
+              onPressed: () => Navigator.pop(context),
+              style: OutlinedButton.styleFrom(
+                backgroundColor: surfaceColor,
+                side: const BorderSide(color: AppTheme.primary, width: 1.4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
                 ),
-                child: const Text(
-                  'Cek Kendaraan Lain',
-                  style: TextStyle(
-                    color: AppTheme.primary,
-                    fontFamily: 'PlusJakartaSans',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              child: const Text(
+                'Cek Kendaraan Lain',
+                style: TextStyle(
+                  color: AppTheme.primary,
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            // ── Card 3: PNBP ─────────────────────────────────────────────────
-            _buildCard(
-              icon: Icons.account_balance_rounded,
-              title: 'Penerimaan Negara Bukan Pajak (PNBP)',
-              child: _buildPnbp(),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -223,12 +222,12 @@ class HasilNjkbPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderCard() {
+  Widget _buildHeaderCard(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -251,23 +250,23 @@ class HasilNjkbPage extends StatelessWidget {
                 Icons.account_balance_wallet_rounded, color: AppTheme.primary, size: 22),
           ),
           const SizedBox(width: 12),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Cek Estimasi Jual Kendaraan',
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               Text(
                 'BAPENDA Provinsi Jawa Timur',
                 style: TextStyle(
-                  color: AppTheme.textSecondary,
+                  color: AppTheme.textSecondaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -281,6 +280,7 @@ class HasilNjkbPage extends StatelessWidget {
   }
 
   Widget _buildCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required Widget child,
@@ -288,7 +288,7 @@ class HasilNjkbPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -318,8 +318,8 @@ class HasilNjkbPage extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
-                      color: AppTheme.textPrimary,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
@@ -329,9 +329,9 @@ class HasilNjkbPage extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(
+          Divider(
               height: 1, thickness: 1,
-              color: Color.fromRGBO(240, 240, 240, 1)),
+              color: AppTheme.borderOf(context)),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
             child: child,
@@ -341,36 +341,36 @@ class HasilNjkbPage extends StatelessWidget {
     );
   }
 
-  Widget _buildIdentitas() {
+  Widget _buildIdentitas(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Expanded(
-              child: _identitasItem(label: 'MODEL', value: data.model.toUpperCase()),
+              child: _identitasItem(context, label: 'MODEL', value: data.model.toUpperCase()),
             ),
             Expanded(
-              child: _identitasItem(label: 'MERK', value: data.merk.toUpperCase()),
+              child: _identitasItem(context, label: 'MERK', value: data.merk.toUpperCase()),
             ),
           ],
         ),
         const SizedBox(height: 14),
-        _identitasItem(label: 'TIPE', value: data.tipe.toUpperCase()),
+        _identitasItem(context, label: 'TIPE', value: data.tipe.toUpperCase()),
         const SizedBox(height: 14),
-        _identitasItem(label: 'TAHUN BUAT', value: data.tahun),
+        _identitasItem(context, label: 'TAHUN BUAT', value: data.tahun),
       ],
     );
   }
 
-  Widget _identitasItem({required String label, required String value}) {
+  Widget _identitasItem(BuildContext context, {required String label, required String value}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: AppTheme.textSecondary,
+          style: TextStyle(
+            color: AppTheme.textSecondaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 10,
             fontWeight: FontWeight.w600,
@@ -380,8 +380,8 @@ class HasilNjkbPage extends StatelessWidget {
         const SizedBox(height: 3),
         Text(
           value,
-          style: const TextStyle(
-            color: AppTheme.textPrimary,
+          style: TextStyle(
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 14,
             fontWeight: FontWeight.w700,
@@ -391,7 +391,7 @@ class HasilNjkbPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPkb() {
+  Widget _buildPkb(BuildContext context) {
     final platHitamTotal = data.pkbPlatHitam + data.opsenPkbPlatHitam;
     final platMerahTotal = data.pkbPlatMerah + data.opsenPkbPlatMerah;
     final platKuningTotal = data.pkbPlatKuning + data.opsenPkbPlatKuning;
@@ -401,27 +401,27 @@ class HasilNjkbPage extends StatelessWidget {
       children: [
         _kategoriLabel('Plat Hitam (Kendaraan Pribadi)'),
         const SizedBox(height: 8),
-        _biayaRow('PKB Plat Hitam', data.fmt(data.pkbPlatHitam)),
+        _biayaRow(context, 'PKB Plat Hitam', data.fmt(data.pkbPlatHitam)),
         const SizedBox(height: 8),
-        _biayaRow('Opsen PKB Plat Hitam', data.fmt(data.opsenPkbPlatHitam)),
+        _biayaRow(context, 'Opsen PKB Plat Hitam', data.fmt(data.opsenPkbPlatHitam)),
         const SizedBox(height: 8),
         _totalKategoriRow('Total Plat Hitam', data.fmt(platHitamTotal)),
         const SizedBox(height: 16),
 
         _kategoriLabel('Plat Merah (Kendaraan Dinas)'),
         const SizedBox(height: 8),
-        _biayaRow('PKB Plat Merah', data.fmt(data.pkbPlatMerah)),
+        _biayaRow(context, 'PKB Plat Merah', data.fmt(data.pkbPlatMerah)),
         const SizedBox(height: 8),
-        _biayaRow('Opsen PKB Plat Merah', data.fmt(data.opsenPkbPlatMerah)),
+        _biayaRow(context, 'Opsen PKB Plat Merah', data.fmt(data.opsenPkbPlatMerah)),
         const SizedBox(height: 8),
         _totalKategoriRow('Total Plat Merah', data.fmt(platMerahTotal)),
         const SizedBox(height: 16),
 
         _kategoriLabel('Plat Kuning (Kendaraan Umum)'),
         const SizedBox(height: 8),
-        _biayaRow('PKB Plat Kuning', data.fmt(data.pkbPlatKuning)),
+        _biayaRow(context, 'PKB Plat Kuning', data.fmt(data.pkbPlatKuning)),
         const SizedBox(height: 8),
-        _biayaRow('Opsen PKB Plat Kuning', data.fmt(data.opsenPkbPlatKuning)),
+        _biayaRow(context, 'Opsen PKB Plat Kuning', data.fmt(data.opsenPkbPlatKuning)),
         const SizedBox(height: 8),
         _totalKategoriRow('Total Plat Kuning', data.fmt(platKuningTotal)),
         const SizedBox(height: 12),
@@ -429,7 +429,7 @@ class HasilNjkbPage extends StatelessWidget {
         Text(
           '* Nilai PKB dihitung berdasarkan tarif 2% (Plat Hitam), 0,5% (Plat Merah), dan 1% (Plat Kuning) dari NJKB. Opsen PKB sebesar 66% dari PKB. Ini merupakan estimasi — nilai aktual dapat berbeda.',
           style: TextStyle(
-            color: const Color.fromRGBO(120, 120, 120, 1),
+            color: AppTheme.textMutedOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 11,
             fontWeight: FontWeight.w400,
@@ -470,7 +470,7 @@ class HasilNjkbPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPnbp() {
+  Widget _buildPnbp(BuildContext context) {
     final rows = [
       ('PNBP BJNB', data.fmt(data.pnbpBjnb)),
       ('PNBP STNK', data.fmt(data.pnbpStnk)),
@@ -480,20 +480,20 @@ class HasilNjkbPage extends StatelessWidget {
       children: [
         for (int i = 0; i < rows.length; i++) ...[
           if (i > 0) const SizedBox(height: 10),
-          _biayaRow(rows[i].$1, rows[i].$2),
+          _biayaRow(context, rows[i].$1, rows[i].$2),
         ],
       ],
     );
   }
 
-  Widget _biayaRow(String label, String value) {
+  Widget _biayaRow(BuildContext context, String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: AppTheme.textPrimary,
+          style: TextStyle(
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w400,
@@ -501,8 +501,8 @@ class HasilNjkbPage extends StatelessWidget {
         ),
         Text(
           value,
-          style: const TextStyle(
-            color: AppTheme.textPrimary,
+          style: TextStyle(
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w600,

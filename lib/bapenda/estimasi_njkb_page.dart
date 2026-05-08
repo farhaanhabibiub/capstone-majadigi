@@ -1,4 +1,4 @@
-import 'package:csv/csv.dart';
+﻿import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,7 +8,7 @@ import '../widgets/error_retry.dart';
 import '../widgets/skeleton_loader.dart';
 import 'hasil_njkb_page.dart';
 
-// ── Model record database ──────────────────────────────────────────────────────
+// â”€â”€ Model record database â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _NjkbRecord {
   final String jenis;
@@ -37,7 +37,7 @@ class _NjkbRecord {
       );
 }
 
-// ── Page ───────────────────────────────────────────────────────────────────────
+// â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class EstimasiNjkbPage extends StatefulWidget {
   const EstimasiNjkbPage({super.key});
@@ -48,12 +48,12 @@ class EstimasiNjkbPage extends StatefulWidget {
 
 class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
 
-  // ── Database ────────────────────────────────────────────────────────────────
+  // â”€â”€ Database â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   List<_NjkbRecord> _db = [];
   bool _dbLoaded = false;
   Object? _loadError;
 
-  // ── Pilihan user ────────────────────────────────────────────────────────────
+  // â”€â”€ Pilihan user â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   String? _selJenis;
   String? _selModel;
   String? _selMerk;
@@ -63,7 +63,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
   // Dropdown terbuka (null = semua tutup)
   int? _open; // 0=jenis 1=model 2=merk 3=tipe 4=tahun
 
-  // ── Opsi cascading dari DB ──────────────────────────────────────────────────
+  // â”€â”€ Opsi cascading dari DB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   List<String> get _jenisOpts => _db.map((r) => r.jenis).toSet().toList()..sort();
 
   List<String> get _modelOpts {
@@ -113,7 +113,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
       _selTipe != null &&
       _selTahun != null;
 
-  // ── Init ─────────────────────────────────────────────────────────────────────
+  // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   @override
   void initState() {
     super.initState();
@@ -136,7 +136,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
         });
       }
     } catch (e) {
-      debugPrint('EstimasiNjkb: gagal load CSV – $e');
+      debugPrint('EstimasiNjkb: gagal load CSV â€“ $e');
       if (mounted) {
         setState(() {
           _loadError = e;
@@ -154,7 +154,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
     await _loadDb();
   }
 
-  // ── Select helpers ───────────────────────────────────────────────────────────
+  // â”€â”€ Select helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   void _toggle(int idx) => setState(() => _open = (_open == idx) ? null : idx);
 
   void _pickJenis(String v) => setState(() {
@@ -174,7 +174,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
 
   void _pickTahun(String v) => setState(() { _selTahun = v; _open = null; });
 
-  // ── Cari data ────────────────────────────────────────────────────────────────
+  // â”€â”€ Cari data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   void _handleCariData() {
     FocusScope.of(context).unfocus();
     final tahunInt = int.tryParse(_selTahun ?? '') ?? 0;
@@ -211,13 +211,13 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
     Navigator.pushNamed(context, AppRoutes.hasilNjkbPage, arguments: hasil);
   }
 
-  // ── Build ─────────────────────────────────────────────────────────────────────
+  // â”€â”€ Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => setState(() => _open = null),
       child: Scaffold(
-        backgroundColor: AppTheme.background,
+        backgroundColor: AppTheme.backgroundOf(context),
         appBar: AppBar(
           backgroundColor: AppTheme.primary,
           elevation: 0,
@@ -331,14 +331,14 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
     );
   }
 
-  // ── Widgets ───────────────────────────────────────────────────────────────────
+  // â”€â”€ Widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildHeaderCard() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -357,15 +357,15 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
             child: const Icon(Icons.account_balance_wallet_rounded, color: AppTheme.primary, size: 22),
           ),
           const SizedBox(width: 12),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Cek Estimasi Jual Kendaraan',
-                  style: TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans',
+                  style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans',
                       fontSize: 14, fontWeight: FontWeight.w700)),
               SizedBox(height: 2),
               Text('BAPENDA Provinsi Jawa Timur',
-                  style: TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans',
+                  style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans',
                       fontSize: 12, fontWeight: FontWeight.w400)),
             ],
           ),
@@ -376,8 +376,8 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
 
   Widget _buildLabel(String text) => Text(
         text,
-        style: const TextStyle(
-          color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans',
+        style: TextStyle(
+          color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans',
           fontSize: 13, fontWeight: FontWeight.w600,
         ),
       );
@@ -415,7 +415,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(isOpen ? 16 : 999),
         border: Border.all(color: border, width: 1.2),
         boxShadow: hasVal && !isOpen
@@ -469,7 +469,7 @@ class _EstimasiNjkbPageState extends State<EstimasiNjkbPage> {
                         child: Text(
                           items[i],
                           style: TextStyle(
-                            color: selected == items[i] ? AppTheme.primary : AppTheme.textPrimary,
+                            color: selected == items[i] ? AppTheme.primary : AppTheme.textPrimaryOf(context),
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 14,
                             fontWeight: selected == items[i] ? FontWeight.w600 : FontWeight.w400,

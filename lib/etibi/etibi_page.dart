@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../common/favorite_mixin.dart';
@@ -94,7 +94,7 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
   }
 
   Future<void> _tambahRiwayat(RiwayatSkrining riwayatBaru) async {
-    // Optimistic update — tampil dulu di UI
+    // Optimistic update â€” tampil dulu di UI
     setState(() => _riwayatList.insert(0, riwayatBaru));
 
     final col = _riwayatCol;
@@ -298,8 +298,8 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.background,
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundOf(context),
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: Column(
@@ -463,7 +463,7 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
           child: Text(
             title,
             style: TextStyle(
-              color: isSelected ? Colors.white : AppTheme.textPrimary,
+              color: isSelected ? Colors.white : AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontWeight: FontWeight.w600,
               fontSize: 13,

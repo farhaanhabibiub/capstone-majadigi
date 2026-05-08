@@ -42,7 +42,11 @@
       "Bash(flutter test *)",
       "Bash(git check-ignore *)",
       "Bash(Select-String -Pattern '^\\\\+.*AIza' -CaseSensitive)",
-      "Bash(Select-Object -First 10)"
+      "Bash(Select-Object -First 10)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\lib\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(flutter build *)",
+      "Bash(Get-ChildItem *)"
     ]
   }
 }

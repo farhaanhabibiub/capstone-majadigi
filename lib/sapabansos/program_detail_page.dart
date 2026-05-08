@@ -1,5 +1,6 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import 'models/sapabansos_model.dart';
 
 class ProgramDetailPage extends StatelessWidget {
@@ -66,11 +67,11 @@ class ProgramDetailPage extends StatelessWidget {
                     child: Column(
                       children: [
                         const SizedBox(height: 24),
-                        _buildStatCards(),
+                        _buildStatCards(context),
                         const SizedBox(height: 20),
-                        _buildDonutChart(),
+                        _buildDonutChart(context),
                         const SizedBox(height: 20),
-                        _buildBarChart(),
+                        _buildBarChart(context),
                         const SizedBox(height: 20),
                         _buildNilaiCard(),
                         const SizedBox(height: 32),
@@ -135,27 +136,27 @@ class ProgramDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCards() {
+  Widget _buildStatCards(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          _statCard('Total Penerima', program.kuota, _blue, Icons.people_alt_outlined),
+          _statCard(context, 'Total Penerima', program.kuota, _blue, Icons.people_alt_outlined),
           const SizedBox(width: 10),
-          _statCard('Tersalurkan', program.tersalur, _green, Icons.check_circle_outline),
+          _statCard(context, 'Tersalurkan', program.tersalur, _green, Icons.check_circle_outline),
           const SizedBox(width: 10),
-          _statCard('Belum Tersalur', program.belumTersalur, _red, Icons.pending_outlined),
+          _statCard(context, 'Belum Tersalur', program.belumTersalur, _red, Icons.pending_outlined),
         ],
       ),
     );
   }
 
-  Widget _statCard(String label, String value, Color color, IconData icon) {
+  Widget _statCard(BuildContext context, String label, String value, Color color, IconData icon) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
@@ -195,12 +196,12 @@ class ProgramDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDonutChart() {
+  Widget _buildDonutChart(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -288,7 +289,7 @@ class ProgramDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBarChart() {
+  Widget _buildBarChart(BuildContext context) {
     final now = DateTime.now();
     final monthNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
     final months = List.generate(6, (i) {
@@ -301,7 +302,7 @@ class ProgramDetailPage extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -373,7 +374,7 @@ class ProgramDetailPage extends StatelessWidget {
 
   List<double> _generateMonthlyTrend() {
     final target = program.progressValue;
-    // 3 growth patterns based on program size — consistent per program
+    // 3 growth patterns based on program size â€” consistent per program
     final idx = program.jumlahPenerima % 3;
     final List<List<double>> patterns = [
       [0.52, 0.65, 0.75, 0.84, 0.92, 1.0], // steady

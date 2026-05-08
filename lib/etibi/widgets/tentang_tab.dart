@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TentangTab extends StatelessWidget {
@@ -12,20 +13,21 @@ class TentangTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildTentangCard(),
+        _buildTentangCard(context),
         const SizedBox(height: 16),
-        _buildCaraGunakanCard(),
+        _buildCaraGunakanCard(context),
         const SizedBox(height: 16),
-        _buildSumberDataCard(),
+        _buildSumberDataCard(context),
         const SizedBox(height: 16),
-        _buildKontakCard(),
+        _buildKontakCard(context),
       ],
     );
   }
 
-  // ── 1. Tentang ────────────────────────────────────────────────────────────────
-  Widget _buildTentangCard() {
+  // â”€â”€ 1. Tentang â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _buildTentangCard(BuildContext context) {
     return _card(
+      context,
       icon: Icons.info_outline_rounded,
       title: 'Tentang Skrining TBC',
       child: Column(
@@ -53,8 +55,8 @@ class TentangTab extends StatelessWidget {
     );
   }
 
-  // ── 2. Cara Menggunakan ───────────────────────────────────────────────────────
-  Widget _buildCaraGunakanCard() {
+  // â”€â”€ 2. Cara Menggunakan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _buildCaraGunakanCard(BuildContext context) {
     final steps = [
       (
         'Isi Identitas',
@@ -75,6 +77,7 @@ class TentangTab extends StatelessWidget {
     ];
 
     return _card(
+      context,
       icon: Icons.help_outline_rounded,
       title: 'Cara Menggunakan',
       child: Column(
@@ -129,9 +132,10 @@ class TentangTab extends StatelessWidget {
     );
   }
 
-  // ── 3. Sumber Data ────────────────────────────────────────────────────────────
-  Widget _buildSumberDataCard() {
+  // â”€â”€ 3. Sumber Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _buildSumberDataCard(BuildContext context) {
     return _card(
+      context,
       icon: Icons.storage_outlined,
       title: 'Sumber Data & Metode',
       child: Column(
@@ -174,9 +178,10 @@ class TentangTab extends StatelessWidget {
     );
   }
 
-  // ── 4. Kontak ─────────────────────────────────────────────────────────────────
-  Widget _buildKontakCard() {
+  // â”€â”€ 4. Kontak â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _buildKontakCard(BuildContext context) {
     return _card(
+      context,
       icon: Icons.contact_support_outlined,
       title: 'Kontak & Informasi Lanjutan',
       child: Column(
@@ -228,12 +233,12 @@ class TentangTab extends StatelessWidget {
     );
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────────
-  Widget _card({required IconData icon, required String title, required Widget child}) {
+  // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _card(BuildContext context, {required IconData icon, required String title, required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),

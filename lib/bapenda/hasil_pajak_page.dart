@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 
@@ -148,7 +148,7 @@ class HasilPajakPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundOf(context),
       appBar: AppBar(
         backgroundColor: AppTheme.primary,
         elevation: 0,
@@ -172,17 +172,17 @@ class HasilPajakPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeaderCard(),
+            _buildHeaderCard(context),
             const SizedBox(height: 16),
 
             // Status badge jatuh tempo
-            _buildStatusBanner(),
+            _buildStatusBanner(context),
             const SizedBox(height: 16),
 
-            const Text(
+            Text(
               'HASIL PENCARIAN',
               style: TextStyle(
-                color: AppTheme.textSecondary,
+                color: AppTheme.textSecondaryOf(context),
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -192,23 +192,26 @@ class HasilPajakPage extends StatelessWidget {
             const SizedBox(height: 12),
 
             _buildCard(
+              context: context,
               icon: Icons.directions_car_rounded,
               title: 'Identitas Kendaraan',
-              child: _buildIdentitasContent(),
+              child: _buildIdentitasContent(context),
             ),
             const SizedBox(height: 12),
 
             _buildCard(
+              context: context,
               icon: Icons.account_balance_wallet_rounded,
               title: 'Biaya Pengurusan Tahunan',
-              child: _buildBiayaContent(),
+              child: _buildBiayaContent(context),
             ),
             const SizedBox(height: 12),
 
             _buildCard(
+              context: context,
               icon: Icons.print_rounded,
               title: 'Biaya Pengurusan 5 Tahunan',
-              child: _buildCetakContent(),
+              child: _buildCetakContent(context),
             ),
             const SizedBox(height: 24),
 
@@ -267,7 +270,7 @@ class HasilPajakPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBanner() {
+  Widget _buildStatusBanner(BuildContext context) {
     final status = _statusPajak;
     Color bgColor;
     Color textColor;
@@ -281,7 +284,7 @@ class HasilPajakPage extends StatelessWidget {
         icon = Icons.check_circle_rounded;
         final tgl = data.parsedTanggalMasaPajak!;
         final sisa = tgl.difference(DateTime.now()).inDays;
-        label = 'Pajak aktif · jatuh tempo ${data.tanggalMasaPajak} ($sisa hari lagi)';
+        label = 'Pajak aktif Â· jatuh tempo ${data.tanggalMasaPajak} ($sisa hari lagi)';
         break;
       case _StatusPajak.segera:
         bgColor = const Color(0xFFFFF8E1);
@@ -299,7 +302,7 @@ class HasilPajakPage extends StatelessWidget {
         break;
       case _StatusPajak.unknown:
         bgColor = const Color(0xFFF5F5F5);
-        textColor = AppTheme.textSecondary;
+        textColor = AppTheme.textSecondaryOf(context);
         icon = Icons.info_outline_rounded;
         label = 'Masa pajak: ${data.tanggalMasaPajak}';
     }
@@ -332,12 +335,12 @@ class HasilPajakPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderCard() {
+  Widget _buildHeaderCard(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -359,13 +362,13 @@ class HasilPajakPage extends StatelessWidget {
             child: const Icon(Icons.directions_car_rounded, color: AppTheme.primary, size: 22),
           ),
           const SizedBox(width: 12),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Cek Pajak Kendaraan',
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -375,7 +378,7 @@ class HasilPajakPage extends StatelessWidget {
               Text(
                 'BAPENDA Provinsi Jawa Timur',
                 style: TextStyle(
-                  color: AppTheme.textSecondary,
+                  color: AppTheme.textSecondaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -388,11 +391,11 @@ class HasilPajakPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCard({required IconData icon, required String title, required Widget child}) {
+  Widget _buildCard({required BuildContext context, required IconData icon, required String title, required Widget child}) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -421,8 +424,8 @@ class HasilPajakPage extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: AppTheme.textPrimary,
+                  style: TextStyle(
+                    color: AppTheme.textPrimaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -441,45 +444,45 @@ class HasilPajakPage extends StatelessWidget {
     );
   }
 
-  Widget _buildIdentitasContent() {
+  Widget _buildIdentitasContent(BuildContext context) {
     return Column(
       children: [
         Row(
           children: [
-            Expanded(child: _identitasItem(label: 'NOMOR POLISI', value: data.platNomor, bold: true)),
-            Expanded(child: _identitasItem(label: 'WARNA', value: data.warna, bold: false)),
+            Expanded(child: _identitasItem(context, label: 'NOMOR POLISI', value: data.platNomor, bold: true)),
+            Expanded(child: _identitasItem(context, label: 'WARNA', value: data.warna, bold: false)),
           ],
         ),
         const SizedBox(height: 14),
         Row(
           children: [
-            Expanded(child: _identitasItem(label: 'MODEL', value: data.model, bold: true)),
-            Expanded(child: _identitasItem(label: 'TIPE', value: data.tipe, bold: false)),
+            Expanded(child: _identitasItem(context, label: 'MODEL', value: data.model, bold: true)),
+            Expanded(child: _identitasItem(context, label: 'TIPE', value: data.tipe, bold: false)),
           ],
         ),
         const SizedBox(height: 14),
         Row(
           children: [
-            Expanded(child: _identitasItem(label: 'TAHUN DIBUAT', value: data.tahunDibuat, bold: true)),
-            Expanded(child: _identitasItem(label: 'MASA PAJAK', value: data.tanggalMasaPajak, bold: false)),
+            Expanded(child: _identitasItem(context, label: 'TAHUN DIBUAT', value: data.tahunDibuat, bold: true)),
+            Expanded(child: _identitasItem(context, label: 'MASA PAJAK', value: data.tanggalMasaPajak, bold: false)),
           ],
         ),
       ],
     );
   }
 
-  Widget _identitasItem({required String label, required String value, required bool bold}) {
+  Widget _identitasItem(BuildContext context, {required String label, required String value, required bool bold}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.3)),
+        Text(label, style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.3)),
         const SizedBox(height: 3),
-        Text(value, style: TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: bold ? FontWeight.w700 : FontWeight.w500)),
+        Text(value, style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: bold ? FontWeight.w700 : FontWeight.w500)),
       ],
     );
   }
 
-  Widget _buildBiayaContent() {
+  Widget _buildBiayaContent(BuildContext context) {
     final items = [
       ('PKB', data.pkbFormatted),
       if (data.pkbProgresif > 0) ('PKB Progresif', data.pkbProgresifFormatted),
@@ -494,7 +497,7 @@ class HasilPajakPage extends StatelessWidget {
       children: [
         for (int i = 0; i < items.length; i++) ...[
           if (i > 0) const SizedBox(height: 10),
-          _biayaRow(items[i].$1, items[i].$2),
+          _biayaRow(context, items[i].$1, items[i].$2),
         ],
         const SizedBox(height: 12),
         const Divider(height: 1, thickness: 1, color: Color.fromRGBO(235, 235, 235, 1)),
@@ -504,12 +507,12 @@ class HasilPajakPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCetakContent() {
+  Widget _buildCetakContent(BuildContext context) {
     return Column(
       children: [
-        _biayaRow('Cetak STNK', data.cetakStnkFormatted),
+        _biayaRow(context, 'Cetak STNK', data.cetakStnkFormatted),
         const SizedBox(height: 10),
-        _biayaRow('Cetak TNKB', data.cetakTnkbFormatted),
+        _biayaRow(context, 'Cetak TNKB', data.cetakTnkbFormatted),
         const SizedBox(height: 12),
         const Divider(height: 1, thickness: 1, color: Color.fromRGBO(235, 235, 235, 1)),
         const SizedBox(height: 12),
@@ -518,7 +521,7 @@ class HasilPajakPage extends StatelessWidget {
         Text(
           '* Total 5 tahunan sudah termasuk semua biaya tahunan + biaya cetak STNK dan TNKB',
           style: TextStyle(
-            color: AppTheme.textSecondary,
+            color: AppTheme.textSecondaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 11,
             fontWeight: FontWeight.w400,
@@ -529,12 +532,12 @@ class HasilPajakPage extends StatelessWidget {
     );
   }
 
-  Widget _biayaRow(String label, String value) {
+  Widget _biayaRow(BuildContext context, String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w400)),
-        Text(value, style: const TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(label, style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w400)),
+        Text(value, style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w600)),
       ],
     );
   }

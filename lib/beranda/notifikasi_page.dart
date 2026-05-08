@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../widgets/empty_state.dart';
@@ -128,12 +128,12 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back, color: AppTheme.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppTheme.textPrimaryOf(context)),
         ),
-        title: const Text(
+        title: Text(
           'Notifikasi',
           style: TextStyle(
-            color: AppTheme.textPrimary,
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: AppTheme.fontFamily,
             fontSize: 16,
             fontWeight: FontWeight.w700,
@@ -201,7 +201,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
       );
     }
     if (!_hasMore && _docs.length > _pageSize) {
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.symmetric(vertical: 18),
         child: Center(
           child: Text(
@@ -209,7 +209,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
             style: TextStyle(
               fontFamily: AppTheme.fontFamily,
               fontSize: 12,
-              color: AppTheme.textSecondary,
+              color: AppTheme.textSecondaryOf(context),
             ),
           ),
         ),
@@ -252,8 +252,8 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                     Expanded(
                       child: Text(
                         title,
-                        style: const TextStyle(
-                          color: AppTheme.textPrimary,
+                        style: TextStyle(
+                          color: AppTheme.textPrimaryOf(context),
                           fontFamily: AppTheme.fontFamily,
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -264,8 +264,8 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                       const SizedBox(width: 8),
                       Text(
                         time,
-                        style: const TextStyle(
-                          color: AppTheme.textSecondary,
+                        style: TextStyle(
+                          color: AppTheme.textSecondaryOf(context),
                           fontFamily: AppTheme.fontFamily,
                           fontSize: 11,
                         ),
@@ -276,8 +276,8 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                 const SizedBox(height: 4),
                 Text(
                   body,
-                  style: const TextStyle(
-                    color: AppTheme.textSecondary,
+                  style: TextStyle(
+                    color: AppTheme.textSecondaryOf(context),
                     fontFamily: AppTheme.fontFamily,
                     fontSize: 12,
                     height: 1.5,

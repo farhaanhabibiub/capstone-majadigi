@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../app_transitions.dart';
 import '../theme/app_theme.dart';
@@ -84,7 +84,7 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
     final results = SearchIndex.search(_query);
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundOf(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -102,7 +102,7 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
     );
   }
 
-  // ── Search Bar ──────────────────────────────────────────────────────────
+  // â”€â”€ Search Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildSearchBar() {
     return Padding(
@@ -110,15 +110,15 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_rounded,
-                color: AppTheme.textPrimary),
+            icon: Icon(Icons.arrow_back_rounded,
+                color: AppTheme.textPrimaryOf(context)),
             onPressed: () => Navigator.pop(context),
           ),
           Expanded(
             child: Container(
               height: 44,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.surfaceOf(context),
                 borderRadius: BorderRadius.circular(22),
                 boxShadow: [
                   BoxShadow(
@@ -137,30 +137,30 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                   _expandedSections.clear();
                 }),
                 onSubmitted: _saveRecent,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
                   fontSize: 14,
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Cari layanan, RSUD, hoaks, data…',
-                  hintStyle: const TextStyle(
+                  hintText: 'Cari layanan, RSUD, hoaks, dataâ€¦',
+                  hintStyle: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     fontSize: 14,
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                   ),
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.search_rounded,
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                     size: 20,
                   ),
                   suffixIcon: _query.isEmpty
                       ? null
                       : IconButton(
                           splashRadius: 18,
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.close_rounded,
-                            color: AppTheme.textSecondary,
+                            color: AppTheme.textSecondaryOf(context),
                             size: 18,
                           ),
                           onPressed: () {
@@ -183,7 +183,7 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
     );
   }
 
-  // ── Idle (no query) ─────────────────────────────────────────────────────
+  // â”€â”€ Idle (no query) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildIdleState() {
     return ListView(
@@ -192,14 +192,14 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
         if (_recent.isNotEmpty) ...[
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Pencarian Terakhir',
                   style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                   ),
                 ),
               ),
@@ -237,7 +237,7 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.surfaceOf(context),
                     borderRadius: BorderRadius.circular(99),
                     border: Border.all(
                       color: const Color.fromRGBO(225, 230, 240, 1),
@@ -246,15 +246,15 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.history_rounded,
-                          size: 14, color: AppTheme.textSecondary),
+                      Icon(Icons.history_rounded,
+                          size: 14, color: AppTheme.textSecondaryOf(context)),
                       const SizedBox(width: 6),
                       Text(
                         term,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
                           fontSize: 12,
-                          color: AppTheme.textPrimary,
+                          color: AppTheme.textPrimaryOf(context),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -266,13 +266,13 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
           ),
           const SizedBox(height: 22),
         ],
-        const Text(
+        Text(
           'Saran Populer',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
             fontSize: 13,
             fontWeight: FontWeight.w700,
-            color: AppTheme.textPrimary,
+            color: AppTheme.textPrimaryOf(context),
           ),
         ),
         const SizedBox(height: 10),
@@ -312,13 +312,13 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
           }).toList(),
         ),
         const SizedBox(height: 22),
-        const Text(
+        Text(
           'Jelajahi Kategori',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
             fontSize: 13,
             fontWeight: FontWeight.w700,
-            color: AppTheme.textPrimary,
+            color: AppTheme.textPrimaryOf(context),
           ),
         ),
         const SizedBox(height: 10),
@@ -361,7 +361,7 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
@@ -382,22 +382,22 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                 Expanded(
                   child: Text(
                     cat.label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                       letterSpacing: 0.2,
                     ),
                   ),
                 ),
                 Text(
                   '${items.length}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                   ),
                 ),
               ],
@@ -453,7 +453,7 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
     );
   }
 
-  // ── Results ─────────────────────────────────────────────────────────────
+  // â”€â”€ Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildResults(List<SearchableItem> results) {
     final byCategory = <SearchCategory, List<SearchableItem>>{};
@@ -468,10 +468,10 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
           padding: const EdgeInsets.only(bottom: 10, left: 4),
           child: Text(
             '${results.length} hasil untuk "$_query"',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTheme.fontFamily,
               fontSize: 12,
-              color: AppTheme.textSecondary,
+              color: AppTheme.textSecondaryOf(context),
             ),
           ),
         ),
@@ -512,11 +512,11 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                     item.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -524,18 +524,18 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                     item.subtitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 11,
-                      color: AppTheme.textSecondary,
+                      color: AppTheme.textSecondaryOf(context),
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right_rounded,
-              color: AppTheme.textSecondary,
+              color: AppTheme.textSecondaryOf(context),
               size: 20,
             ),
           ],

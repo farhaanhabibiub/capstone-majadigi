@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OpenDataDataSebaranPage extends StatefulWidget {
@@ -184,7 +185,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(color: Color(0x08000000), blurRadius: 15, offset: Offset(0, 4)),
@@ -263,7 +264,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             _metaRow('Dataset dibuat', '10 Januari 2025'),
             _metaRow('Cakupan dataset', 'Seluruh kecamatan di Kabupaten Majalengka'),
             _metaRow('Produsen', 'Dinas Koperasi dan UKM Kabupaten Majalengka'),
-            _metaRow('Kontak produsen', '0233-281XXX — diskopukm@majalengkakab.go.id'),
+            _metaRow('Kontak produsen', '0233-281XXX â€” diskopukm@majalengkakab.go.id'),
             _metaRow('Satuan dataset', 'Unit Usaha'),
             _metaRow('Frekuensi Update', 'Tahunan'),
           ],
@@ -314,12 +315,12 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
       ),
       child: Text(
-        '$year — Data sedang dipersiapkan',
+        '$year â€” Data sedang dipersiapkan',
         style: const TextStyle(
           fontSize: 14,
           fontFamily: 'PlusJakartaSans',
@@ -339,7 +340,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.surfaceOf(context),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: _is2025Expanded
@@ -372,7 +373,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.surfaceOf(context),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
             ),
@@ -390,7 +391,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '26 kecamatan • 3 sektor ditampilkan',
+                  '26 kecamatan â€¢ 3 sektor ditampilkan',
                   style: TextStyle(
                     fontSize: 11,
                     fontFamily: 'PlusJakartaSans',
@@ -438,7 +439,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
       ),

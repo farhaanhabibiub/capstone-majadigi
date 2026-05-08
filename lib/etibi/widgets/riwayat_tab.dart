@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import '../models/etibi_model.dart';
 
 class RiwayatTab extends StatelessWidget {
@@ -511,7 +512,7 @@ class RiwayatTab extends StatelessWidget {
       Container(width: 1, height: 40, color: Colors.white24);
 }
 
-// ── Riwayat Card ──────────────────────────────────────────────────────────────
+// â”€â”€ Riwayat Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class RiwayatCard extends StatelessWidget {
   final RiwayatSkrining riwayat;
   final RiwayatSkrining? prevRiwayat;
@@ -584,7 +585,7 @@ class RiwayatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -756,7 +757,7 @@ class RiwayatCard extends StatelessWidget {
               Icon(icon, color: color, size: 14),
               const SizedBox(width: 4),
               Text(
-                stabil ? 'Stabil' : '$deltaStr poin  ·  $label',
+                stabil ? 'Stabil' : '$deltaStr poin  Â·  $label',
                 style: TextStyle(
                   color: color,
                   fontFamily: 'PlusJakartaSans',

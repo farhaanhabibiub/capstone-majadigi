@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'common/favorite_mixin.dart';
 import 'nomordarurat_carinomor.dart';
 import 'nomordarurat_informasi.dart';
@@ -75,8 +75,8 @@ class _NomorDaruratLandingPageState extends State<NomorDaruratLandingPage>
                           child: Container(
                             width: 44,
                             height: 44,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: AppTheme.surfaceOf(context),
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
@@ -118,7 +118,7 @@ class _NomorDaruratLandingPageState extends State<NomorDaruratLandingPage>
                             Container(
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: AppTheme.surfaceOf(context),
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: const [
                                   BoxShadow(
@@ -186,7 +186,7 @@ class _NomorDaruratLandingPageState extends State<NomorDaruratLandingPage>
                               width: double.infinity,
                               padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: AppTheme.surfaceOf(context),
                                 borderRadius: BorderRadius.circular(24),
                                 boxShadow: const [
                                   BoxShadow(

@@ -1,12 +1,13 @@
-import 'package:csv/csv.dart';
+﻿import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/error_retry.dart';
 import '../widgets/skeleton_loader.dart';
 import 'hospital_config.dart';
 
-// ── Model ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class KamarData {
   final String ruang;
@@ -24,7 +25,7 @@ class KamarData {
   });
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class KetersediaanKamarPage extends StatefulWidget {
   final HospitalConfig hospital;
@@ -102,7 +103,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
         });
       }
     } catch (e) {
-      debugPrint('KetersediaanKamar: gagal load CSV – $e');
+      debugPrint('KetersediaanKamar: gagal load CSV â€“ $e');
       if (mounted) {
         setState(() {
           _loadError = e;
@@ -120,7 +121,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
     await _loadData();
   }
 
-  // ── Computed totals ───────────────────────────────────────────────────────
+  // â”€â”€ Computed totals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   int get _totalKapasitas =>
       _kamarList.fold(0, (s, k) => s + k.kapasitas);
@@ -130,7 +131,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
 
   int get _totalTersedia => _totalKapasitas - _totalTerisi;
 
-  // ── Build ─────────────────────────────────────────────────────────────────
+  // â”€â”€ Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +226,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
     );
   }
 
-  // ── Summary Banner ────────────────────────────────────────────────────────
+  // â”€â”€ Summary Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildSummaryBanner() {
     return Container(
@@ -312,7 +313,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
     );
   }
 
-  // ── Stat Row ──────────────────────────────────────────────────────────────
+  // â”€â”€ Stat Row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildStatRow() {
     return Row(
@@ -353,7 +354,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -398,7 +399,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
     );
   }
 
-  // ── Rincian Card ──────────────────────────────────────────────────────────
+  // â”€â”€ Rincian Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildRincianCard() {
     final displayed = _showAll
@@ -408,7 +409,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -611,7 +612,7 @@ class _KetersediaanKamarPageState extends State<KetersediaanKamarPage> {
   }
 }
 
-// ── Sub-widgets ───────────────────────────────────────────────────────────────
+// â”€â”€ Sub-widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _TableHeader extends StatelessWidget {
   final String text;

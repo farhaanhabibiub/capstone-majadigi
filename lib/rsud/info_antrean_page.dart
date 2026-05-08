@@ -1,11 +1,12 @@
-import 'package:csv/csv.dart';
+﻿import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import '../widgets/error_retry.dart';
 import '../widgets/skeleton_loader.dart';
 import 'hospital_config.dart';
 
-// ── Model ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class AntreanData {
   final String poli;
@@ -29,7 +30,7 @@ class AntreanData {
   });
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class InfoAntreanPage extends StatefulWidget {
   final HospitalConfig hospital;
@@ -41,28 +42,28 @@ class InfoAntreanPage extends StatefulWidget {
 
 class _InfoAntreanPageState extends State<InfoAntreanPage>
     with SingleTickerProviderStateMixin {
-  // ── data ───────────────────────────────────────────────────────────────────
+  // â”€â”€ data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   List<AntreanData> _allData = [];
   bool _isLoading = true;
 
-  // ── filter state ───────────────────────────────────────────────────────────
+  // â”€â”€ filter state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   String? _selectedPoli;
   String? _selectedDokter;
   bool _hasilApplied = false;
   AntreanData? _hasilData;
 
-  // ── live dot animation ─────────────────────────────────────────────────────
+  // â”€â”€ live dot animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   late AnimationController _liveCtrl;
   late Animation<double> _liveAnim;
 
-  // ── theme ──────────────────────────────────────────────────────────────────
+  // â”€â”€ theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
   static const Color _textPrimary = Color.fromRGBO(32, 32, 32, 1);
   static const Color _textSecondary = Color.fromRGBO(120, 120, 120, 1);
   static const Color _green = Color.fromRGBO(34, 180, 80, 1);
 
-  // ── lifecycle ──────────────────────────────────────────────────────────────
+  // â”€â”€ lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   void initState() {
@@ -83,7 +84,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
     super.dispose();
   }
 
-  // ── data loading ───────────────────────────────────────────────────────────
+  // â”€â”€ data loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Object? _loadError;
 
@@ -132,7 +133,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
         });
       }
     } catch (e) {
-      debugPrint('InfoAntrean: gagal load CSV – $e');
+      debugPrint('InfoAntrean: gagal load CSV â€“ $e');
       if (mounted) {
         setState(() {
           _loadError = e;
@@ -150,7 +151,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
     await _loadData();
   }
 
-  // ── computed ───────────────────────────────────────────────────────────────
+  // â”€â”€ computed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   List<String> get _availablePolis =>
       _allData.map((d) => d.poli).toSet().toList()..sort();
@@ -168,7 +169,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
 
   bool get _buttonActive => _isBothFilled && !_hasilApplied;
 
-  // ── actions ────────────────────────────────────────────────────────────────
+  // â”€â”€ actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   void _pickPoli() {
     _showBottomPicker(
@@ -317,7 +318,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
     );
   }
 
-  // ── build ──────────────────────────────────────────────────────────────────
+  // â”€â”€ build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   Widget build(BuildContext context) {
@@ -401,13 +402,13 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
     );
   }
 
-  // ── Filter Card ────────────────────────────────────────────────────────────
+  // â”€â”€ Filter Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildFilterCard() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -557,7 +558,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
     );
   }
 
-  // ── Hasil Section ──────────────────────────────────────────────────────────
+  // â”€â”€ Hasil Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildHasilSection(AntreanData data) {
     return Column(
@@ -674,7 +675,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.surfaceOf(context),
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
@@ -814,7 +815,7 @@ class _InfoAntreanPageState extends State<InfoAntreanPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

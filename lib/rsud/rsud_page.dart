@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../app_route.dart';
 import '../common/favorite_mixin.dart';
@@ -24,7 +24,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
   @override
   String get favoriteLabel => widget.hospital.name;
 
-  // ── Per-hospital Operasional data ─────────────────────────────────────────
+  // â”€â”€ Per-hospital Operasional data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   String get _hospitalUrl => const {
         'saiful_anwar': 'https://rsusaifulanwar.jatimprov.go.id/v2/',
@@ -50,27 +50,27 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     switch (_id) {
       case 'saiful_anwar':
         return [
-          'Senin – Kamis  (07:00 – 13:00)',
-          'Jumat          (07:00 – 14:00)',
+          'Senin â€“ Kamis  (07:00 â€“ 13:00)',
+          'Jumat          (07:00 â€“ 14:00)',
           'IGD            (24 Jam)',
         ];
       case 'karsa_husada':
         return [
-          'Senin – Jumat  (07:30 – 14:00)',
+          'Senin â€“ Jumat  (07:30 â€“ 14:00)',
           'IGD            (24 Jam)',
         ];
       case 'prov_jatim':
         return [
-          'Senin – Jumat  (07:00 – 14:00)',
+          'Senin â€“ Jumat  (07:00 â€“ 14:00)',
           'IGD            (24 Jam)',
         ];
       default: // daha_husada
         return [
-          'Senin  (07:00 – 21:00)',
-          'Selasa (07:00 – 21:00)',
-          'Rabu   (07:00 – 21:00)',
-          'Kamis  (07:00 – 21:00)',
-          'Jumat  (07:00 – 21:00)',
+          'Senin  (07:00 â€“ 21:00)',
+          'Selasa (07:00 â€“ 21:00)',
+          'Rabu   (07:00 â€“ 21:00)',
+          'Kamis  (07:00 â€“ 21:00)',
+          'Jumat  (07:00 â€“ 21:00)',
         ];
     }
   }
@@ -152,7 +152,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     }
   }
 
-  // ── Per-hospital Ketentuan data ───────────────────────────────────────────
+  // â”€â”€ Per-hospital Ketentuan data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   String get _ketentuanIntro {
     switch (_id) {
@@ -337,7 +337,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundOf(context),
       appBar: _buildAppBar(),
       body: Column(
         children: [
@@ -354,7 +354,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     );
   }
 
-  // ── AppBar ────────────────────────────────────────────────────────────────
+  // â”€â”€ AppBar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
@@ -382,8 +382,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
             child: Container(
               width: 36,
               height: 36,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: AppTheme.surfaceOf(context),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -400,7 +400,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     );
   }
 
-  // ── Tab Bar ───────────────────────────────────────────────────────────────
+  // â”€â”€ Tab Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildTabBar() {
     return Padding(
@@ -409,7 +409,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
         height: 44,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(999),
           boxShadow: [
             BoxShadow(
@@ -444,7 +444,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
           child: Text(
             label,
             style: TextStyle(
-              color: isActive ? Colors.white : AppTheme.textSecondary,
+              color: isActive ? Colors.white : AppTheme.textSecondaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
@@ -455,7 +455,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     );
   }
 
-  // ── Tab Layanan ───────────────────────────────────────────────────────────
+  // â”€â”€ Tab Layanan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildLayananTab() {
     return SingleChildScrollView(
@@ -509,7 +509,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -534,8 +534,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
           const SizedBox(height: 14),
           Text(
             title,
-            style: const TextStyle(
-              color: AppTheme.textPrimary,
+            style: TextStyle(
+              color: AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -545,8 +545,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
           const SizedBox(height: 6),
           Text(
             description,
-            style: const TextStyle(
-              color: AppTheme.textSecondary,
+            style: TextStyle(
+              color: AppTheme.textSecondaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -581,7 +581,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     );
   }
 
-  // ── Tab Informasi ─────────────────────────────────────────────────────────
+  // â”€â”€ Tab Informasi â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildInformasiTab() {
     return SingleChildScrollView(
@@ -612,7 +612,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     );
   }
 
-  // ── Accordion ─────────────────────────────────────────────────────────────
+  // â”€â”€ Accordion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildAccordion({
     required IconData icon,
@@ -625,7 +625,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -664,8 +664,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
                       children: [
                         Text(
                           title,
-                          style: const TextStyle(
-                            color: AppTheme.textPrimary,
+                          style: TextStyle(
+                            color: AppTheme.textPrimaryOf(context),
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -674,8 +674,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
                         const SizedBox(height: 2),
                         Text(
                           subtitle,
-                          style: const TextStyle(
-                            color: AppTheme.textSecondary,
+                          style: TextStyle(
+                            color: AppTheme.textSecondaryOf(context),
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
@@ -687,9 +687,9 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
                   AnimatedRotation(
                     duration: const Duration(milliseconds: 200),
                     turns: isExpanded ? 0 : 0.5,
-                    child: const Icon(
+                    child: Icon(
                       Icons.keyboard_arrow_up_rounded,
-                      color: AppTheme.textSecondary,
+                      color: AppTheme.textSecondaryOf(context),
                       size: 22,
                     ),
                   ),
@@ -712,7 +712,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     );
   }
 
-  // ── Konten Operasional ────────────────────────────────────────────────────
+  // â”€â”€ Konten Operasional â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildOperasionalContent() {
     return Column(
@@ -742,8 +742,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
           label: 'Alamat',
           child: Text(
             _alamat,
-            style: const TextStyle(
-              color: AppTheme.textPrimary,
+            style: TextStyle(
+              color: AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 13,
               fontWeight: FontWeight.w400,
@@ -858,16 +858,16 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     );
   }
 
-  // ── Konten Ketentuan Layanan ──────────────────────────────────────────────
+  // â”€â”€ Konten Ketentuan Layanan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildKetentuanContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Manfaat',
           style: TextStyle(
-            color: AppTheme.textPrimary,
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w700,
@@ -877,8 +877,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
         const SizedBox(height: 6),
         Text(
           _ketentuanIntro,
-          style: const TextStyle(
-            color: AppTheme.textPrimary,
+          style: TextStyle(
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w400,
@@ -894,8 +894,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
               children: [
                 Text(
                   '${i + 1}. ',
-                  style: const TextStyle(
-                    color: AppTheme.textPrimary,
+                  style: TextStyle(
+                    color: AppTheme.textPrimaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
@@ -905,8 +905,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
                 Expanded(
                   child: Text(
                     _manfaatList[i],
-                    style: const TextStyle(
-                      color: AppTheme.textPrimary,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -918,10 +918,10 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
             ),
           ),
         const SizedBox(height: 20),
-        const Text(
+        Text(
           'Sistem, Mekanisme, dan Prosedur',
           style: TextStyle(
-            color: AppTheme.textPrimary,
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w700,
@@ -931,8 +931,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
         const SizedBox(height: 10),
         Text(
           _pendaftaranPoliTitle,
-          style: const TextStyle(
-            color: AppTheme.textPrimary,
+          style: TextStyle(
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -948,8 +948,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
               children: [
                 Text(
                   '${i + 1}. ',
-                  style: const TextStyle(
-                    color: AppTheme.textPrimary,
+                  style: TextStyle(
+                    color: AppTheme.textPrimaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
@@ -959,8 +959,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
                 Expanded(
                   child: Text(
                     _pendaftaranPoliSteps[i],
-                    style: const TextStyle(
-                      color: AppTheme.textPrimary,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -974,8 +974,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
         const SizedBox(height: 12),
         Text(
           _pendaftaranBpjsTitle,
-          style: const TextStyle(
-            color: AppTheme.textPrimary,
+          style: TextStyle(
+            color: AppTheme.textPrimaryOf(context),
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -991,8 +991,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
               children: [
                 Text(
                   '${i + 1}. ',
-                  style: const TextStyle(
-                    color: AppTheme.textPrimary,
+                  style: TextStyle(
+                    color: AppTheme.textPrimaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
@@ -1002,8 +1002,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
                 Expanded(
                   child: Text(
                     _pendaftaranBpjsSteps[i],
-                    style: const TextStyle(
-                      color: AppTheme.textPrimary,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -1018,7 +1018,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     );
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _infoCard({required String label, required Widget child}) {
     return Container(
@@ -1033,8 +1033,8 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: AppTheme.textPrimary,
+            style: TextStyle(
+              color: AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -1048,7 +1048,7 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
   }
 }
 
-// ── Social Media Item ─────────────────────────────────────────────────────────
+// â”€â”€ Social Media Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _SocialMediaItem {
   final IconData icon;
@@ -1058,7 +1058,7 @@ class _SocialMediaItem {
       {required this.icon, required this.label, required this.url});
 }
 
-// ── Bullet Item ───────────────────────────────────────────────────────────────
+// â”€â”€ Bullet Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _BulletItem extends StatelessWidget {
   final String text;
@@ -1071,19 +1071,19 @@ class _BulletItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(top: 6),
             child: CircleAvatar(
               radius: 3,
-              backgroundColor: AppTheme.textPrimary,
+              backgroundColor: AppTheme.textPrimaryOf(context),
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                color: AppTheme.textPrimary,
+              style: TextStyle(
+                color: AppTheme.textPrimaryOf(context),
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 13,
                 fontWeight: FontWeight.w400,

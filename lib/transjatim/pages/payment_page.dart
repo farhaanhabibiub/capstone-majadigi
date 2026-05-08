@@ -1,5 +1,6 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import '../models/transjatim_model.dart';
 import '../ticket_history_service.dart';
 import 'ticket_result_page.dart';
@@ -147,7 +148,7 @@ class _PaymentPageState extends State<PaymentPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
@@ -172,7 +173,7 @@ class _PaymentPageState extends State<PaymentPage> {
           ),
           const SizedBox(height: 10),
           Text(
-            '${widget.route.stops[widget.fromIndex].name} → ${widget.route.stops[widget.toIndex].name}',
+            '${widget.route.stops[widget.fromIndex].name} â†’ ${widget.route.stops[widget.toIndex].name}',
             style: const TextStyle(color: _textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
@@ -223,7 +224,7 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.surfaceOf(context),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
           ),
@@ -286,7 +287,7 @@ class _PaymentPageState extends State<PaymentPage> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 12, offset: const Offset(0, -4))],
       ),
       child: SizedBox(

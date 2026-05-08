@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:collection';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,11 +33,11 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
   bool _isLoadingHistory = true;
   bool _isResponding = false;
 
-  // ── Suggestion dinamis ────────────────────────────────────────────────────
+  // â”€â”€ Suggestion dinamis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Diisi dari FeatureUsageService; fallback ke _kDefaultSuggestions.
   List<String> _suggestions = const _DefaultSuggestionsList();
 
-  // ── Rate limiter sliding window ───────────────────────────────────────────
+  // â”€â”€ Rate limiter sliding window â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Maks _kMaxPerWindow pesan per _kRateWindow detik.
   static const int _kMaxPerWindow = 8;
   static const Duration _kRateWindow = Duration(seconds: 60);
@@ -126,23 +126,23 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
             fontSize: 16,
           ),
         ),
-        content: const Text(
+        content: Text(
           'Semua percakapan dengan Maja AI akan dihapus permanen dari akun Anda.',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
             fontSize: 13,
-            color: AppTheme.textSecondary,
+            color: AppTheme.textSecondaryOf(context),
             height: 1.5,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(
+            child: Text(
               'Batal',
               style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
-                color: AppTheme.textSecondary,
+                color: AppTheme.textSecondaryOf(context),
               ),
             ),
           ),
@@ -186,7 +186,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     return 'Selamat Malam';
   }
 
-  // ── Kirim pesan ────────────────────────────────────────────────────────────
+  // â”€â”€ Kirim pesan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /// Mengembalikan sisa detik sampai user boleh mengirim lagi.
   /// 0 berarti tidak diblokir.
@@ -268,7 +268,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
       onDone: () async {
         if (!mounted) return;
         final finalText = accumulated.isEmpty
-            ? 'Maaf, tidak ada respons. Coba lagi ya! 😊'
+            ? 'Maaf, tidak ada respons. Coba lagi ya! ðŸ˜Š'
             : accumulated;
         setState(() {
           if (_messages.isNotEmpty) {
@@ -355,7 +355,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     }
   }
 
-  // ── Salin pesan & snackbar helper ──────────────────────────────────────────
+  // â”€â”€ Salin pesan & snackbar helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _copyMessage(String text) async {
     if (text.trim().isEmpty) return;
@@ -398,20 +398,20 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     });
   }
 
-  // ── Build ──────────────────────────────────────────────────────────────────
+  // â”€â”€ Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   @override
   Widget build(BuildContext context) {
     final stillLoading = _isLoadingUser || _isLoadingHistory;
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: AppTheme.backgroundOf(context),
       body: SafeArea(
         child: stillLoading ? _buildSkeleton() : _buildChat(),
       ),
     );
   }
 
-  // ── Skeleton ───────────────────────────────────────────────────────────────
+  // â”€â”€ Skeleton â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildSkeleton() {
     return Column(
@@ -467,7 +467,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     );
   }
 
-  // ── Chat ───────────────────────────────────────────────────────────────────
+  // â”€â”€ Chat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildChat() {
     return Column(
@@ -488,17 +488,17 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     );
   }
 
-  // ── Header ─────────────────────────────────────────────────────────────────
+  // â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildHeader() {
     return Container(
-      color: AppTheme.background,
+      color: AppTheme.backgroundOf(context),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Row(
         children: [
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.arrow_back, color: AppTheme.textPrimary, size: 22),
+            child: Icon(Icons.arrow_back, color: AppTheme.textPrimaryOf(context), size: 22),
           ),
           const SizedBox(width: 12),
           CircleAvatar(
@@ -523,21 +523,21 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                 Row(children: [
                   Text(
                     '$_greeting ',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                     ),
                   ),
-                  const Text('👋', style: TextStyle(fontSize: 15)),
+                  const Text('ðŸ‘‹', style: TextStyle(fontSize: 15)),
                 ]),
                 Text(
                   _userName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     fontSize: 12,
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                   ),
                 ),
               ],
@@ -549,7 +549,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
               onPressed: _isResponding ? null : _confirmClearHistory,
               icon: Icon(
                 Icons.delete_outline_rounded,
-                color: _isResponding ? AppTheme.textSecondary : AppTheme.danger,
+                color: _isResponding ? AppTheme.textSecondaryOf(context) : AppTheme.danger,
                 size: 22,
               ),
             ),
@@ -558,7 +558,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     );
   }
 
-  // ── Empty state ─────────────────────────────────────────────────────────────
+  // â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildEmptyState() {
     return Center(
@@ -574,23 +574,23 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                   const Icon(Icons.auto_awesome_rounded, color: AppTheme.primary, size: 48),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Tanya aku apa saja!',
               style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
-                color: AppTheme.textPrimary,
+                color: AppTheme.textPrimaryOf(context),
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'Aku siap membantu kamu memahami\nlayanan pemerintah Jawa Timur.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
                 fontSize: 13,
-                color: AppTheme.textSecondary,
+                color: AppTheme.textSecondaryOf(context),
                 height: 1.5,
               ),
             ),
@@ -616,7 +616,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(color: const Color.fromRGBO(210, 228, 255, 1)),
           boxShadow: [
@@ -640,7 +640,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     );
   }
 
-  // ── Bubble ─────────────────────────────────────────────────────────────────
+  // â”€â”€ Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildBubble(_ChatMessage msg) {
     if (msg.isUser) return _buildUserBubble(msg.text);
@@ -715,7 +715,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.surfaceOf(context),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
                     topRight: Radius.circular(16),
@@ -732,10 +732,10 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                 ),
                 child: Text(
                   text,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     fontSize: 14,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                     height: 1.5,
                   ),
                 ),
@@ -762,7 +762,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.surfaceOf(context),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(4),
                       topRight: Radius.circular(16),
@@ -779,10 +779,10 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                   ),
                   child: Text(
                     text,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 14,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                       height: 1.5,
                     ),
                   ),
@@ -845,7 +845,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '•••',
+                    'â€¢â€¢â€¢',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -889,11 +889,11 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     );
   }
 
-  // ── Input ──────────────────────────────────────────────────────────────────
+  // â”€â”€ Input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Widget _buildInput() {
     return Container(
-      color: AppTheme.background,
+      color: AppTheme.backgroundOf(context),
       padding: EdgeInsets.fromLTRB(
         16, 8, 16,
         MediaQuery.of(context).padding.bottom + 8,
@@ -903,7 +903,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.surfaceOf(context),
                 borderRadius: BorderRadius.circular(999),
                 boxShadow: [
                   BoxShadow(
@@ -918,10 +918,10 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => _send(),
                 enabled: !_isResponding,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
                   fontSize: 14,
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                 ),
                 decoration: const InputDecoration(
                   hintText: 'Tanyakan apapun',
@@ -985,7 +985,7 @@ class _ChatMessage {
   }
 }
 
-// ── Suggestion chip data ─────────────────────────────────────────────────────
+// â”€â”€ Suggestion chip data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const Map<String, List<String>> _kSuggestionsByFeature = {
   'bapenda': ['Cek pajak kendaraan', 'Estimasi NJKB'],

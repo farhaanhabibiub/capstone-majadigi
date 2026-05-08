@@ -1,9 +1,10 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
 import 'klinikhoaks_model.dart';
 
 class KlinikHoaksLandingPage extends StatefulWidget {
@@ -352,7 +353,7 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
@@ -397,7 +398,7 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _blue, width: 1.5),
       ),
@@ -433,7 +434,7 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: const Color(0xFFE0E0E0),
@@ -458,7 +459,7 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
             ),
             const SizedBox(height: 2),
             Text(
-              'JPG, PNG, PDF, MP4 — maks 10MB',
+              'JPG, PNG, PDF, MP4 â€” maks 10MB',
               style: TextStyle(
                 color: Colors.grey.shade400,
                 fontFamily: 'PlusJakartaSans',

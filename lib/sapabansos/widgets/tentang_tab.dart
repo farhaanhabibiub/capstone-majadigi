@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TentangTab extends StatelessWidget {
@@ -12,20 +13,21 @@ class TentangTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildTentangCard(),
+        _buildTentangCard(context),
         const SizedBox(height: 16),
-        _buildCaraGunakanCard(),
+        _buildCaraGunakanCard(context),
         const SizedBox(height: 16),
-        _buildSumberDataCard(),
+        _buildSumberDataCard(context),
         const SizedBox(height: 16),
         _buildKontakCard(context),
       ],
     );
   }
 
-  // ── 1. Tentang ────────────────────────────────────────────────────────────────
-  Widget _buildTentangCard() {
+  // â”€â”€ 1. Tentang â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _buildTentangCard(BuildContext context) {
     return _card(
+      context,
       icon: Icons.info_outline_rounded,
       title: 'Tentang Bantuan Sosial',
       child: Column(
@@ -53,8 +55,8 @@ class TentangTab extends StatelessWidget {
     );
   }
 
-  // ── 2. Cara Menggunakan ───────────────────────────────────────────────────────
-  Widget _buildCaraGunakanCard() {
+  // â”€â”€ 2. Cara Menggunakan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _buildCaraGunakanCard(BuildContext context) {
     final steps = [
       (
         'Buka Tab Data Penerima',
@@ -75,6 +77,7 @@ class TentangTab extends StatelessWidget {
     ];
 
     return _card(
+      context,
       icon: Icons.help_outline_rounded,
       title: 'Cara Menggunakan',
       child: Column(
@@ -142,9 +145,10 @@ class TentangTab extends StatelessWidget {
     );
   }
 
-  // ── 3. Sumber Data ────────────────────────────────────────────────────────────
-  Widget _buildSumberDataCard() {
+  // â”€â”€ 3. Sumber Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _buildSumberDataCard(BuildContext context) {
     return _card(
+      context,
       icon: Icons.storage_outlined,
       title: 'Sumber Data',
       child: Column(
@@ -158,7 +162,7 @@ class TentangTab extends StatelessWidget {
           const SizedBox(height: 8),
           _infoRow(Icons.account_balance_outlined, 'Pengelola data', 'Dinsos Provinsi Jawa Timur'),
           const SizedBox(height: 8),
-          _infoRow(Icons.dataset_outlined, 'Dasar data', 'DTKS – Kemensos RI'),
+          _infoRow(Icons.dataset_outlined, 'Dasar data', 'DTKS â€“ Kemensos RI'),
           const SizedBox(height: 14),
           Container(
             padding: const EdgeInsets.all(12),
@@ -191,9 +195,10 @@ class TentangTab extends StatelessWidget {
     );
   }
 
-  // ── 4. Kontak & Aduan ─────────────────────────────────────────────────────────
+  // â”€â”€ 4. Kontak & Aduan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildKontakCard(BuildContext context) {
     return _card(
+      context,
       icon: Icons.contact_support_outlined,
       title: 'Kontak & Pengaduan',
       child: Column(
@@ -250,12 +255,12 @@ class TentangTab extends StatelessWidget {
     );
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────────
-  Widget _card({required IconData icon, required String title, required Widget child}) {
+  // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Widget _card(BuildContext context, {required IconData icon, required String title, required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../auth_service.dart';
 import '../common/favorite_mixin.dart';
 import '../theme/app_theme.dart';
@@ -60,12 +60,12 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
     final query = _userRegency!.toLowerCase().trim();
     final queryStripped = query.replaceFirst(RegExp(r'^(kabupaten |kota )'), '');
 
-    // Pass 1: exact match (e.g. "Kota Malang" → "Kota Malang", not "Kabupaten Malang")
+    // Pass 1: exact match (e.g. "Kota Malang" â†’ "Kota Malang", not "Kabupaten Malang")
     for (int i = 0; i < kabupatenPrices.length; i++) {
       if (kabupatenPrices[i].kabupaten.toLowerCase() == query) return i;
     }
 
-    // Pass 2: same-prefix stripped match (kota→kota, kabupaten→kabupaten)
+    // Pass 2: same-prefix stripped match (kotaâ†’kota, kabupatenâ†’kabupaten)
     final prefix = query.startsWith('kota ') ? 'kota '
         : query.startsWith('kabupaten ') ? 'kabupaten '
         : null;
@@ -165,8 +165,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
             margin: const EdgeInsets.only(right: 16),
             width: 36,
             height: 36,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceOf(context),
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -208,8 +208,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.background,
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundOf(context),
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: _selectedItem != null
@@ -245,7 +245,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(30),
         ),
         child: Row(
@@ -262,7 +262,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                   child: Text(
                     'Harga Bahan Pokok',
                     style: TextStyle(
-                      color: _selectedTabIndex == 0 ? Colors.white : AppTheme.textPrimary,
+                      color: _selectedTabIndex == 0 ? Colors.white : AppTheme.textPrimaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -283,7 +283,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                   child: Text(
                     'Informasi',
                     style: TextStyle(
-                      color: _selectedTabIndex == 1 ? Colors.white : AppTheme.textPrimary,
+                      color: _selectedTabIndex == 1 ? Colors.white : AppTheme.textPrimaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -339,7 +339,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                   child: Text(
                     label,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : AppTheme.textSecondary,
+                      color: isSelected ? Colors.white : AppTheme.textSecondaryOf(context),
                       fontFamily: 'PlusJakartaSans',
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
@@ -356,15 +356,15 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
             padding: const EdgeInsets.only(left: 16, bottom: 8),
             child: Text(
               'Harga di $_selectedKabupatenFilter',
-              style: const TextStyle(color: AppTheme.textSecondary, fontFamily: 'PlusJakartaSans', fontSize: 12),
+              style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 12),
             ),
           ),
         if (_selectedKabupatenFilter == null)
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(left: 16, bottom: 8),
             child: Text(
               'Harga Rata - Rata',
-              style: TextStyle(color: AppTheme.textPrimary, fontFamily: 'PlusJakartaSans', fontSize: 16, fontWeight: FontWeight.w700),
+              style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
         Expanded(
@@ -436,7 +436,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         border: Border.all(color: AppTheme.primary),
         borderRadius: BorderRadius.circular(30),
       ),
@@ -559,8 +559,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                   children: [
                     Text(
                       item.name,
-                      style: const TextStyle(
-                        color: AppTheme.textPrimary,
+                      style: TextStyle(
+                        color: AppTheme.textPrimaryOf(context),
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
@@ -571,8 +571,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                       children: [
                         Text(
                           '${_formatRupiah(item.price)} / kg',
-                          style: const TextStyle(
-                            color: AppTheme.textPrimary,
+                          style: TextStyle(
+                            color: AppTheme.textPrimaryOf(context),
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -637,8 +637,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
               if (item.historyDates.isNotEmpty)
                 Text(
                   'Data per ${item.historyDates.last}',
-                  style: const TextStyle(
-                    color: AppTheme.textSecondary,
+                  style: TextStyle(
+                    color: AppTheme.textSecondaryOf(context),
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -650,10 +650,10 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Grafik Harga',
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -661,8 +661,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
               ),
               Text(
                 item.kabupatenPrices[_selectedKabupatenIndex].kabupaten,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
+                style: TextStyle(
+                  color: AppTheme.textSecondaryOf(context),
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -688,7 +688,7 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
           // Kabupaten/Kota price card
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.surfaceOf(context),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -703,17 +703,17 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  children: const [
-                    CircleAvatar(
+                  children: [
+                    const CircleAvatar(
                       radius: 18,
                       backgroundColor: Color.fromRGBO(0, 101, 255, 0.1),
                       child: Icon(Icons.payments, color: AppTheme.primary, size: 18),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Text(
                       'Harga per Kecamatan',
                       style: TextStyle(
-                        color: AppTheme.textPrimary,
+                        color: AppTheme.textPrimaryOf(context),
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -734,8 +734,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                       isExpanded: true,
                       value: _selectedKabupatenIndex,
                       icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.primary),
-                      style: const TextStyle(
-                        color: AppTheme.textPrimary,
+                      style: TextStyle(
+                        color: AppTheme.textPrimaryOf(context),
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -768,10 +768,10 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Rincian per Kecamatan',
                             style: TextStyle(
-                              color: AppTheme.textSecondary,
+                              color: AppTheme.textSecondaryOf(context),
                               fontFamily: 'PlusJakartaSans',
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
@@ -780,8 +780,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                           ),
                           Text(
                             '${item.kabupatenPrices[_selectedKabupatenIndex].kecamatanPrices.length} kecamatan',
-                            style: const TextStyle(
-                              color: AppTheme.textSecondary,
+                            style: TextStyle(
+                              color: AppTheme.textSecondaryOf(context),
                               fontFamily: 'PlusJakartaSans',
                               fontSize: 11,
                               fontWeight: FontWeight.w400,
@@ -799,8 +799,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                               Expanded(
                                 child: Text(
                                   kp.kecamatan,
-                                  style: const TextStyle(
-                                    color: AppTheme.textPrimary,
+                                  style: TextStyle(
+                                    color: AppTheme.textPrimaryOf(context),
                                     fontFamily: 'PlusJakartaSans',
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
@@ -810,8 +810,8 @@ class _SiskaperbapoPageState extends State<SiskaperbapoPage> with FavoriteMixin 
                               ),
                               Text(
                                 _formatRupiah(kp.price),
-                                style: const TextStyle(
-                                  color: AppTheme.textPrimary,
+                                style: TextStyle(
+                                  color: AppTheme.textPrimaryOf(context),
                                   fontFamily: 'PlusJakartaSans',
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,

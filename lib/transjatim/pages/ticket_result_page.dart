@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../models/transjatim_model.dart';
 
@@ -105,7 +106,7 @@ class TicketResultPage extends StatelessWidget {
   Widget _buildTicketCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.07), blurRadius: 16, offset: const Offset(0, 4))],
       ),
@@ -169,7 +170,7 @@ class TicketResultPage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.surfaceOf(context),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: const Color.fromRGBO(230, 230, 230, 1)),
                   ),

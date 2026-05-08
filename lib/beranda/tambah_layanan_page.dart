@@ -1,5 +1,6 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import '../auth_service.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/error_retry.dart';
@@ -222,7 +223,7 @@ class _TambahLayananPageState extends State<TambahLayananPage> {
       }),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(14),
           border: isSelected ? Border.all(color: _blue, width: 2) : null,
           boxShadow: [
@@ -275,12 +276,12 @@ class _TambahLayananPageState extends State<TambahLayananPage> {
   }
 }
 
-// ── Download progress overlay ─────────────────────────────────────────────────
+// â”€â”€ Download progress overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /// Tampilkan progress prefetch tiap fitur yang dipilih user, mirip pengalaman
 /// "downloading content" di Roblox/game launcher. Progress riil berasal dari
 /// [FeatureAssetService.prefetch] (yang men-download manifest + aset dari
-/// Firebase Storage) — jika manifest tidak ada di server, service tetap
+/// Firebase Storage) â€” jika manifest tidak ada di server, service tetap
 /// mengirim progress halus berbasis simulasi sehingga UX konsisten.
 class _DownloadProgressOverlay extends StatefulWidget {
   final List<AddableService> services;
@@ -400,7 +401,7 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> {
         ),
         const SizedBox(height: 24),
         const Text(
-          'Mengunduh fitur…',
+          'Mengunduh fiturâ€¦',
           style: TextStyle(
             color: _blue,
             fontFamily: 'PlusJakartaSans',
@@ -454,8 +455,8 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> {
             ),
             Text(
               _currentProgress >= 0.95
-                  ? 'Memasang…'
-                  : 'Mengambil paket aset…',
+                  ? 'Memasangâ€¦'
+                  : 'Mengambil paket asetâ€¦',
               style: const TextStyle(
                 color: _textSecondary,
                 fontFamily: 'PlusJakartaSans',
@@ -547,7 +548,7 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> {
   }
 }
 
-// ── Success overlay ───────────────────────────────────────────────────────────
+// â”€â”€ Success overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _TambahSuccessOverlay extends StatefulWidget {
   const _TambahSuccessOverlay();

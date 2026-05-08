@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 import '../data/sapabansos_data_service.dart';
 import '../models/sapabansos_model.dart';
 
@@ -95,7 +96,7 @@ class _PenerimaTabState extends State<PenerimaTab> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -130,7 +131,7 @@ class _PenerimaTabState extends State<PenerimaTab> {
           ),
           const SizedBox(height: 20),
 
-          // ── Mode toggle ─────────────────────────────────────────────────────
+          // â”€â”€ Mode toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Container(
             height: 40,
             decoration: BoxDecoration(
@@ -139,18 +140,18 @@ class _PenerimaTabState extends State<PenerimaTab> {
             ),
             child: Row(
               children: [
-                _modeChip('🔢  NIK', !_searchByNama, () => _switchMode(false)),
-                _modeChip('👤  Nama', _searchByNama, () => _switchMode(true)),
+                _modeChip('ðŸ”¢  NIK', !_searchByNama, () => _switchMode(false)),
+                _modeChip('ðŸ‘¤  Nama', _searchByNama, () => _switchMode(true)),
               ],
             ),
           ),
           const SizedBox(height: 20),
 
-          // ── Search field ────────────────────────────────────────────────────
+          // â”€â”€ Search field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Container(
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.surfaceOf(context),
               border: Border.all(color: _blue, width: 1.5),
               borderRadius: BorderRadius.circular(24),
             ),
@@ -197,14 +198,14 @@ class _PenerimaTabState extends State<PenerimaTab> {
                   ),
           ),
 
-          // ── Kabupaten dropdown (only for nama search) ───────────────────────
+          // â”€â”€ Kabupaten dropdown (only for nama search) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (_searchByNama && _kabupatenLoaded) ...[
             const SizedBox(height: 12),
             Container(
               height: 48,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.surfaceOf(context),
                 border: Border.all(color: const Color(0xFFE0E0E0), width: 1.5),
                 borderRadius: BorderRadius.circular(24),
               ),
@@ -229,7 +230,7 @@ class _PenerimaTabState extends State<PenerimaTab> {
 
           const SizedBox(height: 16),
 
-          // ── Search button ───────────────────────────────────────────────────
+          // â”€â”€ Search button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -264,7 +265,7 @@ class _PenerimaTabState extends State<PenerimaTab> {
             ),
           ),
 
-          // ── Results ─────────────────────────────────────────────────────────
+          // â”€â”€ Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (_searchStatus == 1 || _searchStatus == 2) ...[
             const SizedBox(height: 24),
             if (_searchStatus == 2)

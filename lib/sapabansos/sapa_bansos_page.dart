@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../common/favorite_mixin.dart';
 import '../theme/app_theme.dart';
 import 'widgets/penerima_tab.dart';
@@ -51,8 +51,8 @@ class _SapaBansosPageState extends State<SapaBansosPage> with FavoriteMixin {
             margin: const EdgeInsets.only(right: 16),
             width: 36,
             height: 36,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceOf(context),
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -94,8 +94,8 @@ class _SapaBansosPageState extends State<SapaBansosPage> with FavoriteMixin {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.background,
+                  decoration: BoxDecoration(
+                    color: AppTheme.backgroundOf(context),
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: Column(
@@ -125,7 +125,7 @@ class _SapaBansosPageState extends State<SapaBansosPage> with FavoriteMixin {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(30),
         ),
         child: Row(
@@ -153,7 +153,7 @@ class _SapaBansosPageState extends State<SapaBansosPage> with FavoriteMixin {
           child: Text(
             title,
             style: TextStyle(
-              color: isSelected ? Colors.white : AppTheme.textPrimary,
+              color: isSelected ? Colors.white : AppTheme.textPrimaryOf(context),
               fontFamily: 'PlusJakartaSans',
               fontWeight: FontWeight.w600,
               fontSize: 13,

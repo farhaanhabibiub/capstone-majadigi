@@ -165,16 +165,16 @@ class _FavoritTabState extends State<FavoritTab> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppTheme.background,
+      color: AppTheme.backgroundOf(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-          const Center(
+          Center(
             child: Text(
               'Layanan Tersimpan',
               style: TextStyle(
-                color: AppTheme.textPrimary,
+                color: AppTheme.textPrimaryOf(context),
                 fontFamily: AppTheme.fontFamily,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -223,7 +223,7 @@ class _FavoritTabState extends State<FavoritTab> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -258,8 +258,8 @@ class _FavoritTabState extends State<FavoritTab> {
                 children: [
                   Text(
                     entry.label,
-                    style: const TextStyle(
-                      color: AppTheme.textPrimary,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryOf(context),
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
@@ -270,8 +270,8 @@ class _FavoritTabState extends State<FavoritTab> {
                     entry.description,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppTheme.textSecondary,
+                    style: TextStyle(
+                      color: AppTheme.textSecondaryOf(context),
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 12,
                     ),
@@ -282,9 +282,9 @@ class _FavoritTabState extends State<FavoritTab> {
             const SizedBox(width: 6),
             Builder(
               builder: (ctx) => IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.ios_share_rounded,
-                  color: AppTheme.textSecondary,
+                  color: AppTheme.textSecondaryOf(context),
                   size: 20,
                 ),
                 tooltip: 'Bagikan layanan',
