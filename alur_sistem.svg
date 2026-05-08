@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1820" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/>
+    </marker>
+    <marker id="arrOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="700" y="38" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">
+    Alur Sistem — Majadigi
+  </text>
+  <text x="700" y="62" text-anchor="middle" font-size="13" fill="#64748b">
+    Bootstrap → Auth → Personalisasi → Beranda (hub) → Fitur / AI / Hoaks / Profil → Logout
+  </text>
+
+  <!-- Legend -->
+  <g font-size="11">
+    <rect x="60" y="80" width="14" height="14" fill="#bbf7d0" stroke="#16a34a"/>
+    <text x="80" y="92" fill="#0f172a">Start / End</text>
+    <rect x="160" y="80" width="14" height="14" fill="#dbeafe" stroke="#3b82f6"/>
+    <text x="180" y="92" fill="#0f172a">Proses Klien</text>
+    <rect x="280" y="80" width="14" height="14" fill="#fef3c7" stroke="#f59e0b"/>
+    <text x="300" y="92" fill="#0f172a">Decision (cabang)</text>
+    <rect x="430" y="80" width="14" height="14" fill="#fed7aa" stroke="#f97316"/>
+    <text x="450" y="92" fill="#0f172a">Firebase</text>
+    <rect x="520" y="80" width="14" height="14" fill="#c7d2fe" stroke="#6366f1"/>
+    <text x="540" y="92" fill="#0f172a">Gemini API</text>
+    <rect x="620" y="80" width="14" height="14" fill="#e9d5ff" stroke="#a855f7"/>
+    <text x="640" y="92" fill="#0f172a">Storage Lokal</text>
+  </g>
+
+  <!-- ============== PHASE 1: BOOTSTRAP ============== -->
+  <text x="60" y="135" font-size="14" font-weight="700" fill="#1e3a8a">FASE 1 — Bootstrap (App Launch)</text>
+
+  <!-- 1. Start -->
+  <ellipse cx="180" cy="170" rx="80" ry="22" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="180" y="175" text-anchor="middle" font-size="13" font-weight="700">START — App Launch</text>
+
+  <!-- 2. main() init -->
+  <rect x="80" y="210" width="200" height="60" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="180" y="232" text-anchor="middle" font-size="12" font-weight="700">main() init</text>
+  <text x="180" y="250" text-anchor="middle" font-size="11">Firebase.initializeApp</text>
+  <text x="180" y="264" text-anchor="middle" font-size="11">NotificationService / Theme / Font</text>
+
+  <!-- 3. FCM listener + token save -->
+  <rect x="320" y="210" width="220" height="60" rx="8" fill="#fed7aa" stroke="#f97316"/>
+  <text x="430" y="232" text-anchor="middle" font-size="12" font-weight="700">Setup FCM listener</text>
+  <text x="430" y="250" text-anchor="middle" font-size="11">onBackgroundMessage / onMessage</text>
+  <text x="430" y="264" text-anchor="middle" font-size="11">save FCM token → users/{uid}</text>
+
+  <!-- 4. SplashScreen -->
+  <rect x="80" y="295" width="200" height="46" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="180" y="318" text-anchor="middle" font-size="12" font-weight="700">SplashScreen</text>
+  <text x="180" y="334" text-anchor="middle" font-size="11">cek session Firebase</text>
+
+  <!-- arrows -->
+  <line x1="180" y1="192" x2="180" y2="208" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="280" y1="240" x2="318" y2="240" stroke="#c2410c" marker-end="url(#arrOrange)"/>
+  <line x1="180" y1="270" x2="180" y2="293" stroke="#334155" marker-end="url(#arr)"/>
+
+  <!-- ============== PHASE 2: AUTH ============== -->
+  <text x="60" y="378" font-size="14" font-weight="700" fill="#1e3a8a">FASE 2 — Onboarding &amp; Autentikasi</text>
+
+  <!-- decision: first time? -->
+  <polygon points="180,400 280,440 180,480 80,440" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="180" y="438" text-anchor="middle" font-size="12" font-weight="700">Pertama buka?</text>
+  <text x="180" y="454" text-anchor="middle" font-size="11">(belum onboarding)</text>
+
+  <line x1="180" y1="341" x2="180" y2="398" stroke="#334155" marker-end="url(#arr)"/>
+
+  <!-- Yes path: Onboarding -->
+  <rect x="320" y="418" width="180" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="410" y="440" text-anchor="middle" font-size="12" font-weight="700">OnboardingPage</text>
+  <text x="410" y="456" text-anchor="middle" font-size="11">3 slide intro</text>
+  <line x1="280" y1="440" x2="318" y2="440" stroke="#1d4ed8" marker-end="url(#arrBlue)"/>
+  <text x="295" y="432" font-size="10" fill="#0f172a" font-weight="600">Ya</text>
+
+  <!-- merge to login -->
+  <rect x="80" y="510" width="200" height="60" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="180" y="532" text-anchor="middle" font-size="12" font-weight="700">Login / Register</text>
+  <text x="180" y="548" text-anchor="middle" font-size="11">AuthService.login / .register</text>
+  <text x="180" y="562" text-anchor="middle" font-size="11">→ FirebaseAuth + users/{uid}</text>
+
+  <line x1="180" y1="480" x2="180" y2="508" stroke="#334155" marker-end="url(#arr)"/>
+  <text x="190" y="500" font-size="10" fill="#0f172a" font-weight="600">Tidak</text>
+  <line x1="410" y1="462" x2="410" y2="538" stroke="#334155"/>
+  <line x1="410" y1="538" x2="282" y2="538" stroke="#334155" marker-end="url(#arr)"/>
+
+  <!-- Firebase Auth on right -->
+  <rect x="540" y="500" width="180" height="80" rx="8" fill="#fed7aa" stroke="#f97316"/>
+  <text x="630" y="522" text-anchor="middle" font-size="12" font-weight="700">Firebase Auth</text>
+  <text x="630" y="540" text-anchor="middle" font-size="11">create / sign-in</text>
+  <text x="630" y="556" text-anchor="middle" font-size="11">sendEmailVerification</text>
+  <text x="630" y="572" text-anchor="middle" font-size="11">Firestore users/{uid}</text>
+  <line x1="280" y1="540" x2="538" y2="540" stroke="#c2410c" stroke-dasharray="4 3" marker-end="url(#arrOrange)"/>
+
+  <!-- decision: email verified? -->
+  <polygon points="180,610 290,650 180,690 70,650" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="180" y="648" text-anchor="middle" font-size="12" font-weight="700">Email terverifikasi?</text>
+  <text x="180" y="664" text-anchor="middle" font-size="11">refreshVerificationStatus</text>
+  <line x1="180" y1="570" x2="180" y2="608" stroke="#334155" marker-end="url(#arr)"/>
+
+  <!-- No: EmailSent loop -->
+  <rect x="320" y="628" width="200" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="420" y="650" text-anchor="middle" font-size="12" font-weight="700">EmailSentPage</text>
+  <text x="420" y="666" text-anchor="middle" font-size="11">tunggu user klik link</text>
+  <line x1="290" y1="650" x2="318" y2="650" stroke="#1d4ed8" marker-end="url(#arrBlue)"/>
+  <text x="298" y="642" font-size="10" font-weight="600">Tidak</text>
+  <path d="M 420,628 Q 420,600 310,610 L 290,640" fill="none" stroke="#334155" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+  <text x="350" y="608" font-size="10" fill="#475569">retry</text>
+
+  <!-- ============== PHASE 3: PERSONALISASI ============== -->
+  <text x="60" y="730" font-size="14" font-weight="700" fill="#1e3a8a">FASE 3 — Personalisasi (first-time user)</text>
+
+  <!-- decision: first user -->
+  <polygon points="180,755 290,795 180,835 70,795" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="180" y="793" text-anchor="middle" font-size="12" font-weight="700">User baru?</text>
+  <text x="180" y="809" text-anchor="middle" font-size="11">(profile.location null)</text>
+  <line x1="180" y1="690" x2="180" y2="753" stroke="#334155" marker-end="url(#arr)"/>
+  <text x="190" y="725" font-size="10" font-weight="600">Ya (verified)</text>
+
+  <!-- Personalisasi steps (right) -->
+  <rect x="320" y="745" width="160" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="400" y="767" text-anchor="middle" font-size="12" font-weight="700">Lokasi</text>
+  <text x="400" y="781" text-anchor="middle" font-size="11">Geolocator / manual CSV</text>
+
+  <rect x="500" y="745" width="160" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="580" y="767" text-anchor="middle" font-size="12" font-weight="700">Pilih Kategori</text>
+  <text x="580" y="781" text-anchor="middle" font-size="11">7 kategori minat</text>
+
+  <rect x="680" y="745" width="160" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="760" y="767" text-anchor="middle" font-size="12" font-weight="700">Success Page</text>
+  <text x="760" y="781" text-anchor="middle" font-size="11">→ ke Beranda</text>
+
+  <line x1="290" y1="795" x2="318" y2="767" stroke="#1d4ed8" marker-end="url(#arrBlue)"/>
+  <text x="296" y="788" font-size="10" font-weight="600">Ya</text>
+  <line x1="480" y1="767" x2="498" y2="767" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="660" y1="767" x2="678" y2="767" stroke="#334155" marker-end="url(#arr)"/>
+
+  <!-- Firebase save profile -->
+  <rect x="320" y="810" width="340" height="46" rx="8" fill="#fed7aa" stroke="#f97316"/>
+  <text x="490" y="831" text-anchor="middle" font-size="12" font-weight="700">Firestore: users/{uid}</text>
+  <text x="490" y="847" text-anchor="middle" font-size="11">saveUserLocation + saveUserServicePreferences</text>
+  <line x1="400" y1="789" x2="400" y2="808" stroke="#c2410c" stroke-dasharray="4 3" marker-end="url(#arrOrange)"/>
+  <line x1="580" y1="789" x2="580" y2="808" stroke="#c2410c" stroke-dasharray="4 3" marker-end="url(#arrOrange)"/>
+
+  <!-- ============== PHASE 4: BERANDA HUB ============== -->
+  <text x="60" y="900" font-size="14" font-weight="700" fill="#1e3a8a">FASE 4 — Beranda (HUB) &amp; Aksi User</text>
+
+  <!-- Beranda main -->
+  <rect x="100" y="920" width="360" height="120" rx="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="2.5"/>
+  <text x="280" y="945" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">BERANDA (Main Hub)</text>
+  <text x="280" y="965" text-anchor="middle" font-size="11">1. _hydrateFromCache (ProfileCache)</text>
+  <text x="280" y="982" text-anchor="middle" font-size="11">2. _loadUserProfile (Firestore)</text>
+  <text x="280" y="999" text-anchor="middle" font-size="11">3. PersonalizationRuleBase.resolveFeatures()</text>
+  <text x="280" y="1016" text-anchor="middle" font-size="11">4. StreakService.recordVisit()</text>
+  <text x="280" y="1033" text-anchor="middle" font-size="11">5. Render 5 layanan unggulan + shortcut + artikel</text>
+
+  <line x1="180" y1="835" x2="180" y2="918" stroke="#334155" marker-end="url(#arr)"/>
+  <text x="190" y="870" font-size="10" font-weight="600">Tidak (returning)</text>
+  <path d="M 760,789 Q 760,880 460,950" fill="none" stroke="#334155" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+
+  <!-- Storage local box -->
+  <rect x="490" y="920" width="220" height="120" rx="10" fill="#e9d5ff" stroke="#a855f7"/>
+  <text x="600" y="942" text-anchor="middle" font-size="12" font-weight="700" fill="#6b21a8">Storage Lokal</text>
+  <text x="600" y="962" text-anchor="middle" font-size="11">SharedPreferences:</text>
+  <text x="600" y="978" text-anchor="middle" font-size="11">• ProfileCache</text>
+  <text x="600" y="994" text-anchor="middle" font-size="11">• FeatureUsageService</text>
+  <text x="600" y="1010" text-anchor="middle" font-size="11">• StreakService / Favorit</text>
+  <text x="600" y="1027" text-anchor="middle" font-size="11">CSV Assets (data statis)</text>
+  <line x1="460" y1="980" x2="488" y2="980" stroke="#a855f7" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+
+  <!-- Firestore box -->
+  <rect x="740" y="920" width="220" height="120" rx="10" fill="#fed7aa" stroke="#f97316"/>
+  <text x="850" y="942" text-anchor="middle" font-size="12" font-weight="700" fill="#9a3412">Firestore</text>
+  <text x="850" y="962" text-anchor="middle" font-size="11">• users/{uid}</text>
+  <text x="850" y="978" text-anchor="middle" font-size="11">• notifications</text>
+  <text x="850" y="994" text-anchor="middle" font-size="11">• laporan_hoaks</text>
+  <text x="850" y="1010" text-anchor="middle" font-size="11">• admins</text>
+  <text x="850" y="1027" text-anchor="middle" font-size="11">• maja_ai history</text>
+  <line x1="710" y1="980" x2="738" y2="980" stroke="#c2410c" stroke-dasharray="4 3" marker-end="url(#arrOrange)"/>
+
+  <!-- ============== PHASE 5: USER ACTIONS (4 branches) ============== -->
+  <text x="60" y="1085" font-size="14" font-weight="700" fill="#1e3a8a">FASE 5 — Aksi User dari Beranda (4 cabang utama)</text>
+
+  <!-- Branch arrows from Beranda -->
+  <line x1="170" y1="1040" x2="170" y2="1110" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="280" y1="1040" x2="450" y2="1110" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="350" y1="1040" x2="800" y2="1110" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="430" y1="1040" x2="1170" y2="1110" stroke="#334155" marker-end="url(#arr)"/>
+
+  <!-- Branch A: Open Fitur -->
+  <rect x="60" y="1110" width="240" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="180" y="1132" text-anchor="middle" font-size="12" font-weight="700">A. Tap kartu fitur</text>
+  <text x="180" y="1148" text-anchor="middle" font-size="11">FeatureUsageService.recordOpen</text>
+
+  <polygon points="180,1175 280,1210 180,1245 80,1210" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="180" y="1206" text-anchor="middle" font-size="11" font-weight="700">Core / Addable?</text>
+
+  <rect x="60" y="1265" width="110" height="50" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="115" y="1285" text-anchor="middle" font-size="11" font-weight="700">Core</text>
+  <text x="115" y="1300" text-anchor="middle" font-size="10">Bapenda/RSUD/...</text>
+
+  <rect x="190" y="1265" width="120" height="50" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="250" y="1283" text-anchor="middle" font-size="11" font-weight="700">Addable</text>
+  <text x="250" y="1297" text-anchor="middle" font-size="10">DeferredFeaturePage</text>
+  <text x="250" y="1310" text-anchor="middle" font-size="10">loader.loadLibrary()</text>
+
+  <rect x="60" y="1335" width="250" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="185" y="1357" text-anchor="middle" font-size="12" font-weight="700">Render page fitur</text>
+  <text x="185" y="1373" text-anchor="middle" font-size="11">FavoriteMixin (bookmark)</text>
+
+  <line x1="180" y1="1154" x2="180" y2="1173" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="120" y1="1240" x2="115" y2="1263" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="240" y1="1240" x2="250" y2="1263" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="115" y1="1315" x2="160" y2="1333" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="250" y1="1315" x2="210" y2="1333" stroke="#334155" marker-end="url(#arr)"/>
+
+  <!-- Branch B: Maja AI -->
+  <rect x="335" y="1110" width="280" height="44" rx="8" fill="#c7d2fe" stroke="#6366f1"/>
+  <text x="475" y="1132" text-anchor="middle" font-size="12" font-weight="700">B. Tap Maja AI (chat)</text>
+  <text x="475" y="1148" text-anchor="middle" font-size="11">GeminiService.startChat + load history</text>
+
+  <rect x="335" y="1170" width="280" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="475" y="1192" text-anchor="middle" font-size="12" font-weight="700">User kirim pesan</text>
+  <text x="475" y="1208" text-anchor="middle" font-size="11">cek rate limit (8/60 dtk, sliding window)</text>
+
+  <polygon points="475,1235 600,1270 475,1305 350,1270" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="475" y="1268" text-anchor="middle" font-size="11" font-weight="700">Lewat batas?</text>
+  <text x="475" y="1283" text-anchor="middle" font-size="10">(quota window)</text>
+
+  <rect x="335" y="1325" width="280" height="56" rx="8" fill="#c7d2fe" stroke="#6366f1"/>
+  <text x="475" y="1347" text-anchor="middle" font-size="12" font-weight="700">chat.sendMessageStream → Gemini</text>
+  <text x="475" y="1363" text-anchor="middle" font-size="11">streaming chunk + tombol Stop</text>
+  <text x="475" y="1377" text-anchor="middle" font-size="11">onError: map error → user-friendly</text>
+
+  <rect x="335" y="1395" width="280" height="44" rx="8" fill="#fed7aa" stroke="#f97316"/>
+  <text x="475" y="1417" text-anchor="middle" font-size="12" font-weight="700">Save ke Firestore</text>
+  <text x="475" y="1433" text-anchor="middle" font-size="11">MajaAiHistoryService.add (user + AI)</text>
+
+  <line x1="475" y1="1154" x2="475" y2="1168" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="475" y1="1214" x2="475" y2="1233" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="475" y1="1305" x2="475" y2="1323" stroke="#334155" marker-end="url(#arr)"/>
+  <text x="487" y="1318" font-size="10" font-weight="600">Tidak</text>
+  <path d="M 600,1270 Q 660,1230 660,1190 Q 660,1150 615,1132" fill="none" stroke="#334155" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+  <text x="668" y="1210" font-size="10">Ya: tunggu N dtk</text>
+  <line x1="475" y1="1381" x2="475" y2="1393" stroke="#c2410c" marker-end="url(#arrOrange)"/>
+
+  <!-- Branch C: Klinik Hoaks -->
+  <rect x="690" y="1110" width="270" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="825" y="1132" text-anchor="middle" font-size="12" font-weight="700">C. Klinik Hoaks (lapor)</text>
+  <text x="825" y="1148" text-anchor="middle" font-size="11">isi form + upload bukti</text>
+
+  <rect x="690" y="1170" width="270" height="44" rx="8" fill="#fed7aa" stroke="#f97316"/>
+  <text x="825" y="1192" text-anchor="middle" font-size="12" font-weight="700">Firebase Storage</text>
+  <text x="825" y="1208" text-anchor="middle" font-size="11">upload file → URL</text>
+
+  <rect x="690" y="1230" width="270" height="44" rx="8" fill="#fed7aa" stroke="#f97316"/>
+  <text x="825" y="1252" text-anchor="middle" font-size="12" font-weight="700">Firestore: laporan_hoaks</text>
+  <text x="825" y="1268" text-anchor="middle" font-size="11">status="Diproses"</text>
+
+  <rect x="690" y="1290" width="270" height="56" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="825" y="1312" text-anchor="middle" font-size="12" font-weight="700">Admin (AdminSessionGuard)</text>
+  <text x="825" y="1328" text-anchor="middle" font-size="11">filter status, ubah status</text>
+  <text x="825" y="1342" text-anchor="middle" font-size="11">→ AuditLogService.record</text>
+
+  <rect x="690" y="1360" width="270" height="44" rx="8" fill="#fed7aa" stroke="#f97316"/>
+  <text x="825" y="1382" text-anchor="middle" font-size="12" font-weight="700">FCM push ke user</text>
+  <text x="825" y="1398" text-anchor="middle" font-size="11">notif "Status tiket diperbarui"</text>
+
+  <line x1="825" y1="1154" x2="825" y2="1168" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="825" y1="1214" x2="825" y2="1228" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="825" y1="1274" x2="825" y2="1288" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="825" y1="1346" x2="825" y2="1358" stroke="#c2410c" marker-end="url(#arrOrange)"/>
+
+  <!-- Branch D: Profil -->
+  <rect x="1030" y="1110" width="280" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="1170" y="1132" text-anchor="middle" font-size="12" font-weight="700">D. Tab Profil</text>
+  <text x="1170" y="1148" text-anchor="middle" font-size="11">_loadProfile / Streak / Activity</text>
+
+  <rect x="1030" y="1170" width="280" height="56" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="1170" y="1192" text-anchor="middle" font-size="12" font-weight="700">Render</text>
+  <text x="1170" y="1208" text-anchor="middle" font-size="11">streak banner • stat bulan ini</text>
+  <text x="1170" y="1222" text-anchor="middle" font-size="11">aktivitas terakhir • menu akun</text>
+
+  <polygon points="1170,1255 1280,1290 1170,1325 1060,1290" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="1170" y="1288" text-anchor="middle" font-size="11" font-weight="700">isAdmin?</text>
+  <text x="1170" y="1303" text-anchor="middle" font-size="10">(admins/{uid})</text>
+
+  <rect x="1030" y="1340" width="280" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="1170" y="1362" text-anchor="middle" font-size="12" font-weight="700">Tampilkan Panel Admin</text>
+  <text x="1170" y="1378" text-anchor="middle" font-size="11">link ke halaman admin</text>
+
+  <line x1="1170" y1="1154" x2="1170" y2="1168" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="1170" y1="1226" x2="1170" y2="1253" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="1170" y1="1325" x2="1170" y2="1338" stroke="#1d4ed8" marker-end="url(#arrBlue)"/>
+  <text x="1180" y="1336" font-size="10" font-weight="600">Ya</text>
+
+  <!-- ============== PHASE 6: RETURN TO BERANDA / LOGOUT ============== -->
+  <text x="60" y="1480" font-size="14" font-weight="700" fill="#1e3a8a">FASE 6 — Kembali ke Beranda / Logout</text>
+
+  <!-- back to beranda -->
+  <rect x="60" y="1500" width="900" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="510" y="1522" text-anchor="middle" font-size="12" font-weight="700">Navigator.pop / popUntil → kembali ke BERANDA</text>
+  <text x="510" y="1538" text-anchor="middle" font-size="11">refresh shortcut, unread count, recent activity</text>
+
+  <!-- arrows from each branch back to "kembali" -->
+  <path d="M 185,1379 Q 185,1450 460,1500" fill="none" stroke="#475569" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+  <path d="M 475,1439 Q 475,1470 480,1500" fill="none" stroke="#475569" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+  <path d="M 825,1404 Q 825,1450 510,1500" fill="none" stroke="#475569" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+  <path d="M 1170,1384 Q 1170,1450 540,1500" fill="none" stroke="#475569" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+
+  <!-- Logout flow -->
+  <rect x="1030" y="1500" width="280" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="1170" y="1522" text-anchor="middle" font-size="12" font-weight="700">User tap "Keluar" / "Hapus Akun"</text>
+  <text x="1170" y="1538" text-anchor="middle" font-size="11">konfirmasi dialog</text>
+
+  <rect x="1030" y="1565" width="280" height="80" rx="8" fill="#e9d5ff" stroke="#a855f7"/>
+  <text x="1170" y="1587" text-anchor="middle" font-size="12" font-weight="700" fill="#6b21a8">AuthService.signOut()</text>
+  <text x="1170" y="1605" text-anchor="middle" font-size="11">ProfileCache.clear()</text>
+  <text x="1170" y="1620" text-anchor="middle" font-size="11">FeatureUsageService.clear()</text>
+  <text x="1170" y="1635" text-anchor="middle" font-size="11">StreakService / Biometric / FeatureAsset</text>
+
+  <rect x="1030" y="1665" width="280" height="44" rx="8" fill="#fed7aa" stroke="#f97316"/>
+  <text x="1170" y="1687" text-anchor="middle" font-size="12" font-weight="700">FirebaseAuth.signOut</text>
+  <text x="1170" y="1703" text-anchor="middle" font-size="11">+ Firestore users delete (jika hapus akun)</text>
+
+  <ellipse cx="1170" cy="1750" rx="120" ry="22" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="1170" y="1755" text-anchor="middle" font-size="13" font-weight="700">END → LoginPage</text>
+
+  <line x1="1170" y1="1544" x2="1170" y2="1563" stroke="#334155" marker-end="url(#arr)"/>
+  <line x1="1170" y1="1645" x2="1170" y2="1663" stroke="#c2410c" marker-end="url(#arrOrange)"/>
+  <line x1="1170" y1="1709" x2="1170" y2="1728" stroke="#334155" marker-end="url(#arr)"/>
+
+  <!-- Beranda → logout link -->
+  <path d="M 960,1522 Q 1000,1522 1028,1522" fill="none" stroke="#475569" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+  <text x="980" y="1514" font-size="10" fill="#475569">tap Keluar</text>
+
+  <!-- Footer -->
+  <text x="700" y="1798" text-anchor="middle" font-size="11" fill="#94a3b8">
+    alur_sistem.svg  •  Majadigi capstone  •  Generated diagram
+  </text>
+</svg>

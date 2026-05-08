@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 940" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <linearGradient id="clientGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#eff6ff"/>
+    </linearGradient>
+    <linearGradient id="firebaseGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffedd5"/>
+      <stop offset="100%" stop-color="#fff7ed"/>
+    </linearGradient>
+    <linearGradient id="geminiGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0e7ff"/>
+      <stop offset="100%" stop-color="#eef2ff"/>
+    </linearGradient>
+    <linearGradient id="backendGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#f0fdf4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Title -->
+  <text x="640" y="38" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">
+    Arsitektur Sistem — Majadigi
+  </text>
+  <text x="640" y="62" text-anchor="middle" font-size="13" fill="#64748b">
+    Client-Heavy Hybrid + Firebase BaaS  •  Feature-Modular Flutter App
+  </text>
+
+  <!-- ===== CLIENT (Flutter App) ===== -->
+  <rect x="60" y="90" width="780" height="640" rx="14" ry="14"
+        fill="url(#clientGrad)" stroke="#3b82f6" stroke-width="2"/>
+  <text x="80" y="120" font-size="16" font-weight="700" fill="#1e3a8a">
+    CLIENT — Flutter App (Android / iOS)
+  </text>
+  <text x="80" y="140" font-size="12" fill="#475569">
+    Feature-based modular  •  Centralized routing  •  Static-singleton services
+  </text>
+
+  <!-- Layer 1: Presentation -->
+  <rect x="80" y="160" width="740" height="120" rx="10" ry="10"
+        fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="100" y="184" font-size="14" font-weight="700" fill="#1e40af">
+    1.  Presentation Layer  (lib/&lt;feature&gt;/*.dart)
+  </text>
+  <g font-size="11.5" fill="#0f172a">
+    <rect x="100" y="198" width="135" height="32" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="167.5" y="218" text-anchor="middle">Beranda + Favorit + Profil</text>
+
+    <rect x="245" y="198" width="135" height="32" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="312.5" y="218" text-anchor="middle">Bapenda / RSUD / Transjatim</text>
+
+    <rect x="390" y="198" width="135" height="32" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="457.5" y="218" text-anchor="middle">Siskaperbapo / Etibi</text>
+
+    <rect x="535" y="198" width="135" height="32" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="602.5" y="218" text-anchor="middle">Sapa Bansos / Klinik Hoaks</text>
+
+    <rect x="680" y="198" width="130" height="32" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="745" y="218" text-anchor="middle">Open Data / Admin</text>
+
+    <rect x="100" y="238" width="320" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+    <text x="260" y="257" text-anchor="middle" font-weight="600">Maja AI Chat (streaming)</text>
+
+    <rect x="430" y="238" width="380" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+    <text x="620" y="257" text-anchor="middle" font-weight="600">
+      Centralized Router  —  AppRoutes.generateRoute (Fade/Slide)
+    </text>
+  </g>
+
+  <!-- Layer 2: State Management -->
+  <rect x="80" y="295" width="740" height="70" rx="10" ry="10"
+        fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="100" y="319" font-size="14" font-weight="700" fill="#1e40af">
+    2.  State Management
+  </text>
+  <g font-size="11.5" fill="#0f172a">
+    <rect x="100" y="330" width="220" height="26" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="210" y="348" text-anchor="middle">setState (state lokal per page)</text>
+
+    <rect x="330" y="330" width="240" height="26" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="450" y="348" text-anchor="middle">ValueNotifier (Theme, FontScale)</text>
+
+    <rect x="580" y="330" width="230" height="26" rx="6" fill="#fee2e2" stroke="#fca5a5"/>
+    <text x="695" y="348" text-anchor="middle">No Provider / Bloc / Riverpod</text>
+  </g>
+
+  <!-- Layer 3: Service Layer -->
+  <rect x="80" y="380" width="740" height="170" rx="10" ry="10"
+        fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="100" y="404" font-size="14" font-weight="700" fill="#1e40af">
+    3.  Service Layer  —  Static Singletons + Repository/Facade
+  </text>
+  <g font-size="11.5" fill="#0f172a">
+    <rect x="100" y="416" width="170" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="185" y="436" text-anchor="middle">AuthService</text>
+
+    <rect x="280" y="416" width="170" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="365" y="436" text-anchor="middle">NotifikasiService</text>
+
+    <rect x="460" y="416" width="170" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="545" y="436" text-anchor="middle">FeatureUsageService</text>
+
+    <rect x="640" y="416" width="170" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="725" y="436" text-anchor="middle">ProfileCache</text>
+
+    <rect x="100" y="454" width="170" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="185" y="474" text-anchor="middle">MajaAiHistoryService</text>
+
+    <rect x="280" y="454" width="170" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="365" y="474" text-anchor="middle">GeminiService</text>
+
+    <rect x="460" y="454" width="170" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="545" y="474" text-anchor="middle">StreakService</text>
+
+    <rect x="640" y="454" width="170" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="725" y="474" text-anchor="middle">AuditLogService</text>
+
+    <rect x="100" y="492" width="260" height="30" rx="6" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="230" y="512" text-anchor="middle" font-weight="600">PersonalizationRuleBase (Strategy)</text>
+
+    <rect x="370" y="492" width="200" height="30" rx="6" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="470" y="512" text-anchor="middle" font-weight="600">ServiceRegistry</text>
+
+    <rect x="580" y="492" width="230" height="30" rx="6" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="695" y="512" text-anchor="middle" font-weight="600">FavoriteMixin / BiometricSvc</text>
+  </g>
+
+  <!-- Layer 4: Local Data -->
+  <rect x="80" y="565" width="740" height="105" rx="10" ry="10"
+        fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="100" y="589" font-size="14" font-weight="700" fill="#1e40af">
+    4.  Local Data  (Cache-Aside / Offline-First)
+  </text>
+  <g font-size="11.5" fill="#0f172a">
+    <rect x="100" y="600" width="220" height="56" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="210" y="622" text-anchor="middle" font-weight="600">SharedPreferences</text>
+    <text x="210" y="640" text-anchor="middle" fill="#475569">feature_usage, streak, favorit, cache profil</text>
+
+    <rect x="330" y="600" width="220" height="56" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="440" y="622" text-anchor="middle" font-weight="600">CSV Assets</text>
+    <text x="440" y="640" text-anchor="middle" fill="#475569">kendaraan, NJKB, kamar/jadwal RSUD, bansos</text>
+
+    <rect x="560" y="600" width="250" height="56" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="685" y="622" text-anchor="middle" font-weight="600">Deferred Loading</text>
+    <text x="685" y="640" text-anchor="middle" fill="#475569">import '...' deferred as → DeferredFeaturePage</text>
+  </g>
+
+  <!-- Cross-cutting -->
+  <rect x="80" y="685" width="740" height="34" rx="8" ry="8"
+        fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/>
+  <text x="450" y="707" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">
+    Cross-cutting  •  AppTheme (light/dark)  •  FontScale  •  Semantics  •  Skeleton/EmptyState/ErrorRetry  •  Hero animations
+  </text>
+
+  <!-- ===== EXTERNAL SERVICES ===== -->
+  <!-- Firebase -->
+  <rect x="880" y="90" width="340" height="200" rx="14" ry="14"
+        fill="url(#firebaseGrad)" stroke="#f97316" stroke-width="2"/>
+  <text x="900" y="120" font-size="16" font-weight="700" fill="#9a3412">
+    Firebase BaaS  (primary backend)
+  </text>
+  <g font-size="12" fill="#0f172a">
+    <rect x="900" y="140" width="300" height="30" rx="6" fill="#ffffff" stroke="#fdba74"/>
+    <text x="915" y="160">Authentication  —  email/password + verify</text>
+
+    <rect x="900" y="178" width="300" height="30" rx="6" fill="#ffffff" stroke="#fdba74"/>
+    <text x="915" y="198">Cloud Firestore  —  users, notifications, hoaks</text>
+
+    <rect x="900" y="216" width="300" height="30" rx="6" fill="#ffffff" stroke="#fdba74"/>
+    <text x="915" y="236">Storage  —  file bukti laporan hoaks</text>
+
+    <rect x="900" y="254" width="300" height="30" rx="6" fill="#ffffff" stroke="#fdba74"/>
+    <text x="915" y="274">FCM (Push Notification + background msg)</text>
+  </g>
+
+  <!-- Gemini -->
+  <rect x="880" y="310" width="340" height="120" rx="14" ry="14"
+        fill="url(#geminiGrad)" stroke="#6366f1" stroke-width="2"/>
+  <text x="900" y="340" font-size="16" font-weight="700" fill="#3730a3">
+    Google Gemini API
+  </text>
+  <g font-size="12" fill="#0f172a">
+    <rect x="900" y="358" width="300" height="28" rx="6" fill="#ffffff" stroke="#a5b4fc"/>
+    <text x="915" y="377">Model: gemini-3-flash-preview</text>
+
+    <rect x="900" y="392" width="300" height="28" rx="6" fill="#ffffff" stroke="#a5b4fc"/>
+    <text x="915" y="411">Streaming chat + sliding-window rate limit</text>
+  </g>
+
+  <!-- Node Backend -->
+  <rect x="880" y="450" width="340" height="160" rx="14" ry="14"
+        fill="url(#backendGrad)" stroke="#16a34a" stroke-width="2"/>
+  <text x="900" y="480" font-size="16" font-weight="700" fill="#166534">
+    Node.js + Express  (sekunder/legacy)
+  </text>
+  <g font-size="12" fill="#0f172a">
+    <rect x="900" y="498" width="300" height="28" rx="6" fill="#ffffff" stroke="#86efac"/>
+    <text x="915" y="517">Express REST  •  /api/auth  •  CORS  •  /health</text>
+
+    <rect x="900" y="532" width="300" height="28" rx="6" fill="#ffffff" stroke="#86efac"/>
+    <text x="915" y="551">Mongoose + MongoDB</text>
+
+    <rect x="900" y="566" width="300" height="28" rx="6" fill="#ffffff" stroke="#86efac"/>
+    <text x="915" y="585">bcryptjs + nodemailer + dotenv</text>
+  </g>
+
+  <!-- Pemerintah Jatim layer (data source) -->
+  <rect x="880" y="630" width="340" height="100" rx="14" ry="14"
+        fill="#fdf4ff" stroke="#a855f7" stroke-width="2"/>
+  <text x="900" y="660" font-size="16" font-weight="700" fill="#6b21a8">
+    Data Sources (eksternal/manual)
+  </text>
+  <g font-size="12" fill="#0f172a">
+    <rect x="900" y="676" width="300" height="46" rx="6" fill="#ffffff" stroke="#d8b4fe"/>
+    <text x="915" y="696">Bapenda, RSUD, Transjatim, Siskaperbapo,</text>
+    <text x="915" y="713">Sapa Bansos, Open Data, Klinik Hoaks (manual ingest)</text>
+  </g>
+
+  <!-- Connectors -->
+  <line x1="840" y1="190" x2="880" y2="190" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="840" y1="370" x2="880" y2="370" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="840" y1="530" x2="880" y2="530" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- ===== Bottom: Tech Stack chips ===== -->
+  <rect x="60" y="760" width="1160" height="160" rx="14" ry="14"
+        fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="80" y="788" font-size="15" font-weight="700" fill="#0f172a">Teknologi yang Digunakan</text>
+
+  <g font-size="11.5" fill="#0f172a">
+    <!-- row 1 -->
+    <rect x="80" y="800" width="120" height="28" rx="14" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="140" y="819" text-anchor="middle" font-weight="600">Flutter 3.11+</text>
+
+    <rect x="208" y="800" width="100" height="28" rx="14" fill="#dbeafe" stroke="#60a5fa"/>
+    <text x="258" y="819" text-anchor="middle" font-weight="600">Dart</text>
+
+    <rect x="316" y="800" width="180" height="28" rx="14" fill="#fed7aa" stroke="#f97316"/>
+    <text x="406" y="819" text-anchor="middle" font-weight="600">Firebase Auth + Firestore</text>
+
+    <rect x="504" y="800" width="160" height="28" rx="14" fill="#fed7aa" stroke="#f97316"/>
+    <text x="584" y="819" text-anchor="middle" font-weight="600">Firebase Storage + FCM</text>
+
+    <rect x="672" y="800" width="170" height="28" rx="14" fill="#c7d2fe" stroke="#6366f1"/>
+    <text x="757" y="819" text-anchor="middle" font-weight="600">google_generative_ai</text>
+
+    <rect x="850" y="800" width="160" height="28" rx="14" fill="#bbf7d0" stroke="#16a34a"/>
+    <text x="930" y="819" text-anchor="middle" font-weight="600">Node.js + Express</text>
+
+    <rect x="1018" y="800" width="180" height="28" rx="14" fill="#bbf7d0" stroke="#16a34a"/>
+    <text x="1108" y="819" text-anchor="middle" font-weight="600">Mongoose + MongoDB</text>
+
+    <!-- row 2 -->
+    <rect x="80" y="836" width="170" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="165" y="855" text-anchor="middle" font-weight="600">shared_preferences</text>
+
+    <rect x="258" y="836" width="180" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="348" y="855" text-anchor="middle" font-weight="600">cached_network_image</text>
+
+    <rect x="446" y="836" width="120" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="506" y="855" text-anchor="middle" font-weight="600">flutter_svg</text>
+
+    <rect x="574" y="836" width="170" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="659" y="855" text-anchor="middle" font-weight="600">geolocator + geocoding</text>
+
+    <rect x="752" y="836" width="160" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="832" y="855" text-anchor="middle" font-weight="600">flutter_map + latlong2</text>
+
+    <rect x="920" y="836" width="160" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="1000" y="855" text-anchor="middle" font-weight="600">local_auth (biometric)</text>
+
+    <rect x="1088" y="836" width="110" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="1143" y="855" text-anchor="middle" font-weight="600">qr_flutter</text>
+
+    <!-- row 3 -->
+    <rect x="80" y="872" width="180" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="170" y="891" text-anchor="middle" font-weight="600">flutter_local_notifications</text>
+
+    <rect x="268" y="872" width="120" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="328" y="891" text-anchor="middle" font-weight="600">image_picker</text>
+
+    <rect x="396" y="872" width="130" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="461" y="891" text-anchor="middle" font-weight="600">image_cropper</text>
+
+    <rect x="534" y="872" width="120" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="594" y="891" text-anchor="middle" font-weight="600">file_picker</text>
+
+    <rect x="662" y="872" width="120" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="722" y="891" text-anchor="middle" font-weight="600">share_plus</text>
+
+    <rect x="790" y="872" width="120" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="850" y="891" text-anchor="middle" font-weight="600">url_launcher</text>
+
+    <rect x="918" y="872" width="100" height="28" rx="14" fill="#e0e7ff" stroke="#818cf8"/>
+    <text x="968" y="891" text-anchor="middle" font-weight="600">intl + csv</text>
+
+    <rect x="1026" y="872" width="170" height="28" rx="14" fill="#bbf7d0" stroke="#16a34a"/>
+    <text x="1111" y="891" text-anchor="middle" font-weight="600">bcryptjs + nodemailer</text>
+  </g>
+
+  <text x="640" y="928" text-anchor="middle" font-size="11" fill="#94a3b8">
+    Generated for Majadigi capstone  •  arsitektur_sistem.svg
+  </text>
+</svg>
