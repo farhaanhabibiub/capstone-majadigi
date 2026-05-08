@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/material.dart';
+import 'common/dataset_download_service.dart';
 import 'theme/app_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class OpenDataDataSebaranPage extends StatefulWidget {
   const OpenDataDataSebaranPage({super.key});
@@ -15,6 +15,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
   bool _isPeriodeExpanded = true;
   bool _is2025Expanded = true;
   bool _showAllRows = false;
+  bool _isDownloading = false;
 
   static const _allKecamatan = <Map<String, dynamic>>[
     {'nama': 'Majalengka', 'kuliner': '1.250', 'fashion': '450', 'kerajinan': '120'},
@@ -408,18 +409,30 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             width: double.infinity,
             height: 52,
             child: ElevatedButton.icon(
-              onPressed: _downloadDataset,
+              onPressed: _isDownloading ? null : _downloadDataset,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF007AFF),
+                disabledBackgroundColor:
+                    const Color(0xFF007AFF).withValues(alpha: 0.6),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(26),
                 ),
                 elevation: 0,
               ),
-              icon: const Icon(Icons.download_outlined, color: Colors.white, size: 20),
-              label: const Text(
-                'Unduh Dataset',
-                style: TextStyle(
+              icon: _isDownloading
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.4,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.download_outlined,
+                      color: Colors.white, size: 20),
+              label: Text(
+                _isDownloading ? 'Memproses...' : 'Unduh Dataset',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'PlusJakartaSans',
@@ -555,19 +568,26 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
   }
 
   Future<void> _downloadDataset() async {
-    const url = 'https://opendata.jatimprov.go.id/';
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tidak dapat membuka portal. Kunjungi opendata.jatimprov.go.id'),
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
+    if (_isDownloading) return;
+    setState(() => _isDownloading = true);
+    try {
+      final headers = ['Kecamatan', 'Kuliner', 'Fashion', 'Kerajinan'];
+      final rows = _allKecamatan
+          .map((m) => [
+                (m['nama'] ?? '').toString(),
+                (m['kuliner'] ?? '').toString(),
+                (m['fashion'] ?? '').toString(),
+                (m['kerajinan'] ?? '').toString(),
+              ])
+          .toList();
+      await DatasetDownloadService.downloadCsv(
+        context: context,
+        title: 'Sebaran UMKM Majalengka 2025',
+        headers: headers,
+        rows: rows,
+      );
+    } finally {
+      if (mounted) setState(() => _isDownloading = false);
     }
   }
 }

@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/material.dart';
+import 'common/dataset_download_service.dart';
 import 'theme/app_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'widgets/empty_state.dart';
 
 class OpenDataDetailPage extends StatelessWidget {
@@ -264,25 +264,7 @@ class OpenDataDetailPage extends StatelessWidget {
   }
 
   Widget _buildDownloadButton(BuildContext context, _Content c) {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: ElevatedButton.icon(
-        onPressed: () => _launchUrl(c.downloadUrl),
-        icon: const Icon(Icons.download_rounded, color: Colors.white, size: 20),
-        label: const Text('Unduh Dataset', style: TextStyle(color: Colors.white, fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700)),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: _blue,
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
+    return _DownloadButton(content: c);
   }
 
   Color _typeColor(String type) {
@@ -602,4 +584,77 @@ class _Stat {
   final Color? color;
 
   const _Stat(this.value, this.label, {this.color});
+}
+
+class _DownloadButton extends StatefulWidget {
+  final _Content content;
+  const _DownloadButton({required this.content});
+
+  @override
+  State<_DownloadButton> createState() => _DownloadButtonState();
+}
+
+class _DownloadButtonState extends State<_DownloadButton> {
+  static const _blue = Color(0xFF007AFF);
+  bool _busy = false;
+
+  Future<void> _handleDownload() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      final c = widget.content;
+      // Pakai tabel kalau ada; jika tidak (mis. dataset cuma punya stats),
+      // fallback export ringkasan stats sebagai 2-kolom.
+      final List<String> headers = c.tableHeaders.isNotEmpty
+          ? c.tableHeaders
+          : const ['Indikator', 'Nilai'];
+      final List<List<String>> rows = c.tableRows.isNotEmpty
+          ? c.tableRows
+          : c.stats.map((s) => [s.label, s.value]).toList();
+      await DatasetDownloadService.downloadCsv(
+        context: context,
+        title: c.title,
+        headers: headers,
+        rows: rows,
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: ElevatedButton.icon(
+        onPressed: _busy ? null : _handleDownload,
+        icon: _busy
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.4,
+                  color: Colors.white,
+                ),
+              )
+            : const Icon(Icons.download_rounded, color: Colors.white, size: 20),
+        label: Text(
+          _busy ? 'Memproses...' : 'Unduh Dataset',
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _blue,
+          disabledBackgroundColor: _blue.withValues(alpha: 0.6),
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+        ),
+      ),
+    );
+  }
 }
