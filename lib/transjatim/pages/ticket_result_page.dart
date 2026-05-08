@@ -6,7 +6,20 @@ import '../models/transjatim_model.dart';
 class TicketResultPage extends StatelessWidget {
   final TicketOrder order;
 
-  const TicketResultPage({super.key, required this.order});
+  /// True bila page dibuka dari tab Riwayat — sembunyikan banner "Pembayaran
+  /// Berhasil", aktifkan back button, dan ganti CTA jadi "Tutup".
+  final bool fromHistory;
+
+  /// True bila tiket sudah ditandai pakai oleh admin/petugas. Tampilkan
+  /// banner peringatan & overlay watermark di atas QR.
+  final bool isUsed;
+
+  const TicketResultPage({
+    super.key,
+    required this.order,
+    this.fromHistory = false,
+    this.isUsed = false,
+  });
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
   static const Color _whiteBg = Color.fromRGBO(248, 248, 245, 1);
@@ -37,10 +50,11 @@ class TicketResultPage extends StatelessWidget {
         backgroundColor: _blue,
         elevation: 0,
         centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Tiket Berhasil',
-          style: TextStyle(
+        automaticallyImplyLeading: fromHistory,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text(
+          fromHistory ? 'Detail Tiket' : 'Tiket Berhasil',
+          style: const TextStyle(
             color: Colors.white,
             fontFamily: 'PlusJakartaSans',
             fontSize: 16,
@@ -52,15 +66,72 @@ class TicketResultPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _buildSuccessBanner(),
-            const SizedBox(height: 16),
+            if (!fromHistory) ...[
+              _buildSuccessBanner(),
+              const SizedBox(height: 16),
+            ],
+            if (isUsed) ...[
+              _buildUsedBanner(),
+              const SizedBox(height: 16),
+            ],
             _buildTicketCard(context),
             const SizedBox(height: 16),
             _buildInfoNote(),
             const SizedBox(height: 24),
-            _buildHomeButton(context),
+            _buildPrimaryButton(context),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildUsedBanner() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEE2E2),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE11D48).withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              color: Color(0xFFE11D48),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.block_rounded, color: Colors.white, size: 22),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tiket Sudah Digunakan',
+                  style: TextStyle(
+                    color: Color(0xFFE11D48),
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'Tiket ini sudah dipindai petugas dan tidak dapat dipakai kembali.',
+                  style: TextStyle(
+                    color: Color(0xFFB91C1C),
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 12,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -167,19 +238,58 @@ class TicketResultPage extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceOf(context),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color.fromRGBO(230, 230, 230, 1)),
-                  ),
-                  child: QrImageView(
-                    data: order.qrData,
-                    version: QrVersions.auto,
-                    size: 180,
-                    backgroundColor: Colors.white,
-                  ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceOf(context),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: const Color.fromRGBO(230, 230, 230, 1)),
+                      ),
+                      child: ColorFiltered(
+                        colorFilter: isUsed
+                            ? const ColorFilter.matrix(<double>[
+                                0.2126, 0.7152, 0.0722, 0, 0,
+                                0.2126, 0.7152, 0.0722, 0, 0,
+                                0.2126, 0.7152, 0.0722, 0, 0,
+                                0,      0,      0,      1, 0,
+                              ])
+                            : const ColorFilter.mode(
+                                Colors.transparent, BlendMode.dst),
+                        child: QrImageView(
+                          data: order.qrData,
+                          version: QrVersions.auto,
+                          size: 180,
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    if (isUsed)
+                      Transform.rotate(
+                        angle: -0.35,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE11D48).withValues(alpha: 0.92),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'TERPAKAI',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'PlusJakartaSans',
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 4,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -253,20 +363,27 @@ class TicketResultPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHomeButton(BuildContext context) {
+  Widget _buildPrimaryButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+        onPressed: fromHistory
+            ? () => Navigator.pop(context)
+            : () => Navigator.of(context).popUntil((route) => route.isFirst),
         style: ElevatedButton.styleFrom(
           backgroundColor: _blue,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         ),
-        child: const Text(
-          'Kembali ke Beranda',
-          style: TextStyle(color: Colors.white, fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700),
+        child: Text(
+          fromHistory ? 'Tutup' : 'Kembali ke Beranda',
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );

@@ -370,6 +370,12 @@ class _ProfilTabState extends State<ProfilTab> {
                       label: 'Panel Admin',
                       onTap: () => Navigator.pushNamed(context, AppRoutes.adminPage),
                     ),
+                    _menuItem(
+                      icon: Icons.qr_code_scanner_rounded,
+                      label: 'Scan Tiket Transjatim',
+                      onTap: () => Navigator.pushNamed(
+                          context, AppRoutes.scanTiketPage),
+                    ),
                   ]),
                 ],
 

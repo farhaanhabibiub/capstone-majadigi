@@ -1,8 +1,10 @@
 ﻿import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../models/transjatim_model.dart';
 import '../ticket_history_service.dart';
+import '../transjatim_ticket_service.dart';
 import 'ticket_result_page.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -80,12 +82,25 @@ class _PaymentPageState extends State<PaymentPage> {
       'city': widget.route.city,
       'fromStop': widget.route.stops[widget.fromIndex].name,
       'toStop': widget.route.stops[widget.toIndex].name,
+      'fromIndex': widget.fromIndex,
+      'toIndex': widget.toIndex,
       'ticketClass': widget.ticketClass.label,
       'passengerCount': widget.passengerCount,
       'paymentMethod': _selectedMethod!,
       'bookingTime': now.toIso8601String(),
       'totalPrice': _totalPrice,
     });
+
+    // Simpan juga ke Firestore agar dapat diverifikasi oleh admin/petugas
+    // pada halaman Scan Tiket. Diam-diam ignore error supaya offline tetap
+    // jalan (tiket cuma tidak bisa diverifikasi sampai online).
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      try {
+        await TransjatimTicketService.save(order, uid);
+      } catch (_) {}
+    }
+
     if (!mounted) return;
     Navigator.pushReplacement(
       context,

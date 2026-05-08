@@ -38,6 +38,8 @@ dependencies:
   local_auth_android: ^1.0.46
   local_auth_darwin: ^1.4.0
   cached_network_image: ^3.4.1
+  path_provider: ^2.1.5
+  mobile_scanner: ^5.2.3
 
 dev_dependencies:
   flutter_test:

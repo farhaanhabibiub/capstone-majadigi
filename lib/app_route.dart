@@ -12,6 +12,7 @@ import 'location_manual_page.dart';
 import 'personalization_services_page.dart';
 import 'personalization_success_page.dart';
 import 'beranda/beranda_page.dart';
+import 'beranda/berita_arsip_page.dart';
 import 'beranda/notifikasi_page.dart';
 import 'beranda/tambah_layanan_page.dart';
 import 'beranda/maja_ai_chat_page.dart';
@@ -54,6 +55,7 @@ import 'admin/admin_page.dart';
 import 'admin/admin_notifikasi_page.dart';
 import 'admin/admin_session_guard.dart';
 import 'admin/audit_log_page.dart';
+import 'admin/scan_tiket_page.dart';
 import 'profil/ubah_profil_page.dart';
 import 'profil/keamanan_akun_page.dart';
 import 'profil/aksesibilitas_page.dart';
@@ -98,9 +100,11 @@ class AppRoutes {
   static const String majaAiChatPage = '/majaAiChatPage';
   static const String globalSearchPage = '/globalSearchPage';
   static const String notifikasiPage = '/notifikasiPage';
+  static const String beritaArsipPage = '/beritaArsipPage';
   static const String adminPage = '/adminPage';
   static const String adminNotifikasiPage = '/adminNotifikasiPage';
   static const String auditLogPage = '/auditLogPage';
+  static const String scanTiketPage = '/scanTiketPage';
   static const String ubahProfilPage = '/ubahProfilPage';
   static const String keamananAkunPage = '/keamananAkunPage';
   static const String aksesibilitasPage = '/aksesibilitasPage';
@@ -288,6 +292,9 @@ class AppRoutes {
       case notifikasiPage:
         return (_) => const NotifikasiPage();
 
+      case beritaArsipPage:
+        return (_) => const BeritaArsipPage();
+
       case adminPage:
         return (_) => const AdminSessionGuard(child: AdminPage());
 
@@ -296,6 +303,9 @@ class AppRoutes {
 
       case auditLogPage:
         return (_) => const AdminSessionGuard(child: AuditLogPage());
+
+      case scanTiketPage:
+        return (_) => const AdminSessionGuard(child: ScanTiketPage());
 
       case ubahProfilPage:
         return (_) => const UbahProfilPage();

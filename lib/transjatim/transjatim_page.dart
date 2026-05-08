@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import '../common/favorite_mixin.dart';
 import '../theme/app_theme.dart';
 import '../widgets/empty_state.dart';
@@ -10,6 +11,8 @@ import 'ticket_history_service.dart';
 import 'widgets/route_card.dart';
 import 'widgets/halte_map_widget.dart';
 import 'pages/buy_ticket_page.dart';
+import 'pages/ticket_result_page.dart';
+import 'transjatim_ticket_service.dart';
 
 class TransjatimPage extends StatefulWidget {
   const TransjatimPage({super.key});
@@ -270,9 +273,22 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
     );
   }
 
+  /// Source-of-truth = Firestore (agar status sinkron dengan admin scanner).
+  /// Fallback ke local SharedPreferences kalau gagal (mis. offline atau
+  /// tiket lama yang belum tersinkron ke Firestore).
+  Future<List<Map<String, dynamic>>> _loadRiwayat() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return TicketHistoryService.getAll();
+    try {
+      final remote = await TransjatimTicketService.userTickets(uid);
+      if (remote.isNotEmpty) return remote;
+    } catch (_) {}
+    return TicketHistoryService.getAll();
+  }
+
   Widget _buildRiwayatView() {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: TicketHistoryService.getAll(),
+      future: _loadRiwayat(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SkeletonLoader.list();
@@ -346,59 +362,172 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
       return buf.toString();
     }();
 
+    return InkWell(
+      onTap: () => _openRiwayatDetail(t),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceOf(context),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(20)),
+                  child: Text(t['routeId'] as String? ?? '', style: const TextStyle(color: Colors.white, fontFamily: 'PlusJakartaSans', fontSize: 11, fontWeight: FontWeight.w700)),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(t['city'] as String? ?? '', style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 11)),
+                ),
+                _buildStatusBadge(t),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${t['fromStop']} → ${t['toStop']}',
+              style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Icon(Icons.person_outline, size: 13, color: AppTheme.textSecondaryOf(context)),
+                const SizedBox(width: 4),
+                Text('${t['passengerCount']} orang • ${t['ticketClass']}', style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 12)),
+                const Spacer(),
+                Text(totalStr, style: const TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(Icons.access_time, size: 13, color: AppTheme.textSecondaryOf(context)),
+                const SizedBox(width: 4),
+                Text(dateStr, style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 11)),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Container(height: 1, color: AppTheme.borderOf(context)),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Icon(Icons.qr_code_2_rounded, size: 16, color: AppTheme.primary),
+                const SizedBox(width: 6),
+                const Text(
+                  'Lihat QR Tiket',
+                  style: TextStyle(
+                    color: AppTheme.primary,
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                Icon(Icons.chevron_right_rounded,
+                    size: 18, color: AppTheme.textSecondaryOf(context)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Buka detail tiket lengkap dengan QR dari riwayat. Rekonstruksi
+  /// [TicketOrder] dari map yang disimpan di SharedPreferences/Firestore.
+  Future<void> _openRiwayatDetail(Map<String, dynamic> t) async {
+    final order = _orderFromHistoryMap(t);
+    if (order == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tiket lama tidak dapat ditampilkan. Hapus & beli ulang.'),
+        ),
+      );
+      return;
+    }
+    final isUsed = (t['status'] as String?) == 'used';
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            TicketResultPage(order: order, fromHistory: true, isUsed: isUsed),
+      ),
+    );
+    // Refresh status setelah balik dari detail (mungkin admin baru saja scan).
+    if (mounted) setState(() {});
+  }
+
+  Widget _buildStatusBadge(Map<String, dynamic> t) {
+    final isUsed = (t['status'] as String?) == 'used';
+    final color = isUsed ? const Color(0xFFE11D48) : const Color(0xFF059669);
+    final bg = isUsed ? const Color(0xFFFEE2E2) : const Color(0xFFECFDF5);
+    final label = isUsed ? 'Sudah Digunakan' : 'Aktif';
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceOf(context),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+        color: bg,
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(20)),
-                child: Text(t['routeId'] as String? ?? '', style: const TextStyle(color: Colors.white, fontFamily: 'PlusJakartaSans', fontSize: 11, fontWeight: FontWeight.w700)),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(t['city'] as String? ?? '', style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 11)),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: const Color(0xFFECFDF5), borderRadius: BorderRadius.circular(8)),
-                child: const Text('Selesai', style: TextStyle(color: Color(0xFF059669), fontFamily: 'PlusJakartaSans', fontSize: 11, fontWeight: FontWeight.w600)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${t['fromStop']} â†’ ${t['toStop']}',
-            style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              Icon(Icons.person_outline, size: 13, color: AppTheme.textSecondaryOf(context)),
-              const SizedBox(width: 4),
-              Text('${t['passengerCount']} orang â€¢ ${t['ticketClass']}', style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 12)),
-              const Spacer(),
-              Text(totalStr, style: const TextStyle(color: AppTheme.primary, fontFamily: 'PlusJakartaSans', fontSize: 14, fontWeight: FontWeight.w700)),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Icon(Icons.access_time, size: 13, color: AppTheme.textSecondaryOf(context)),
-              const SizedBox(width: 4),
-              Text(dateStr, style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 11)),
-            ],
-          ),
-        ],
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontFamily: 'PlusJakartaSans',
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
       ),
+    );
+  }
+
+  TicketOrder? _orderFromHistoryMap(Map<String, dynamic> t) {
+    final routeId = t['routeId'] as String?;
+    if (routeId == null) return null;
+    TransjatimRoute? route;
+    for (final r in TransjatimDummyData.routes) {
+      if (r.id == routeId) {
+        route = r;
+        break;
+      }
+    }
+    if (route == null) return null;
+
+    final fromStop = (t['fromStop'] as String?) ?? '';
+    final toStop = (t['toStop'] as String?) ?? '';
+
+    int fromIndex = (t['fromIndex'] as int?) ??
+        route.stops.indexWhere((s) => s.name == fromStop);
+    int toIndex = (t['toIndex'] as int?) ??
+        route.stops.indexWhere((s) => s.name == toStop);
+    if (fromIndex < 0) fromIndex = 0;
+    if (toIndex < 0) toIndex = route.stops.length - 1;
+
+    final classLabel = (t['ticketClass'] as String?) ?? 'Ekonomi';
+    final ticketClass = classLabel.toLowerCase().contains('lux')
+        ? TicketClass.luxury
+        : TicketClass.economy;
+
+    final passengerCount = (t['passengerCount'] as int?) ?? 1;
+    final paymentMethod = (t['paymentMethod'] as String?) ?? '-';
+    final bookingTime =
+        DateTime.tryParse(t['bookingTime'] as String? ?? '') ?? DateTime.now();
+    final orderId = (t['orderId'] as String?) ?? 'TJ-LEGACY';
+
+    return TicketOrder(
+      orderId: orderId,
+      route: route,
+      fromIndex: fromIndex,
+      toIndex: toIndex,
+      ticketClass: ticketClass,
+      passengerCount: passengerCount,
+      paymentMethod: paymentMethod,
+      bookingTime: bookingTime,
     );
   }
 }

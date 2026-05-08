@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../app_route.dart';
@@ -9,6 +11,7 @@ import '../common/streak_service.dart';
 import '../personalization_rule_base.dart';
 import '../theme/app_theme.dart';
 import '../rsud/hospital_config.dart';
+import 'berita_data.dart';
 import 'favorit_tab.dart';
 import 'feature_usage_service.dart';
 import 'notifikasi_service.dart';
@@ -136,32 +139,9 @@ class _BerandaPageState extends State<BerandaPage> {
           .whereType<_ServiceItem>()
           .toList(growable: false);
 
-  static const List<_ArtikelItem> _artikels = [
-    _ArtikelItem(
-      tag: 'TEKNOLOGI',
-      tagColor: Color.fromRGBO(0, 101, 255, 1),
-      title: 'BAPENDA Jatim Luncurkan Fitur Pembayaran Digital',
-      assetPath: 'assets/images/artikel_1.png',
-      date: '11 April 2026',
-      url: 'https://rri.co.id/surabaya/regional/1189034/bapenda-jatim-mudahkan-bayar-pajak-dengan-inovasi-digital',
-    ),
-    _ArtikelItem(
-      tag: 'KEBIJAKAN',
-      tagColor: Color.fromRGBO(202, 138, 4, 1),
-      title: 'Update Aturan Pajak Kendaraan Bermotor 2026',
-      assetPath: 'assets/images/artikel_2.png',
-      date: '15 Maret 2026',
-      url: 'https://nasional.kontan.co.id/news/resmi-berlaku-april-2026-pajak-mobil-motor-listrik-tak-lagi-rp-0-ini-aturannya',
-    ),
-    _ArtikelItem(
-      tag: 'LAYANAN',
-      tagColor: Color.fromRGBO(13, 148, 136, 1),
-      title: 'Integrasi Layanan Kesehatan RSUD Dr. Soetomo',
-      assetPath: 'assets/images/artikel_3.png',
-      date: '15 Maret 2026',
-      url: 'https://rsudrsoetomo.jatimprov.go.id/',
-    ),
-  ];
+  /// Beranda menampilkan 3 artikel teratas; arsip lengkap di
+  /// [BeritaArsipPage] (route `AppRoutes.beritaArsipPage`).
+  List<ArtikelItem> get _artikels => kBeritaArtikels.take(3).toList();
 
   @override
   void initState() {
@@ -281,6 +261,313 @@ class _BerandaPageState extends State<BerandaPage> {
     Navigator.pushNamed(context, AppRoutes.rsudPage, arguments: hospital);
   }
 
+  // ── Location picker ────────────────────────────────────────────────────────
+  // User dapat tap header lokasi untuk ganti lokasi. Setelah tersimpan,
+  // 5 layanan unggulan otomatis di-resolve ulang via PersonalizationRuleBase
+  // sehingga RSUD terdekat ikut berubah.
+
+  Future<void> _showLocationPicker() async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: AppTheme.surfaceOf(context),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppTheme.borderOf(context),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Ubah Lokasi',
+                style: TextStyle(
+                  color: AppTheme.textPrimaryOf(context),
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Lokasi memengaruhi RSUD terdekat &\nrekomendasi layanan di Beranda.',
+                style: TextStyle(
+                  color: AppTheme.textSecondaryOf(context),
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 12,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 18),
+              _locationOption(
+                ctx,
+                icon: Icons.my_location_rounded,
+                label: 'Deteksi otomatis (GPS)',
+                desc: 'Pakai sinyal GPS perangkat untuk deteksi lokasi',
+                value: 'gps',
+              ),
+              const SizedBox(height: 10),
+              _locationOption(
+                ctx,
+                icon: Icons.search_rounded,
+                label: 'Cari lokasi manual',
+                desc: 'Pilih kecamatan/kabupaten dari daftar',
+                value: 'manual',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (!mounted || result == null) return;
+    if (result == 'gps') {
+      await _detectGpsLocation();
+    } else if (result == 'manual') {
+      await _pickManualLocation();
+    }
+  }
+
+  Widget _locationOption(
+    BuildContext sheetCtx, {
+    required IconData icon,
+    required String label,
+    required String desc,
+    required String value,
+  }) {
+    return InkWell(
+      onTap: () => Navigator.pop(sheetCtx, value),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppTheme.backgroundOf(sheetCtx),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppTheme.borderOf(sheetCtx)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: _blue.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: _blue, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: AppTheme.textPrimaryOf(sheetCtx),
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    desc,
+                    style: TextStyle(
+                      color: AppTheme.textSecondaryOf(sheetCtx),
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded,
+                size: 20, color: AppTheme.textSecondaryOf(sheetCtx)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _detectGpsLocation() async {
+    _showLoadingSnack('Mendeteksi lokasi…');
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (!mounted) return;
+        _showSnack('Layanan lokasi belum aktif. Aktifkan GPS lalu coba lagi.',
+            isError: true);
+        await Geolocator.openLocationSettings();
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied) {
+        if (!mounted) return;
+        _showSnack('Izin lokasi ditolak.', isError: true);
+        return;
+      }
+      if (permission == LocationPermission.deniedForever) {
+        if (!mounted) return;
+        _showSnack(
+            'Izin lokasi ditolak permanen. Buka pengaturan aplikasi.',
+            isError: true);
+        await Geolocator.openAppSettings();
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings:
+            const LocationSettings(accuracy: LocationAccuracy.high),
+      );
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isEmpty) {
+        if (!mounted) return;
+        _showSnack('Lokasi ditemukan, tetapi detail wilayah tidak tersedia.',
+            isError: true);
+        return;
+      }
+
+      final place = placemarks.first;
+      final province = _firstNonEmpty(
+          [place.administrativeArea, place.subAdministrativeArea]);
+      final regency = _firstNonEmpty([
+        place.subAdministrativeArea,
+        place.locality,
+        place.subLocality,
+      ]);
+      final city = _firstNonEmpty([
+        place.locality,
+        place.subAdministrativeArea,
+        place.subLocality,
+      ]);
+
+      final result = await AuthService.instance.saveUserLocation(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        city: city,
+        regency: regency,
+        province: province,
+        source: 'gps',
+      );
+      if (!mounted) return;
+      if (!result.success) {
+        _showSnack(result.message, isError: true);
+        return;
+      }
+      _applyNewLocation(city ?? '', regency ?? '');
+      _showSnack('Lokasi diperbarui: ${_formatLocation(city ?? '', regency ?? '')}');
+    } catch (e) {
+      if (!mounted) return;
+      _showSnack('Gagal mengambil lokasi: $e', isError: true);
+    }
+  }
+
+  Future<void> _pickManualLocation() async {
+    final result =
+        await Navigator.pushNamed(context, AppRoutes.locationManualPage);
+    if (!mounted || result is! Map<String, dynamic>) return;
+    final city = (result['city'] as String?) ?? '';
+    final regency = (result['regency'] as String?) ?? '';
+    _applyNewLocation(city, regency);
+    _showSnack('Lokasi diperbarui: ${_formatLocation(city, regency)}');
+  }
+
+  /// Update state lokasi & re-resolve 5 layanan unggulan (termasuk RSUD
+  /// terdekat). Dibungkus setState supaya re-render dengan smooth.
+  void _applyNewLocation(String city, String regency) {
+    setState(() {
+      _locationCity = city;
+      _locationRegency = regency;
+      _locationText = _formatLocation(city, regency);
+      _services = _resolveServices();
+    });
+  }
+
+  String? _firstNonEmpty(List<String?> values) {
+    for (final v in values) {
+      final t = v?.trim() ?? '';
+      if (t.isNotEmpty) return t;
+    }
+    return null;
+  }
+
+  void _showLoadingSnack(String message) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.clearSnackBars();
+    messenger.showSnackBar(
+      SnackBar(
+        backgroundColor: AppTheme.textPrimaryOf(context),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 8),
+        content: Row(
+          children: [
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.2,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              message,
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'PlusJakartaSans',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSnack(String message, {bool isError = false}) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.clearSnackBars();
+    messenger.showSnackBar(
+      SnackBar(
+        backgroundColor: isError ? const Color(0xFFE11D48) : _blue,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 3),
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'PlusJakartaSans',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -358,41 +645,59 @@ class _BerandaPageState extends State<BerandaPage> {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Lokasi Saat Ini:',
-                  style: TextStyle(
-                    color: AppTheme.textSecondaryOf(context),
-                    fontFamily: 'PlusJakartaSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        _locationText,
-                        overflow: TextOverflow.ellipsis,
+            child: Semantics(
+              button: true,
+              label: 'Ubah lokasi. Saat ini: $_locationText',
+              hint: 'Buka pilihan deteksi GPS atau pilih manual',
+              child: InkWell(
+                onTap: _showLocationPicker,
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Lokasi Saat Ini:',
                         style: TextStyle(
-                          color: AppTheme.textPrimaryOf(context),
+                          color: AppTheme.textSecondaryOf(context),
                           fontFamily: 'PlusJakartaSans',
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                    ),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 16,
-                      color: AppTheme.textPrimaryOf(context),
-                    ),
-                  ],
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 220),
+                              transitionBuilder: (child, anim) =>
+                                  FadeTransition(opacity: anim, child: child),
+                              child: Text(
+                                _locationText,
+                                key: ValueKey(_locationText),
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: AppTheme.textPrimaryOf(context),
+                                  fontFamily: 'PlusJakartaSans',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            size: 16,
+                            color: AppTheme.textPrimaryOf(context),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -678,26 +983,39 @@ class _BerandaPageState extends State<BerandaPage> {
         const SizedBox(height: 14),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _services.length + _visibleAddedServices.length + 1,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 0.9,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 240),
+            transitionBuilder: (child, anim) => FadeTransition(
+              opacity: anim,
+              child: child,
             ),
-            itemBuilder: (context, index) {
-              if (index < _services.length) {
-                return _buildServiceCard(_services[index]);
-              }
-              final addedIndex = index - _services.length;
-              if (addedIndex < _visibleAddedServices.length) {
-                return _buildAddedServiceCard(_visibleAddedServices[addedIndex]);
-              }
-              return _buildTambahLayananCard();
-            },
+            child: GridView.builder(
+              key: ValueKey(
+                '${_services.map((s) => s.id).join(",")}|'
+                '${_visibleAddedServices.map((s) => s.id).join(",")}',
+              ),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount:
+                  _services.length + _visibleAddedServices.length + 1,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 0.9,
+              ),
+              itemBuilder: (context, index) {
+                if (index < _services.length) {
+                  return _buildServiceCard(_services[index]);
+                }
+                final addedIndex = index - _services.length;
+                if (addedIndex < _visibleAddedServices.length) {
+                  return _buildAddedServiceCard(
+                      _visibleAddedServices[addedIndex]);
+                }
+                return _buildTambahLayananCard();
+              },
+            ),
           ),
         ),
       ],
@@ -958,7 +1276,8 @@ class _BerandaPageState extends State<BerandaPage> {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () =>
+                    Navigator.pushNamed(context, AppRoutes.beritaArsipPage),
                 child: const Text(
                   'Lihat Semua',
                   style: TextStyle(
@@ -985,7 +1304,7 @@ class _BerandaPageState extends State<BerandaPage> {
     );
   }
 
-  Widget _buildArtikelCard(_ArtikelItem item) {
+  Widget _buildArtikelCard(ArtikelItem item) {
     return Semantics(
       button: true,
       label: 'Artikel ${item.tag}: ${item.title}, ${item.date}',
@@ -1237,24 +1556,6 @@ class _ServiceItem {
     required this.fallback,
     this.route,
     this.hospital,
-  });
-}
-
-class _ArtikelItem {
-  final String tag;
-  final Color tagColor;
-  final String title;
-  final String assetPath;
-  final String date;
-  final String url;
-
-  const _ArtikelItem({
-    required this.tag,
-    required this.tagColor,
-    required this.title,
-    required this.assetPath,
-    required this.date,
-    required this.url,
   });
 }
 
