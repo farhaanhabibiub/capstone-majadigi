@@ -4,15 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// Helper untuk mengunduh dataset Open Data sebagai file CSV ke perangkat
-/// pengguna. File ditulis ke direktori sementara aplikasi lalu dibuka melalui
-/// system share sheet — pengguna dapat menyimpan ke folder Downloads, Drive,
-/// mengirim ke email, dsb.
 class DatasetDownloadService {
   DatasetDownloadService._();
 
-  /// Tulis [headers] + [rows] sebagai CSV (delimiter koma, RFC 4180-friendly
-  /// quoting), lalu tampilkan share sheet. Return true jika berhasil.
   static Future<bool> downloadCsv({
     required BuildContext context,
     required String title,
@@ -24,45 +18,59 @@ class DatasetDownloadService {
       for (final row in rows) {
         buf.writeln(row.map(_escape).join(','));
       }
-
-      final dir = await getTemporaryDirectory();
+      final csvContent = buf.toString();
       final fileName = '${_slug(title)}.csv';
+
+      // Android: simpan ke penyimpanan eksternal app (tidak perlu permission
+      // di Android 10+) lalu buka share sheet agar user bisa memindahkan ke
+      // folder manapun.
+      if (Platform.isAndroid) {
+        final savedPath = await _saveToExternalStorage(fileName, csvContent);
+        if (savedPath != null) {
+          if (!context.mounted) return false;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFF007AFF),
+              behavior: SnackBarBehavior.floating,
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              duration: const Duration(seconds: 4),
+              content: Row(
+                children: [
+                  const Icon(Icons.download_done_rounded, color: Colors.white, size: 18),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'File tersimpan: $fileName — pilih tujuan di bawah',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'PlusJakartaSans',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+          await Share.shareXFiles(
+            [XFile(savedPath, mimeType: 'text/csv', name: fileName)],
+            subject: 'Dataset Majadigi: $title',
+          );
+          return true;
+        }
+      }
+
+      // iOS atau fallback Android: tulis ke temp lalu buka share sheet
+      final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/$fileName');
-      await file.writeAsString(buf.toString());
+      await file.writeAsString(csvContent);
 
       if (!context.mounted) return false;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: const Color(0xFF007AFF),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          duration: const Duration(seconds: 2),
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle_outline_rounded,
-                  color: Colors.white, size: 18),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Berhasil membuat $fileName',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'PlusJakartaSans',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
 
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'text/csv', name: fileName)],
         subject: 'Dataset Majadigi: $title',
-        text: 'Dataset "$title" dari aplikasi Majadigi.',
       );
       return true;
     } catch (e) {
@@ -86,6 +94,21 @@ class DatasetDownloadService {
       }
       return false;
     }
+  }
+
+  /// Simpan ke app-specific external storage (tidak perlu permission Android 10+).
+  /// Return path file jika berhasil, null jika gagal.
+  static Future<String?> _saveToExternalStorage(
+      String fileName, String content) async {
+    try {
+      final extDir = await getExternalStorageDirectory();
+      if (extDir != null) {
+        final file = File('${extDir.path}/$fileName');
+        await file.writeAsString(content);
+        return file.path;
+      }
+    } catch (_) {}
+    return null;
   }
 
   static String _escape(String cell) {
