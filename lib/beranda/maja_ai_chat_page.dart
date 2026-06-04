@@ -271,7 +271,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
       onDone: () async {
         if (!mounted) return;
         final finalText = accumulated.isEmpty
-            ? 'Maaf, tidak ada respons. Coba lagi ya! ðŸ˜Š'
+            ? 'Maaf, tidak ada respons. Coba lagi ya! 😊'
             : accumulated;
         setState(() {
           if (_messages.isNotEmpty) {
@@ -533,7 +533,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                       color: AppTheme.textPrimaryOf(context),
                     ),
                   ),
-                  const Text('ðŸ‘‹', style: TextStyle(fontSize: 15)),
+                  const Text(‘👋’, style: TextStyle(fontSize: 15)),
                 ]),
                 Text(
                   _userName,
