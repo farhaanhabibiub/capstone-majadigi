@@ -533,7 +533,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                       color: AppTheme.textPrimaryOf(context),
                     ),
                   ),
-                  const Text(‘👋’, style: TextStyle(fontSize: 15)),
+                  const Text('👋', style: TextStyle(fontSize: 15)),
                 ]),
                 Text(
                   _userName,

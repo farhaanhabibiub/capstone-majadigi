@@ -140,8 +140,8 @@ class _PenerimaTabState extends State<PenerimaTab> {
             ),
             child: Row(
               children: [
-                _modeChip(‘📢  NIK’, !_searchByNama, () => _switchMode(false)),
-                _modeChip(‘👤  Nama’, _searchByNama, () => _switchMode(true)),
+                _modeChip('📢  NIK', !_searchByNama, () => _switchMode(false)),
+                _modeChip('👤  Nama', _searchByNama, () => _switchMode(true)),
               ],
             ),
           ),
