@@ -61,7 +61,7 @@ class _OpenDataListPageState extends State<OpenDataListPage> {
       'route': 'penduduk',
     },
     {
-      'title': 'Angka Kemiskinan Jawa Timur 2020â€“2024',
+      'title': 'Angka Kemiskinan Jawa Timur 2020–2024',
       'date': '15 Maret 2025',
       'category': 'Sosial',
       'type': 'Statistik',

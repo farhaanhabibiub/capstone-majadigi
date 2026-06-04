@@ -265,7 +265,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
             _metaRow('Dataset dibuat', '10 Januari 2025'),
             _metaRow('Cakupan dataset', 'Seluruh kecamatan di Kabupaten Majalengka'),
             _metaRow('Produsen', 'Dinas Koperasi dan UKM Kabupaten Majalengka'),
-            _metaRow('Kontak produsen', '0233-281XXX â€” diskopukm@majalengkakab.go.id'),
+            _metaRow('Kontak produsen', '0233-281XXX – diskopukm@majalengkakab.go.id'),
             _metaRow('Satuan dataset', 'Unit Usaha'),
             _metaRow('Frekuensi Update', 'Tahunan'),
           ],
@@ -321,7 +321,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
         border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
       ),
       child: Text(
-        '$year â€” Data sedang dipersiapkan',
+        '$year – Data sedang dipersiapkan',
         style: const TextStyle(
           fontSize: 14,
           fontFamily: 'PlusJakartaSans',
@@ -392,7 +392,7 @@ class _OpenDataDataSebaranPageState extends State<OpenDataDataSebaranPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '26 kecamatan â€¢ 3 sektor ditampilkan',
+                  '26 kecamatan • 3 sektor ditampilkan',
                   style: TextStyle(
                     fontSize: 11,
                     fontFamily: 'PlusJakartaSans',

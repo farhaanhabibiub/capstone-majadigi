@@ -236,7 +236,7 @@ class _TransjatimPageState extends State<TransjatimPage> with FavoriteMixin {
           Text(route.title, style: TextStyle(color: AppTheme.textPrimaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 15, fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text(
-            '${route.stops.length} halte  â€¢  Ekonomi mulai Rp 2.500',
+            '${route.stops.length} halte  •  Ekonomi mulai Rp 2.500',
             style: TextStyle(color: AppTheme.textSecondaryOf(context), fontFamily: 'PlusJakartaSans', fontSize: 12),
           ),
           const SizedBox(height: 12),

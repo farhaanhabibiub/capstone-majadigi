@@ -395,7 +395,7 @@ class _OpenDataLandingPageState extends State<OpenDataLandingPage>
               ),
               const SizedBox(height: 8),
               const Text(
-                'Pertanyaan & aduan melalui email pada jam kerja:\nSeninâ€“Jumat, 08:00â€“16:00 WIB',
+                'Pertanyaan & aduan melalui email pada jam kerja:\nSenin–Jumat, 08:00–16:00 WIB',
                 style: TextStyle(
                   color: Color(0xFF4B5563),
                   fontFamily: 'PlusJakartaSans',

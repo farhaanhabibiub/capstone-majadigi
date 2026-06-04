@@ -162,7 +162,7 @@ class TentangTab extends StatelessWidget {
           const SizedBox(height: 8),
           _infoRow(Icons.account_balance_outlined, 'Pengelola data', 'Dinsos Provinsi Jawa Timur'),
           const SizedBox(height: 8),
-          _infoRow(Icons.dataset_outlined, 'Dasar data', 'DTKS â€“ Kemensos RI'),
+          _infoRow(Icons.dataset_outlined, 'Dasar data', 'DTKS – Kemensos RI'),
           const SizedBox(height: 14),
           Container(
             padding: const EdgeInsets.all(12),

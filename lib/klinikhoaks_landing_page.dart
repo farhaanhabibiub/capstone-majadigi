@@ -578,7 +578,7 @@ class _KlinikHoaksLandingPageState extends State<KlinikHoaksLandingPage> {
             ),
             const SizedBox(height: 2),
             Text(
-              'JPG, PNG, PDF, MP4 â€” maks 10MB',
+              'JPG, PNG, PDF, MP4 – maks 10MB',
               style: TextStyle(
                 color: Colors.grey.shade400,
                 fontFamily: 'PlusJakartaSans',

@@ -143,7 +143,7 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
                   color: AppTheme.textPrimaryOf(context),
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Cari layanan, RSUD, hoaks, dataâ€¦',
+                  hintText: 'Cari layanan, RSUD, hoaks, data…',
                   hintStyle: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     fontSize: 14,

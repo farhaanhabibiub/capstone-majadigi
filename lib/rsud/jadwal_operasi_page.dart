@@ -18,7 +18,7 @@ class JadwalData {
   final String klinik;
   final String status;
 
-  String get jamRange => '$jamMulai â€“ $jamSelesai';
+  String get jamRange => '$jamMulai – $jamSelesai';
   bool get isTerjadwal => status == 'Terjadwal';
 
   const JadwalData({

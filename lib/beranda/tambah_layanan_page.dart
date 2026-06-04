@@ -401,7 +401,7 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> {
         ),
         const SizedBox(height: 24),
         const Text(
-          'Mengunduh fiturâ€¦',
+          'Mengunduh fitur…',
           style: TextStyle(
             color: _blue,
             fontFamily: 'PlusJakartaSans',
@@ -455,8 +455,8 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> {
             ),
             Text(
               _currentProgress >= 0.95
-                  ? 'Memasangâ€¦'
-                  : 'Mengambil paket asetâ€¦',
+                  ? 'Memasang…'
+                  : 'Mengambil paket aset…',
               style: const TextStyle(
                 color: _textSecondary,
                 fontFamily: 'PlusJakartaSans',

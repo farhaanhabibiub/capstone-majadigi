@@ -548,7 +548,7 @@ class _SkriningTabState extends State<SkriningTab> {
                   const Spacer(),
                   _levelPill('â‰¤ 5', 'Rendah', const Color(0xFF2E7D32), _levelRisiko == 'Rendah'),
                   const SizedBox(width: 6),
-                  _levelPill('6â€“12', 'Sedang', const Color(0xFFF59E0B), _levelRisiko == 'Sedang'),
+                  _levelPill('6–12', 'Sedang', const Color(0xFFF59E0B), _levelRisiko == 'Sedang'),
                   const SizedBox(width: 6),
                   _levelPill('â‰¥ 13', 'Tinggi', const Color(0xFFD32F2F), _levelRisiko == 'Tinggi'),
                 ],

@@ -845,7 +845,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'â€¢â€¢â€¢',
+                    '•••',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,

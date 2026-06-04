@@ -576,9 +576,9 @@ class _KlinikHoaksPermohonanPageState extends State<KlinikHoaksPermohonanPage>
           'Jam Operasional',
           Column(
             children: [
-              _dayRow('Senin â€“ Kamis', '08:00 â€“ 16:00', closed: false),
-              _dayRow('Jumat', '08:00 â€“ 11:00', closed: false),
-              _dayRow('Sabtu â€“ Minggu', 'Tutup', closed: true),
+              _dayRow('Senin – Kamis', '08:00 – 16:00', closed: false),
+              _dayRow('Jumat', '08:00 – 11:00', closed: false),
+              _dayRow('Sabtu – Minggu', 'Tutup', closed: true),
             ],
           ),
         ),

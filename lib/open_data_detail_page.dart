@@ -315,21 +315,21 @@ class OpenDataDetailPage extends StatelessWidget {
     ),
 
     'kemiskinan': _Content(
-      title: 'Angka Kemiskinan Jawa Timur 2020â€“2024',
+      title: 'Angka Kemiskinan Jawa Timur 2020–2024',
       date: '15 Maret 2025',
       category: 'Sosial',
       type: 'Statistik',
       source: 'BPS Jawa Timur',
       iconData: Icons.trending_down_outlined,
       iconColor: Color(0xFFDC2626),
-      description: 'Data perkembangan tingkat kemiskinan Provinsi Jawa Timur periode 2020â€“2024 berdasarkan survei sosial ekonomi nasional (Susenas) yang dilaksanakan setiap tahun oleh BPS.',
+      description: 'Data perkembangan tingkat kemiskinan Provinsi Jawa Timur periode 2020–2024 berdasarkan survei sosial ekonomi nasional (Susenas) yang dilaksanakan setiap tahun oleh BPS.',
       stats: [
         _Stat('10,16%', 'Tingkat Kemiskinan 2024', color: Color(0xFFDC2626)),
         _Stat('4,2 jt', 'Penduduk Miskin', color: Color(0xFFEA580C)),
         _Stat('-0,58%', 'Penurunan vs 2023', color: Color(0xFF059669)),
-        _Stat('11,40%', 'Rata-rata 2020â€“2024', color: Color(0xFF7C3AED)),
+        _Stat('11,40%', 'Rata-rata 2020–2024', color: Color(0xFF7C3AED)),
       ],
-      tableTitle: 'Tren Angka Kemiskinan 2020â€“2024',
+      tableTitle: 'Tren Angka Kemiskinan 2020–2024',
       tableHeaders: ['Tahun', 'Persentase'],
       tableRows: [
         ['2020', '11,46%'],
@@ -433,7 +433,7 @@ class OpenDataDetailPage extends StatelessWidget {
       source: 'Dispar Jawa Timur',
       iconData: Icons.beach_access_outlined,
       iconColor: Color(0xFF0284C7),
-      description: 'Statistik kunjungan wisatawan nusantara dan mancanegara ke destinasi wisata di Provinsi Jawa Timur pada kuartal keempat tahun 2024 (Oktober â€“ Desember).',
+      description: 'Statistik kunjungan wisatawan nusantara dan mancanegara ke destinasi wisata di Provinsi Jawa Timur pada kuartal keempat tahun 2024 (Oktober – Desember).',
       stats: [
         _Stat('18,4 jt', 'Wisatawan Q4 2024', color: Color(0xFF0284C7)),
         _Stat('142 rb', 'Wisman Q4 2024', color: Color(0xFFEA580C)),

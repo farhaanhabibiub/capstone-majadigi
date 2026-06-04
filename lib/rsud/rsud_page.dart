@@ -50,27 +50,27 @@ class _RsudPageState extends State<RsudPage> with FavoriteMixin {
     switch (_id) {
       case 'saiful_anwar':
         return [
-          'Senin â€“ Kamis  (07:00 â€“ 13:00)',
-          'Jumat          (07:00 â€“ 14:00)',
+          'Senin – Kamis  (07:00 – 13:00)',
+          'Jumat          (07:00 – 14:00)',
           'IGD            (24 Jam)',
         ];
       case 'karsa_husada':
         return [
-          'Senin â€“ Jumat  (07:30 â€“ 14:00)',
+          'Senin – Jumat  (07:30 – 14:00)',
           'IGD            (24 Jam)',
         ];
       case 'prov_jatim':
         return [
-          'Senin â€“ Jumat  (07:00 â€“ 14:00)',
+          'Senin – Jumat  (07:00 – 14:00)',
           'IGD            (24 Jam)',
         ];
       default: // daha_husada
         return [
-          'Senin  (07:00 â€“ 21:00)',
-          'Selasa (07:00 â€“ 21:00)',
-          'Rabu   (07:00 â€“ 21:00)',
-          'Kamis  (07:00 â€“ 21:00)',
-          'Jumat  (07:00 â€“ 21:00)',
+          'Senin  (07:00 – 21:00)',
+          'Selasa (07:00 – 21:00)',
+          'Rabu   (07:00 – 21:00)',
+          'Kamis  (07:00 – 21:00)',
+          'Jumat  (07:00 – 21:00)',
         ];
     }
   }
