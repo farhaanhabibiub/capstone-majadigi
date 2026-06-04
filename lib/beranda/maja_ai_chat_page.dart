@@ -46,7 +46,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
   @override
   void initState() {
     super.initState();
-    _chat = GeminiService.startChat();
+    if (GeminiService.isConfigured) _chat = GeminiService.startChat();
     _loadUser();
     _loadHistory();
     _loadSuggestions();
@@ -86,7 +86,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
               isUser: m.isUser,
               docId: m.id,
             )));
-      _chat = GeminiService.startChat(history: history);
+      if (GeminiService.isConfigured) _chat = GeminiService.startChat(history: history);
       _isLoadingHistory = false;
     });
     if (_messages.isNotEmpty) _scrollToBottom();
@@ -173,7 +173,7 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     if (!mounted) return;
     setState(() {
       _messages.clear();
-      _chat = GeminiService.startChat();
+      if (GeminiService.isConfigured) _chat = GeminiService.startChat();
       _isResponding = false;
     });
   }
@@ -206,7 +206,10 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
     final text = _textCtrl.text.trim();
     if (text.isEmpty || _isResponding) return;
     final chat = _chat;
-    if (chat == null) return;
+    if (chat == null) {
+      _showSnack('GEMINI_API_KEY belum dikonfigurasi.', isError: true);
+      return;
+    }
 
     final wait = _rateLimitWaitSeconds();
     if (wait > 0) {
@@ -567,6 +570,33 @@ class _MajaAiChatPageState extends State<MajaAiChatPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (!GeminiService.isConfigured)
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF3CD),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFFFD700)),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.warning_amber_rounded, color: Color(0xFFB45309), size: 18),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'GEMINI_API_KEY belum dikonfigurasi. Jalankan app dengan --dart-define=GEMINI_API_KEY=...',
+                        style: TextStyle(
+                          fontFamily: AppTheme.fontFamily,
+                          fontSize: 12,
+                          color: Color(0xFF92400E),
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Image.asset(
               'assets/images/maja_ai.png',
               width: 90,
