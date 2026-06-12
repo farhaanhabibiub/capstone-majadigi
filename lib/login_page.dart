@@ -167,9 +167,19 @@ class _LoginPageState extends State<LoginPage> {
       await _maybeOfferBiometric(_emailController.text.trim());
 
       if (!mounted) return;
+
+      final profile = await AuthService.instance.getUserProfile();
+      if (!mounted) return;
+
+      final location = profile?['location'] as Map<String, dynamic>?;
+      final hasLocation =
+          (location?['regency'] as String?)?.isNotEmpty == true;
+
       Navigator.pushNamedAndRemoveUntil(
         context,
-        AppRoutes.berandaPage,
+        hasLocation
+            ? AppRoutes.berandaPage
+            : AppRoutes.personalizationLocationPage,
         (route) => false,
       );
     } finally {
