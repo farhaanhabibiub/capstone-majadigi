@@ -33,3 +33,21 @@ no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_t
 32|27/05/2026|Rabu|10:00|11:30|Pterigium Eksisi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|
 33|31/05/2026|Minggu|07:00|09:00|Apendektomi Laparoskopi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Terjadwal|
 34|31/05/2026|Minggu|09:30|11:30|Histerektomi|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+35|03/06/2026|Rabu|07:30|09:30|Tonsilektomi|dr. Fitri Handayani, Sp.THT|THT|Selesai|
+36|03/06/2026|Rabu|10:00|11:30|Katarak Phacoemulsifikasi|dr. Budi Santoso, Sp.M|MATA|Selesai|
+37|07/06/2026|Minggu|07:00|09:00|Apendektomi Laparoskopi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Terjadwal|
+38|07/06/2026|Minggu|09:30|11:30|Herniorafi Inguinal|dr. Dedi Kurniawan, Sp.B|BEDAH UMUM|Terjadwal|
+39|10/06/2026|Rabu|07:00|09:00|Sectio Caesarea|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+40|10/06/2026|Rabu|09:30|11:30|Artroskopi Lutut|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Terjadwal|
+41|14/06/2026|Minggu|07:30|09:30|Tonsilektomi|dr. Fitri Handayani, Sp.THT|THT|Terjadwal|
+42|14/06/2026|Minggu|10:00|12:00|Histerektomi|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+43|17/06/2026|Rabu|07:30|09:30|ORIF Radius|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Terjadwal|
+44|17/06/2026|Rabu|10:00|11:30|Pterigium Eksisi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|
+45|21/06/2026|Minggu|07:00|09:00|Apendektomi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Terjadwal|
+46|21/06/2026|Minggu|09:30|11:30|Kolesistektomi Laparoskopi|dr. Ahmad Fauzi, Sp.B|BEDAH UMUM|Terjadwal|
+47|24/06/2026|Rabu|07:30|09:30|Tonsilektomi|dr. Fitri Handayani, Sp.THT|THT|Terjadwal|
+48|24/06/2026|Rabu|10:00|12:00|Histerektomi|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+49|28/06/2026|Minggu|07:00|09:00|Sectio Caesarea|dr. Siti Rahayu, Sp.OG|KEBIDANAN|Terjadwal|
+50|28/06/2026|Minggu|09:30|11:30|ORIF Femur|dr. Eko Prasetyo, Sp.OT|ORTOPEDI|Terjadwal|
+51|30/06/2026|Selasa|07:30|09:30|Katarak Phacoemulsifikasi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|
+52|30/06/2026|Selasa|10:00|11:30|Pterigium Eksisi|dr. Budi Santoso, Sp.M|MATA|Terjadwal|

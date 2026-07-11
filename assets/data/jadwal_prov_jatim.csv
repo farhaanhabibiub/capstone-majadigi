@@ -34,3 +34,23 @@ no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_t
 34|27/05/2026|Rabu|09:30|11:30|Kraniotomi|dr. Surya Nugroho, Sp.BS|BEDAH SARAF|Terjadwal|
 35|31/05/2026|Minggu|07:00|10:00|CABG (Bypass Jantung)|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|
 36|31/05/2026|Minggu|09:30|11:30|Reseksi Paru|dr. Citra Dewi, Sp.P|PARU|Terjadwal|
+37|03/06/2026|Rabu|07:00|10:00|Transplantasi Ginjal|dr. Eko Santoso, Sp.U|UROLOGI|Selesai|
+38|03/06/2026|Rabu|10:00|12:00|Laparotomi|dr. Andi Wicaksono, Sp.B|BEDAH UMUM|Selesai|
+39|07/06/2026|Minggu|06:30|09:30|CABG (Bypass Jantung)|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|
+40|07/06/2026|Minggu|09:30|12:30|Kraniotomi|dr. Surya Nugroho, Sp.BS|BEDAH SARAF|Terjadwal|
+41|07/06/2026|Minggu|07:00|09:30|Gastrektomi|dr. Andi Wicaksono, Sp.B|BEDAH DIGESTIF|Terjadwal|
+42|10/06/2026|Rabu|07:00|09:00|Reseksi Paru|dr. Citra Dewi, Sp.P|PARU|Terjadwal|
+43|10/06/2026|Rabu|09:30|11:30|Histerektomi Radikal|dr. Dewi Anggraini, Sp.OG|KEBIDANAN|Terjadwal|
+44|14/06/2026|Minggu|06:30|09:30|TAVI|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|
+45|14/06/2026|Minggu|10:00|13:00|Total Knee Replacement|dr. Bayu Kurniawan, Sp.OT|ORTOPEDI|Terjadwal|
+46|14/06/2026|Minggu|07:00|09:00|ORIF Pelvis|dr. Bayu Kurniawan, Sp.OT|ORTOPEDI|Terjadwal|
+47|17/06/2026|Rabu|07:00|10:00|Nefrektomi|dr. Eko Santoso, Sp.U|UROLOGI|Terjadwal|
+48|17/06/2026|Rabu|09:30|11:30|Kraniotomi|dr. Surya Nugroho, Sp.BS|BEDAH SARAF|Terjadwal|
+49|21/06/2026|Minggu|06:30|09:30|CABG (Bypass Jantung)|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|
+50|21/06/2026|Minggu|10:00|12:30|Gastrektomi|dr. Andi Wicaksono, Sp.B|BEDAH DIGESTIF|Terjadwal|
+51|21/06/2026|Minggu|07:00|09:00|Laparotomi|dr. Andi Wicaksono, Sp.B|BEDAH UMUM|Terjadwal|
+52|24/06/2026|Rabu|07:00|09:00|Reseksi Paru|dr. Citra Dewi, Sp.P|PARU|Terjadwal|
+53|24/06/2026|Rabu|09:30|12:30|Transplantasi Ginjal|dr. Eko Santoso, Sp.U|UROLOGI|Terjadwal|
+54|28/06/2026|Minggu|07:00|10:00|Kraniotomi|dr. Surya Nugroho, Sp.BS|BEDAH SARAF|Terjadwal|
+55|28/06/2026|Minggu|10:00|12:30|Histerektomi Radikal|dr. Dewi Anggraini, Sp.OG|KEBIDANAN|Terjadwal|
+56|28/06/2026|Minggu|06:30|09:00|CABG (Bypass Jantung)|dr. Wahyu Pradana, Sp.JP|JANTUNG|Terjadwal|

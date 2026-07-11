@@ -319,31 +319,41 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
   }
 
   Widget _buildTabContent() {
-    if (_selectedTabIndex == 1) {
-      if (_isLoadingRiwayat) {
-        return SkeletonLoader.list();
-      }
-      return Column(
-        children: [
-          if (_reminderDate != null) _buildReminderBanner(),
-          Expanded(
-            child: _riwayatList.isEmpty
-                ? _buildEmptyRiwayat()
-                : Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: RiwayatTab(
-                      riwayatList: _riwayatList,
-                      onRefresh: _refreshRiwayat,
-                      onDelete: _hapusRiwayat,
-                    ),
+    return IndexedStack(
+      index: _selectedTabIndex,
+      sizing: StackFit.expand,
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: SkriningTab(onSubmit: _tambahRiwayat, onSelesai: _pindahKeRiwayat),
+        ),
+        _buildRiwayatContent(),
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: const TentangTab(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRiwayatContent() {
+    if (_isLoadingRiwayat) return SkeletonLoader.list();
+    return Column(
+      children: [
+        if (_reminderDate != null) _buildReminderBanner(),
+        Expanded(
+          child: _riwayatList.isEmpty
+              ? _buildEmptyRiwayat()
+              : Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: RiwayatTab(
+                    riwayatList: _riwayatList,
+                    onRefresh: _refreshRiwayat,
+                    onDelete: _hapusRiwayat,
                   ),
-          ),
-        ],
-      );
-    }
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: _buildCurrentTab(),
+                ),
+        ),
+      ],
     );
   }
 
@@ -474,14 +484,4 @@ class _EtibiPageState extends State<EtibiPage> with FavoriteMixin {
     );
   }
 
-  Widget _buildCurrentTab() {
-    switch (_selectedTabIndex) {
-      case 0:
-        return SkriningTab(onSubmit: _tambahRiwayat, onSelesai: _pindahKeRiwayat);
-      case 2:
-        return const TentangTab();
-      default:
-        return SkriningTab(onSubmit: _tambahRiwayat, onSelesai: _pindahKeRiwayat);
-    }
-  }
 }

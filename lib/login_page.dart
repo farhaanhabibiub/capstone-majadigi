@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _obscurePassword = true;
   bool _isSubmitting = false;
+  bool _biometricLoginAvailable = false;
 
   static const Color _blue = Color.fromRGBO(0, 101, 255, 1);
 
@@ -30,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
     _emailController.addListener(_refresh);
     _passwordController.addListener(_refresh);
+    _checkBiometricLoginAvailability();
   }
 
   void _refresh() {
@@ -65,8 +67,74 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text.isNotEmpty;
   }
 
-  Future<void> _maybeOfferBiometric(String email) async {
-    if (await BiometricService.isEnabled()) return;
+  Future<void> _checkBiometricLoginAvailability() async {
+    final enabled = await BiometricService.isEnabled();
+    if (!enabled) return;
+    final enrolled = await BiometricService.enrolledEmail();
+    if (enrolled == null) return;
+    final password = await BiometricService.getStoredPassword();
+    if (password == null) return;
+    if (!mounted) return;
+    setState(() => _biometricLoginAvailable = true);
+  }
+
+  Future<void> _handleBiometricLogin() async {
+    final ok = await BiometricService.authenticate();
+    if (!ok || !mounted) return;
+
+    final email = await BiometricService.enrolledEmail();
+    final password = await BiometricService.getStoredPassword();
+
+    if (email == null || password == null) {
+      await BiometricService.disable();
+      if (mounted) setState(() => _biometricLoginAvailable = false);
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final result = await AuthService.instance.login(
+        email: email,
+        password: password,
+      );
+
+      if (!mounted) return;
+
+      if (!result.success) {
+        // Password berubah atau akun dihapus → hapus enrollment biometrik
+        await BiometricService.disable();
+        if (!mounted) return;
+        setState(() => _biometricLoginAvailable = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login biometrik gagal: ${result.message}')),
+        );
+        return;
+      }
+
+      final profile = await AuthService.instance.getUserProfile();
+      if (!mounted) return;
+
+      final location = profile?['location'] as Map<String, dynamic>?;
+      final hasLocation = (location?['regency'] as String?)?.isNotEmpty == true;
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        hasLocation ? AppRoutes.berandaPage : AppRoutes.personalizationLocationPage,
+        (route) => false,
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  Future<void> _maybeOfferBiometric(String email, String password) async {
+    if (await BiometricService.isEnabled()) {
+      // Jika enrollment untuk email berbeda (user ganti akun), reset dulu
+      final enrolled = await BiometricService.enrolledEmail();
+      if (enrolled == email.toLowerCase()) return;
+      await BiometricService.disable();
+    }
     if (!await BiometricService.isAvailable()) return;
     if (!mounted) return;
 
@@ -134,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
       reason: 'Konfirmasi sidik jari/wajah untuk mengaktifkan login biometrik',
     );
     if (ok) {
-      await BiometricService.enable(email);
+      await BiometricService.enable(email, password);
     }
   }
 
@@ -164,7 +232,10 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       // ── Tawarkan biometric jika belum di-enroll & device support ─────
-      await _maybeOfferBiometric(_emailController.text.trim());
+      await _maybeOfferBiometric(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
 
       if (!mounted) return;
 
@@ -400,6 +471,69 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
+                        if (_biometricLoginAvailable) ...[
+                          const SizedBox(height: 20),
+                          Row(
+                            children: const [
+                              Expanded(
+                                  child: Divider(
+                                      color: Color.fromRGBO(220, 220, 220, 1))),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                                child: Text(
+                                  'atau',
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(140, 140, 140, 1),
+                                    fontFamily: 'PlusJakartaSans',
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                  child: Divider(
+                                      color: Color.fromRGBO(220, 220, 220, 1))),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Center(
+                            child: GestureDetector(
+                              onTap: _handleBiometricLogin,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 64,
+                                    height: 64,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _blue.withValues(alpha: 0.08),
+                                      border: Border.all(
+                                        color: _blue.withValues(alpha: 0.25),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.fingerprint_rounded,
+                                      color: _blue,
+                                      size: 34,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  const Text(
+                                    'Masuk dengan Biometrik',
+                                    style: TextStyle(
+                                      color: _blue,
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                        ],
                         const SizedBox(height: 14),
                         Center(
                           child: Wrap(

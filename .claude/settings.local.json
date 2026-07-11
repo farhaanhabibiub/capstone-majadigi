@@ -46,7 +46,25 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\lib\" -Directory)",
       "Bash(Select-Object Name)",
       "Bash(flutter build *)",
-      "Bash(Get-ChildItem *)"
+      "Bash(Get-ChildItem *)",
+      "Bash(Select-Object Name, FullName)",
+      "Bash(grep -E \"\\\\.dart$\")",
+      "PowerShell(pip install *)",
+      "PowerShell(python -c $script)",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\inspect_docx.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\inspect_tables.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\inspect_f1.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\fill_farhan.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\verify_docx.py\")",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\expand_c2.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\verify2.py\")",
+      "PowerShell(firebase *)",
+      "Bash(gh auth *)",
+      "PowerShell(gh auth *)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\build\\\\app\\\\outputs\\\\flutter-apk\\\\\" | Select-Object Name, @{N='Size\\(MB\\)';E={[math]::Round\\($_.Length/1MB,1\\)}})",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\update_demo.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\farhaanhabibi\\\\AndroidStudioProjects\\\\capstonemajadigi\\\\add_june.py\")"
     ]
   }
 }

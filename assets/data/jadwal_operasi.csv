@@ -81,3 +81,33 @@ id|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_t
 80|30/05/2026|Sabtu|11:00|13:30|KOLESISTEKTOMI|dr. Deddy Aryanda Putra, Sp.B, M.Ked.Klin|KLINIK BEDAH|Terjadwal|
 81|31/05/2026|Minggu|08:00|12:00|LAPAROTOMI EKSPLORASI|dr. Rendra Kusuma, Sp.B|KLINIK BEDAH|Terjadwal|
 82|31/05/2026|Minggu|09:00|12:00|MASTEKTOMI|dr. Deddy Aryanda Putra, Sp.B, M.Ked.Klin|KLINIK BEDAH|Terjadwal|
+83|03/06/2026|Rabu|08:00|10:30|HEMOROIDEKTOMI|dr. Deddy Aryanda Putra, Sp.B, M.Ked.Klin|KLINIK BEDAH|Selesai|
+84|03/06/2026|Rabu|11:00|12:30|APENDIKTOMI|dr. Rendra Kusuma, Sp.B|KLINIK BEDAH|Selesai|
+85|03/06/2026|Rabu|08:00|09:30|OPERASI KATARAK OD|dr. Darwan Triyono, Sp.M|KLINIK MATA|Selesai|
+86|03/06/2026|Rabu|09:00|11:00|TONSILEKTOMI|dr. Ahmad Fauzi, Sp.THT-KL|KLINIK THT|Selesai|
+87|06/06/2026|Sabtu|08:00|11:00|TIROIDEKTOMI|dr. Bambang Sutrisno, Sp.B|KLINIK BEDAH|Terjadwal|
+88|06/06/2026|Sabtu|08:00|11:30|ORIF FEMUR|dr. Hartono Wibowo, Sp.OT|KLINIK ORTOPEDI|Terjadwal|
+89|06/06/2026|Sabtu|09:00|10:30|SECTIO CAESAREA|dr. Ratna Dewi, Sp.OG|KLINIK OBSGIN|Terjadwal|
+90|10/06/2026|Rabu|08:00|10:00|MASTEKTOMI|dr. Deddy Aryanda Putra, Sp.B, M.Ked.Klin|KLINIK BEDAH|Terjadwal|
+91|10/06/2026|Rabu|08:00|09:30|PTERYGIUM OD|dr. Siti Nurhaliza, Sp.M|KLINIK MATA|Terjadwal|
+92|10/06/2026|Rabu|10:00|12:00|TURP|dr. Budi Santoso, Sp.U|KLINIK UROLOGI|Terjadwal|
+93|10/06/2026|Rabu|09:00|11:00|SEPTOPLASTI|dr. Ahmad Fauzi, Sp.THT-KL|KLINIK THT|Terjadwal|
+94|13/06/2026|Sabtu|08:00|12:00|LAPAROTOMI EKSPLORASI|dr. Rendra Kusuma, Sp.B|KLINIK BEDAH|Terjadwal|
+95|13/06/2026|Sabtu|09:00|12:00|HISTEREKTOMI|dr. Ratna Dewi, Sp.OG|KLINIK OBSGIN|Terjadwal|
+96|13/06/2026|Sabtu|08:00|11:30|ARTROSKOPI LUTUT|dr. Hartono Wibowo, Sp.OT|KLINIK ORTOPEDI|Terjadwal|
+97|17/06/2026|Rabu|08:00|09:30|APENDIKTOMI|dr. Rendra Kusuma, Sp.B|KLINIK BEDAH|Terjadwal|
+98|17/06/2026|Rabu|10:00|12:30|HERNIOTOMI INGUINALIS|dr. Bambang Sutrisno, Sp.B|KLINIK BEDAH|Terjadwal|
+99|17/06/2026|Rabu|08:00|09:30|OPERASI KATARAK OS|dr. Darwan Triyono, Sp.M|KLINIK MATA|Terjadwal|
+100|17/06/2026|Rabu|09:00|11:00|MIOMEKTOMI|dr. Rina Susanti, Sp.OG|KLINIK OBSGIN|Terjadwal|
+101|20/06/2026|Sabtu|08:00|11:00|KOLESISTEKTOMI|dr. Deddy Aryanda Putra, Sp.B, M.Ked.Klin|KLINIK BEDAH|Terjadwal|
+102|20/06/2026|Sabtu|09:00|10:30|OPERASI KATARAK OD|dr. Darwan Triyono, Sp.M|KLINIK MATA|Terjadwal|
+103|20/06/2026|Sabtu|08:00|11:30|ORIF RADIUS|dr. Hartono Wibowo, Sp.OT|KLINIK ORTOPEDI|Terjadwal|
+104|20/06/2026|Sabtu|10:00|11:30|TONSILEKTOMI|dr. Ahmad Fauzi, Sp.THT-KL|KLINIK THT|Terjadwal|
+105|24/06/2026|Rabu|08:00|10:30|HEMOROIDEKTOMI|dr. Deddy Aryanda Putra, Sp.B, M.Ked.Klin|KLINIK BEDAH|Terjadwal|
+106|24/06/2026|Rabu|11:00|12:30|HERNIOTOMI INGUINALIS|dr. Bambang Sutrisno, Sp.B|KLINIK BEDAH|Terjadwal|
+107|24/06/2026|Rabu|09:00|10:30|SECTIO CAESAREA|dr. Ratna Dewi, Sp.OG|KLINIK OBSGIN|Terjadwal|
+108|24/06/2026|Rabu|10:00|11:30|PTERYGIUM OS|dr. Siti Nurhaliza, Sp.M|KLINIK MATA|Terjadwal|
+109|27/06/2026|Sabtu|08:00|11:00|TIROIDEKTOMI|dr. Bambang Sutrisno, Sp.B|KLINIK BEDAH|Terjadwal|
+110|27/06/2026|Sabtu|08:00|11:30|ORIF FEMUR|dr. Hartono Wibowo, Sp.OT|KLINIK ORTOPEDI|Terjadwal|
+111|27/06/2026|Sabtu|10:00|12:00|TURP|dr. Budi Santoso, Sp.U|KLINIK UROLOGI|Terjadwal|
+112|27/06/2026|Sabtu|11:00|12:30|NEFREKTOMI|dr. Budi Santoso, Sp.U|KLINIK UROLOGI|Terjadwal|

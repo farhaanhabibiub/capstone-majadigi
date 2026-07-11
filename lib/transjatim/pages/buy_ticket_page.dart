@@ -394,7 +394,7 @@ class _BuyTicketPageState extends State<BuyTicketPage> {
         children: [
           _priceRow('Harga/penumpang', _formatRupiah(_pricePerPax)),
           const SizedBox(height: 6),
-          _priceRow('Penumpang', 'Ã— $_passengerCount'),
+          _priceRow('Penumpang', '× $_passengerCount'),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
             child: Divider(thickness: 1, color: Color.fromRGBO(0, 101, 255, 0.2)),

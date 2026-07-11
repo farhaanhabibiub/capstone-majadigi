@@ -50,8 +50,8 @@ class _SplashScreenState extends State<SplashScreen> {
           reason: 'Verifikasi sidik jari/wajah untuk masuk ke Majadigi',
         );
         if (!ok) {
-          // Gagal/cancel → keluar dari sesi & balik ke login
-          await AuthService.instance.signOut();
+          // Gagal/cancel → kembali ke login; sesi Firebase & enrollment
+          // biometrik TETAP aktif agar user bisa retry dari halaman login.
           if (!mounted) return;
           Navigator.pushReplacementNamed(context, AppRoutes.loginPage);
           return;

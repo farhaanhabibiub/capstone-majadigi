@@ -20,7 +20,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDateFormatting('id_ID', null);
-  await NotificationService.initialize();
+  await NotificationService.initialize().timeout(
+    const Duration(seconds: 5),
+    onTimeout: () {},
+  );
   await ThemeController.init();
   await FontScaleController.init();
 

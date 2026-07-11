@@ -48,6 +48,7 @@ import 'package:sqflite_darwin/sqflite_darwin.dart' as sqflite_darwin;
 import 'package:url_launcher_macos/url_launcher_macos.dart' as url_launcher_macos;
 import 'package:file_picker/file_picker.dart' as file_picker;
 import 'package:file_selector_windows/file_selector_windows.dart' as file_selector_windows;
+import 'package:flutter_secure_storage_windows/flutter_secure_storage_windows.dart' as flutter_secure_storage_windows;
 import 'package:image_picker_windows/image_picker_windows.dart' as image_picker_windows;
 import 'package:local_auth_windows/local_auth_windows.dart' as local_auth_windows;
 import 'package:package_info_plus/package_info_plus.dart' as package_info_plus;
@@ -440,6 +441,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`file_selector_windows` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        flutter_secure_storage_windows.FlutterSecureStorageWindows.registerWith();
+      } catch (err) {
+        print(
+          '`flutter_secure_storage_windows` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }

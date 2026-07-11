@@ -74,13 +74,36 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
 
   Future<void> _toggleBiometric(bool value) async {
     if (value) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null || user.email == null) return;
+
+      // Minta password untuk verifikasi & penyimpanan terenkripsi
+      final password = await _showPasswordDialog();
+      if (password == null || password.isEmpty) return;
+
+      // Re-autentikasi Firebase
+      try {
+        final credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: password,
+        );
+        await user.reauthenticateWithCredential(credential);
+      } on FirebaseAuthException {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Password salah. Coba lagi.')),
+          );
+        }
+        return;
+      }
+
+      // Konfirmasi biometrik
       final ok = await BiometricService.authenticate(
         reason: 'Konfirmasi sidik jari/wajah untuk mengaktifkan login biometrik',
       );
       if (!ok) return;
-      final email = FirebaseAuth.instance.currentUser?.email;
-      if (email == null) return;
-      await BiometricService.enable(email);
+
+      await BiometricService.enable(user.email!, password);
       if (mounted) {
         setState(() => _biometricEnabled = true);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -95,6 +118,124 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
           const SnackBar(content: Text('Login biometrik dinonaktifkan')),
         );
       }
+    }
+  }
+
+  Future<String?> _showPasswordDialog() async {
+    final ctrl = TextEditingController();
+    bool obscure = true;
+    try {
+      return await showDialog<String>(
+        context: context,
+        builder: (ctx) => StatefulBuilder(
+          builder: (ctx, setDlg) => AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            icon: const Icon(Icons.fingerprint_rounded,
+                color: AppTheme.primary, size: 40),
+            title: const Text(
+              'Aktifkan Login Biometrik',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: AppTheme.fontFamily,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Masukkan password akun Anda untuk menyimpannya secara terenkripsi.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 13,
+                    color: AppTheme.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: ctrl,
+                  obscureText: obscure,
+                  style: const TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 14,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Password',
+                    hintStyle: const TextStyle(
+                      fontFamily: AppTheme.fontFamily,
+                      color: AppTheme.textSecondary,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscure
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: AppTheme.textSecondary,
+                        size: 20,
+                      ),
+                      onPressed: () => setDlg(() => obscure = !obscure),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(225, 225, 225, 1)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(225, 225, 225, 1)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                          color: AppTheme.primary, width: 1.4),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, null),
+                child: const Text(
+                  'Batal',
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    color: AppTheme.textSecondary,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, ctrl.text),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primary,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24)),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Lanjut',
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } finally {
+      ctrl.dispose();
     }
   }
 
@@ -134,6 +275,9 @@ class _KeamananAkunPageState extends State<KeamananAkunPage> {
 
       // Update password
       await user.updatePassword(_newPassCtrl.text);
+
+      // Password lama sudah tidak valid — clear enrollment biometrik
+      await BiometricService.disable();
 
       if (!mounted) return;
       _showSuccess();

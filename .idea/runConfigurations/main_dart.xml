@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="additionalArgs" value="--dart-define=GEMINI_API_KEY=AIzaSyDmc76S5li3RxPYIOnwj4BBM0_LnVTZCkA" />
     <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
-    <method />
+    <method v="2" />
   </configuration>
 </component>

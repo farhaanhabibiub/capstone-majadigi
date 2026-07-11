@@ -24,3 +24,17 @@ no|tanggal|hari|jam_mulai|jam_selesai|nama_operasi|dokter|klinik|status|update_t
 23|27/05/2026|Rabu|07:30|09:30|ORIF Radius|dr. Agus Setiawan, Sp.OT|ORTOPEDI|Terjadwal|
 24|31/05/2026|Minggu|07:00|08:30|Apendektomi|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
 25|31/05/2026|Minggu|09:00|11:00|Sectio Caesarea|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
+26|03/06/2026|Rabu|07:30|09:00|Tonsilektomi|dr. Nina Kusuma, Sp.THT|THT|Selesai|
+27|03/06/2026|Rabu|09:30|11:00|Katarak|dr. Hendra Wijaya, Sp.M|MATA|Selesai|
+28|07/06/2026|Minggu|07:00|09:00|Hernia Repair|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
+29|07/06/2026|Minggu|09:30|11:00|Sectio Caesarea|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
+30|10/06/2026|Rabu|07:30|09:00|Polipektomi Nasal|dr. Nina Kusuma, Sp.THT|THT|Terjadwal|
+31|14/06/2026|Minggu|07:00|09:00|Apendektomi|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
+32|14/06/2026|Minggu|09:00|10:30|ORIF Radius|dr. Agus Setiawan, Sp.OT|ORTOPEDI|Terjadwal|
+33|17/06/2026|Rabu|07:00|08:30|Miomektomi|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
+34|21/06/2026|Minggu|07:00|09:00|Sectio Caesarea|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|
+35|21/06/2026|Minggu|09:30|11:30|Katarak|dr. Hendra Wijaya, Sp.M|MATA|Terjadwal|
+36|24/06/2026|Rabu|07:30|09:00|Hernia Repair|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
+37|24/06/2026|Rabu|09:30|11:00|Tonsilektomi|dr. Nina Kusuma, Sp.THT|THT|Terjadwal|
+38|28/06/2026|Minggu|07:00|09:00|Apendektomi|dr. Rudi Hermawan, Sp.B|BEDAH UMUM|Terjadwal|
+39|28/06/2026|Minggu|09:00|10:30|Miomektomi|dr. Lilis Suryani, Sp.OG|KEBIDANAN|Terjadwal|

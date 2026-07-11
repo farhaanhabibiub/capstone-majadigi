@@ -284,7 +284,7 @@ class HasilPajakPage extends StatelessWidget {
         icon = Icons.check_circle_rounded;
         final tgl = data.parsedTanggalMasaPajak!;
         final sisa = tgl.difference(DateTime.now()).inDays;
-        label = 'Pajak aktif Â· jatuh tempo ${data.tanggalMasaPajak} ($sisa hari lagi)';
+        label = 'Pajak aktif · jatuh tempo ${data.tanggalMasaPajak} ($sisa hari lagi)';
         break;
       case _StatusPajak.segera:
         bgColor = const Color(0xFFFFF8E1);

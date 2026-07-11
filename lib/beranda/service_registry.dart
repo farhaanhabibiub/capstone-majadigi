@@ -23,6 +23,13 @@ class AddableService {
 class ServiceRegistry {
   static const List<AddableService> all = [
     AddableService(
+      id: 'siskaperbapo',
+      label: 'Harga Bahan Pokok',
+      assetPath: 'assets/images/layanan_siskaperbapo.png',
+      fallback: Icons.storefront_rounded,
+      route: AppRoutes.siskaperbapoPage,
+    ),
+    AddableService(
       id: 'sapa_bansos',
       label: 'Bantuan Sosial',
       assetPath: 'assets/images/layanan_sapa_bansos.png',

@@ -374,7 +374,11 @@ class AuthService {
     try {
       final user = _auth.currentUser;
       if (user == null) return null;
-      final doc = await _firestore.collection('users').doc(user.uid).get();
+      final doc = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .get()
+          .timeout(const Duration(seconds: 8));
       return doc.data();
     } catch (_) {
       return null;
